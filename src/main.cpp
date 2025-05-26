@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
+// #include "include/engine.hpp"
 #include <iostream> // For error messages
-
+#include <exception>
 int main()
 {
     // 1. Create the main window
@@ -71,3 +72,17 @@ int main()
 
     return 0;
 }
+
+// int main()
+// {
+//     try
+//     {
+//         Engine engine;
+//         engine.Run();
+//     }
+//     catch (std::exception &e)
+//     {
+//         std::cout << "ERROR: " << e.what();
+//     }
+//     return 0;
+// }
