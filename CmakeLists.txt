@@ -1,23 +1,133 @@
 cmake_minimum_required(VERSION 3.28)
-project(CMakeSFMLProject LANGUAGES CXX)
+project(ClashOfSkeleton LANGUAGES CXX)
 
+# Set C++ standard globally
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib) # For static libraries
 
+# --- SFML Dependency (FetchContent) ---
 include(FetchContent)
 FetchContent_Declare(SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.1
+    GIT_TAG 3.0.1 # Make sure this is the version you intend to use for SFML 3
     GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL
-    SYSTEM)
-FetchContent_MakeAvailable(SFML)
+    EXCLUDE_FROM_ALL # Don't build SFML's examples/docs unless explicitly requested
+    SYSTEM # Treat SFML as a system library to suppress its warnings
+)
+FetchContent_MakeAvailable(SFML) # Downloads and prepares SFML target
 
+# --- Define Game Libraries ---
+# All our headers are in the top-level 'include' directory, structured by module.
+# So, ${CMAKE_CURRENT_SOURCE_DIR}/include needs to be an include path for all our targets.
+file(GLOB GameUtilitySource "src/Utility/*.cpp")
+# Utility Library
+add_library(GameUtility STATIC
+${GameUtilitySource}
+# ResourcesUtility.hpp is header-only or its .cpp is missing from src listing
+)
+target_include_directories(GameUtility PUBLIC
+${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+# If Utility uses SFML (e.g. sf::String), link it:
+# target_link_libraries(GameUtility PRIVATE SFML::System)
 
+file(GLOB GameGraphicSource "src/Graphic/*.cpp")
+# Graphic Library
+add_library(GameGraphic STATIC
+${GameGraphicSource}
+)
+target_include_directories(GameGraphic PUBLIC
+${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(GameGraphic PRIVATE
+SFML::Graphics # For sf::Drawable, sf::Transformable, sf::Sprite, etc.
+GameUtility    # Assuming Graphic might use logging
+)
+
+file(GLOB GameResourcesSource "src/Resources/*.cpp")
+# Resources Library
+add_library(GameResources STATIC
+${GameResourcesSource}
+)
+target_include_directories(GameResources PUBLIC
+${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(GameResources PRIVATE
+SFML::Graphics # For sf::Font, sf::Texture, etc.
+GameUtility    # Assuming Resources might use logging
+)
+
+file(GLOB GameStateSource "src/State/*.cpp")
+# State Library
+add_library(GameState STATIC
+${GameStateSource}
+# BaseState.hpp is header-only or its .cpp is missing from src listing
+)
+target_include_directories(GameState PUBLIC
+${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(GameState PRIVATE
+SFML::Graphics # States often handle events and draw
+GameGraphic    # States use graphic objects
+GameResources  # States use resources
+GameUtility    # Assuming States might use logging
+)
+
+file(GLOB EngineSource "src/Engine/*.cpp")
+# Engine Library (as per your original attempt to link "Engine")
+add_library(Engine STATIC # Changed from GameEngine to match your original target_link_libraries
+    ${EngineSource}
+)
+target_include_directories(Engine PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(Engine PRIVATE
+    SFML::Window   # Engine likely manages the window
+    SFML::Graphics # Engine likely does high-level drawing or uses graphic components
+    SFML::System   # For time, etc.
+    GameState      # Engine manages game states
+    GameGraphic    # Engine might use graphic components directly
+    GameResources  # Engine might manage resources directly
+    GameUtility    # For core engine logging
+)
+
+# --- Main Executable ---
 add_executable(main src/main.cpp)
-target_include_directories(main PRIVATE src/Engine)
-target_include_directories(main PRIVATE src/Graphic)
-target_include_directories(main PRIVATE src/Resources)
-target_include_directories(main PRIVATE src/State)
-target_include_directories(main PRIVATE src/Utility)
-target_compile_features(main PRIVATE cxx_std_17)
-target_link_libraries(main PRIVATE SFML::Graphics)
+
+# main.cpp will include headers from 'include', e.g., "Engine/Engine.hpp"
+# This is already covered if Engine has PUBLIC include directories to ${CMAKE_CURRENT_SOURCE_DIR}/include
+# but explicitly adding it for main.cpp's own includes is fine.
+target_include_directories(main PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+# Link main against your Engine library and necessary SFML components.
+# If Engine.hpp exposes SFML types (e.g. takes sf::VideoMode in constructor),
+# Engine should link SFML components PUBLICLY, or main must link them itself.
+# Linking them here for main is safer if Engine's SFML usage is an implementation detail.
+target_link_libraries(main PRIVATE
+    Engine         # Your main game logic library
+    SFML::Graphics # If main.cpp uses sf::VideoMode, sf::Event, etc.
+    SFML::Window
+    SFML::System
+)
+# If your Engine library correctly links SFML components as PUBLIC where its interface
+# exposes them, you might only need: target_link_libraries(main PRIVATE Engine)
+
+# --- Copy Assets ---
+# This command will copy the 'assets' directory to your build's 'bin' directory
+# where the executable resides, after 'main' is successfully built.
+set(ASSETS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/assets)
+set(ASSETS_DESTINATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
+
+add_custom_command(
+    TARGET main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different # More efficient than copy_directory
+            "${ASSETS_SOURCE_DIR}"
+            "${ASSETS_DESTINATION_DIR}"
+    COMMENT "Copying assets to output directory"
+)

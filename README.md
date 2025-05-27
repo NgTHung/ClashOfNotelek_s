@@ -58,6 +58,8 @@ consideration, it is common to separate this section to its own file called
 
 ## Links
 
+## To do
+- Add settings.
 
 ## Licensing
 
