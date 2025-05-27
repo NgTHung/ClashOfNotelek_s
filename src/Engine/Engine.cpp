@@ -1,5 +1,6 @@
 #include "Engine/Engine.hpp"
 #include "State/StartState.hpp"
+#include "State/HomeState.hpp"
 
 Engine::Engine() : m_Window(sf::VideoMode({1280, 720}), "Clash of Notelek\'s"), m_ShouldPop(false), m_ShouldChangeState(false)
 {
@@ -13,7 +14,7 @@ BaseState &Engine::GetCurrentState() const
 
 void Engine::Prepare()
 {
-    PushState<StartState>(m_Window);
+    PushState<HomeState>(*this);
 }
 
 void Engine::PopState()
