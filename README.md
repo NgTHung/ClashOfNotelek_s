@@ -24,7 +24,7 @@ After making some changes(or not), running these command will help you building 
 mkdir build
 cd build
 cmake clean .
-cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCMAKE_BUILD_TYPE=Debug ..
 cmake --build .
 bin/main.exe
 ```

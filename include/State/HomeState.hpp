@@ -3,11 +3,11 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-class StartState : public BaseState
+class HomeState : public BaseState
 {
 public:
-    StartState(const sf::RenderWindow &Window);
-    ~StartState() override = default;
+    HomeState(const Engine &g_Engine);
+    ~HomeState() override = default;
     bool Render(sf::RenderTarget &Renderer) const override;
     bool Update(const sf::Time &DT) override;
     bool HandleEvent(const std::optional<sf::Event> Event) override;
