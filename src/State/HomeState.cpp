@@ -2,20 +2,23 @@
 #include "Resources/ResourcesManager.hpp"
 #include "Engine/Engine.hpp"
 
-HomeState::HomeState(const Engine &g_Engine) : Names({"HIHI", "HOHO", "HEHE"}), Name(ResourcesManager::GetManager()->GetFontHolder().GetFont("arial.ttf"))
+HomeState::HomeState(const Engine &g_Engine)
 {
-    Index = 0;
-    Name.setString(Names[Index]);
-    Name.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    Name.setFillColor(sf::Color::Blue);
-    TextBound = Name.getLocalBounds();
-    Name.setOrigin(TextBound.getCenter());
-    Name.setPosition(static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f);
+    // Need to edit
+    sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
+    sf::IntRect IntRect = {{0, 0}, {32, 32}};
+    sf::Vector2f Factors = {2.5, 2.5};
+
+    this->Notelek.SetPosition(Position);
+    this->Notelek.SetIntRect(IntRect);
+    this->Notelek.SetScale(Factors);
+
+    this->activeKey.clear();
 }
 
 bool HomeState::Render(sf::RenderTarget &Renderer) const
 {
-    Renderer.draw(Name);
+    this->Notelek.Render(Renderer);
     return true;
 }
 
@@ -23,12 +26,55 @@ bool HomeState::HandleEvent(const std::optional<sf::Event> Event)
 {
     if (const auto *keyPressed = Event->getIf<sf::Event::KeyPressed>())
     {
-        if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
+        this->activeKey.insert(keyPressed->code);
+    }
+    if (const auto *keyPressed = Event->getIf<sf::Event::KeyReleased>())
+    {
+        this->activeKey.erase(keyPressed->code);
+    }
+
+    for (auto key : activeKey){
+        switch (key)
         {
-            (Index += 1) %= 3;
-            Name.setString(Names[Index]);
+        case sf::Keyboard::Key::Right:
+        {
+            this->Notelek.Next();
+            sf::Vector2f Position = this->Notelek.GetPosition();
+            Position.x += 2.5;
+            this->Notelek.SetPosition(Position);
+            break;
+        }
+        case sf::Keyboard::Key::Left:
+        {
+            this->Notelek.Next();
+            sf::Vector2f Position = this->Notelek.GetPosition();
+            Position.x -= 2.5;
+            this->Notelek.SetPosition(Position);
+            break;
+        }
+        
+        case sf::Keyboard::Key::Down:
+        {
+            this->Notelek.Next();
+            sf::Vector2f Position = this->Notelek.GetPosition();
+            Position.y += 2.5;
+            this->Notelek.SetPosition(Position);
+            break;
+        }
+        case sf::Keyboard::Key::Up:
+        {
+            this->Notelek.Next();
+            sf::Vector2f Position = this->Notelek.GetPosition();
+            Position.y -= 2.5;
+            this->Notelek.SetPosition(Position);
+            break;
+        }
+        default:
+            this->Notelek.Init();
+            break;
         }
     }
+
     return true;
 }
 

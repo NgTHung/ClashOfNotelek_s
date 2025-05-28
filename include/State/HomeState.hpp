@@ -1,7 +1,9 @@
 #pragma once
 #include "State/BaseState.hpp"
+#include "Graphic/Sprite.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <set>
 
 class HomeState : public BaseState
 {
@@ -15,8 +17,6 @@ public:
     bool FixLagUpdate(const sf::Time &DT) override;
 
 private:
-    sf::Text Name;
-    sf::FloatRect TextBound;
-    std::vector<std::string> Names;
-    int Index;
+    Character Notelek;
+    std::set<sf::Keyboard::Key> activeKey;
 };
