@@ -15,8 +15,8 @@ public:
     bool FixLagUpdate(const sf::Time &DT) override;
 
 private:
-    sf::Text Name;
-    sf::FloatRect TextBound;
-    std::vector<std::string> Names;
+    sf::Text m_Name;
+    sf::FloatRect m_TextBound;
+    std::vector<std::string> m_Names;
     int Index;
 };

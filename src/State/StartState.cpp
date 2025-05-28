@@ -1,20 +1,20 @@
 #include "State/StartState.hpp"
 #include "Resources/ResourcesManager.hpp"
 
-StartState::StartState(const sf::RenderWindow &Window) : Names({"TTP", "TLTH", "BBQ"}), Name(ResourcesManager::GetManager()->GetFontHolder().GetFont("arial.ttf"))
+StartState::StartState(const sf::RenderWindow &Window) : m_Names({"TTP", "TLTH", "BBQ"}), m_Name(ResourcesManager::GetManager()->GetFontHolder().GetFont("arial.ttf"))
 {
     Index = 0;
-    Name.setString(Names[Index]);
-    Name.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    Name.setFillColor(sf::Color::Blue);
-    TextBound = Name.getLocalBounds();
-    Name.setOrigin(TextBound.getCenter());
-    Name.setPosition(static_cast<sf::Vector2f>(Window.getSize()) / 2.f);
+    m_Name.setString(m_Names[Index]);
+    m_Name.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    m_Name.setFillColor(sf::Color::Blue);
+    m_TextBound = m_Name.getLocalBounds();
+    m_Name.setOrigin(m_TextBound.getCenter());
+    m_Name.setPosition(static_cast<sf::Vector2f>(Window.getSize()) / 2.f);
 }
 
 bool StartState::Render(sf::RenderTarget &Renderer) const
 {
-    Renderer.draw(Name);
+    Renderer.draw(m_Name);
     return true;
 }
 
@@ -25,7 +25,10 @@ bool StartState::HandleEvent(const std::optional<sf::Event> Event)
         if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
         {
             (Index += 1) %= 3;
-            Name.setString(Names[Index]);
+            m_Name.setString(m_Names[Index]);
+        }
+        if (keyPressed->scancode == sf::Keyboard::Scancode::W)
+        {
         }
     }
     return true;

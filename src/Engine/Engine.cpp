@@ -92,7 +92,7 @@ bool Engine::TryPop()
 
 void Engine::Run()
 {
-    const int TPS = 30; // TIck Per Second
+    const int TPS = 30; // Tick Per Second
     const sf::Time TimePerUpdate = sf::seconds(1.f / TPS);
     int Ticks = 0;
 
