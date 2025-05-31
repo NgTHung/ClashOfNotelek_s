@@ -1,6 +1,7 @@
 #include "Engine/Engine.hpp"
 #include "State/StartState.hpp"
 #include "State/HomeState.hpp"
+#include "Utility/Logger.hpp"
 
 Engine::Engine() : m_Window(sf::VideoMode({1280, 720}), "Clash of Notelek\'s"), m_ShouldPop(false), m_ShouldChangeState(false)
 {
@@ -60,7 +61,7 @@ bool Engine::HandleEvent()
         }
         if (!isSuccess)
         {
-            std::cout << "ERROR";
+            LOG_ERROR("State Error.");
             return false;
         }
     }

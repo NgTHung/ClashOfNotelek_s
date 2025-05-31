@@ -33,7 +33,8 @@ bool HomeState::HandleEvent(const std::optional<sf::Event> Event)
         this->activeKey.erase(keyPressed->code);
     }
 
-    for (auto key : activeKey){
+    for (auto key : activeKey)
+    {
         switch (key)
         {
         case sf::Keyboard::Key::Right:
@@ -52,7 +53,7 @@ bool HomeState::HandleEvent(const std::optional<sf::Event> Event)
             this->Notelek.SetPosition(Position);
             break;
         }
-        
+
         case sf::Keyboard::Key::Down:
         {
             this->Notelek.Next();

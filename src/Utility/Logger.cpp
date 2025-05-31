@@ -1,4 +1,5 @@
 #include "Utility/Logger.hpp"
+#include <iostream>
 
 LogLevel Logger::CurrentLogLevel = LogLevel::DEBUG;
 

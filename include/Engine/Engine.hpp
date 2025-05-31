@@ -2,9 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
-#include <iostream>
 #include "State/BaseState.hpp"
-
 
 class Engine
 {

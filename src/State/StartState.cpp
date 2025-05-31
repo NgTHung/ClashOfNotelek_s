@@ -1,7 +1,7 @@
 #include "State/StartState.hpp"
 #include "Resources/ResourcesManager.hpp"
 
-StartState::StartState(const sf::RenderWindow &Window) : m_Names({"TTP", "TLTH", "BBQ"}), m_Name(ResourcesManager::GetManager()->GetFontHolder().GetFont("arial.ttf"))
+StartState::StartState(const sf::RenderWindow &Window) : m_Names({"TTP", "TLTH", "BBQ"}), m_Name(ResourcesManager::GetManager().GetFontHolder().GetFont("arial.ttf"))
 {
     Index = 0;
     m_Name.setString(m_Names[Index]);
