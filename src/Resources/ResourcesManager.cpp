@@ -5,10 +5,10 @@ const FontHolder &ResourcesManager::GetFontHolder() const
     return *m_FontHolder;
 }
 
-const ResourcesManager *ResourcesManager::GetManager()
+const ResourcesManager &ResourcesManager::GetManager()
 {
     static ResourcesManager m_Instance{};
-    return &m_Instance;
+    return m_Instance;
 }
 
 ResourcesManager::ResourcesManager()
