@@ -16,7 +16,7 @@ HomeState::HomeState(const Engine &g_Engine)
     this->activeKey.clear();
 }
 
-bool HomeState::Render(sf::RenderTarget &Renderer) const
+bool HomeState::Render(sf::RenderTarget &Renderer)
 {
     this->Notelek.Render(Renderer);
     return true;

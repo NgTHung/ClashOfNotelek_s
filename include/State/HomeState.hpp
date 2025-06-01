@@ -1,19 +1,18 @@
 #pragma once
-#include "State/BaseState.hpp"
+#include "State/ScreenState.hpp"
 #include "Graphic/Sprite.hpp"
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <set>
 
-class HomeState : public BaseState
+class HomeState : public ScreenState
 {
 public:
     HomeState(const Engine &g_Engine);
     ~HomeState() override = default;
-    bool Render(sf::RenderTarget &Renderer) const override;
+    bool Render(sf::RenderTarget &Renderer) override;
     bool Update(const sf::Time &DT) override;
-    bool HandleEvent(const std::optional<sf::Event> Event) override;
-    bool HandleInput() override;
+    bool HandleEvent(const std::optional<sf::Event> Event);
+    bool HandleInput();
     bool FixLagUpdate(const sf::Time &DT) override;
     bool IsDashTurn() const;
 

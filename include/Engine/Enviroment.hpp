@@ -1,4 +1,4 @@
 namespace Eviroment
 {
-    const double Velocity = 1;
+    const double m_Velocity = 1;
 }

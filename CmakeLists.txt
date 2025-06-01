@@ -29,13 +29,21 @@ FetchContent_Declare(googletest
 )
 FetchContent_MakeAvailable(googletest)
 
+file(GLOB GameEventSource "src/Event/*.cpp")
+add_library(GameEvent STATIC
+    ${GameEventSource}
+)
+target_include_directories(GameEvent PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
 file(GLOB GameUtilitySource "src/Utility/*.cpp")
 # Utility Library
 add_library(GameUtility STATIC
-${GameUtilitySource}
+    ${GameUtilitySource}
 )
 target_include_directories(GameUtility PUBLIC
-${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 file(GLOB GameGraphicSource "src/Graphic/*.cpp")
@@ -48,7 +56,9 @@ target_include_directories(GameGraphic PUBLIC
 )
 target_link_libraries(GameGraphic PRIVATE
     SFML::Graphics
-    GameUtility   
+    GameUtility
+    GameState
+    GameEvent
 )
 
 file(GLOB GameResourcesSource "src/Resources/*.cpp")
@@ -77,6 +87,7 @@ target_link_libraries(GameState PRIVATE
     GameGraphic    
     GameResources  
     GameUtility    
+    GameEvent
 )
 
 file(GLOB EngineSource "src/Engine/*.cpp")
@@ -95,6 +106,7 @@ target_link_libraries(Engine PRIVATE
     GameGraphic    
     GameResources  
     GameUtility    
+    GameEvent
 )
 
 # --- Main Executable ---

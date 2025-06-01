@@ -1,21 +1,21 @@
 #include "Engine/Engine.hpp"
 #include "State/StartState.hpp"
-#include "State/HomeState.hpp"
 #include "Utility/Logger.hpp"
 
-Engine::Engine() : m_Window(sf::VideoMode({1280, 720}), "Clash of Notelek\'s"), m_ShouldPop(false), m_ShouldChangeState(false)
+Engine::Engine() : m_Window(sf::VideoMode({1280, 720}), "Clash of Notelek\'s"), m_ShouldPop(false), m_ShouldExit(false),
+                   m_ShouldChangeState(false)
 {
     m_Window.setFramerateLimit(60);
 }
 
-BaseState &Engine::GetCurrentState() const
+ScreenState &Engine::GetCurrentState() const
 {
     return *this->m_States.back();
 }
 
 void Engine::Prepare()
 {
-    PushState<HomeState>(*this);
+    PushState<StartState>(this->m_Window);
 }
 
 void Engine::PopState()
@@ -23,7 +23,7 @@ void Engine::PopState()
     m_ShouldPop = true;
 }
 
-bool Engine::PushState(std::unique_ptr<BaseState> state)
+bool Engine::PushState(std::unique_ptr<ScreenState> state)
 {
     m_States.push_back(std::move(state));
     return true;
@@ -37,8 +37,7 @@ const sf::RenderWindow &Engine::GetWindow() const
 template <typename T, typename... Args>
 bool Engine::PushState(Args &&...args)
 {
-    PushState(std::make_unique<T>(std::forward<Args>(args)...));
-    return true;
+    return PushState(std::make_unique<T>(std::forward<Args>(args)...));
 }
 
 template <typename T, typename... Args>
@@ -50,11 +49,11 @@ bool Engine::ChangeState(Args &&...args)
     return true;
 }
 
-bool Engine::HandleEvent()
+bool Engine::HandleInput()
 {
     while (const std::optional Event = m_Window.pollEvent())
     {
-        bool isSuccess = GetCurrentState().HandleEvent(Event);
+        bool isSuccess = GetCurrentState().HandleInput(Event);
         if (Event->is<sf::Event::Closed>())
         {
             m_Window.close();
@@ -81,11 +80,13 @@ bool Engine::TryPop()
         else if (m_ShouldChangeState)
         {
             m_ShouldChangeState = false;
+            m_States.back().reset();
             m_States.pop_back();
             this->PushState(std::move(m_ChangedState));
             return true;
         }
 
+        m_States.back().reset();
         m_States.pop_back();
     }
     return true;
@@ -93,24 +94,24 @@ bool Engine::TryPop()
 
 void Engine::Run()
 {
-    const int TPS = 30; // Tick Per Second
-    const sf::Time TimePerUpdate = sf::seconds(1.f / TPS);
+    constexpr int TPS = 30; // Tick Per Second
+    constexpr sf::Time TimePerUpdate = sf::seconds(1.f / TPS);
     int Ticks = 0;
 
-    sf::Clock Timer;
     sf::Time LastTime = sf::Time::Zero;
     sf::Time Lag = sf::Time::Zero;
 
     while (m_Window.isOpen() && !m_States.empty())
     {
-        BaseState &State = this->GetCurrentState();
+        sf::Clock Timer;
+        ScreenState &State = this->GetCurrentState();
 
         sf::Time Time = Timer.getElapsedTime();
         sf::Time Elapsed = Time - LastTime;
         LastTime = Time;
         Lag += Elapsed;
 
-        State.HandleInput();
+        HandleInput();
         State.Update(Elapsed);
 
         while (Lag >= TimePerUpdate)
@@ -124,7 +125,7 @@ void Engine::Run()
         State.Render(m_Window);
         m_Window.display();
 
-        HandleEvent();
+        State.HandleEvent();
         TryPop();
     }
 }
