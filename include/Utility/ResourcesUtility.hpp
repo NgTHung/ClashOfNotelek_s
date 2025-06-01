@@ -3,5 +3,12 @@
 enum class ResourcesType
 {
     None,
-    Font
+    Font,
+    Texture
+};
+
+enum class TextureName
+{
+    Notelek,
+    Enenies
 };

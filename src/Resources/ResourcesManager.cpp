@@ -13,18 +13,28 @@ const ResourcesManager *ResourcesManager::GetManager()
 
 ResourcesManager::ResourcesManager()
 {
+    // Load Font
     m_FontHolder = std::make_unique<FontHolder>();
     m_FontHolder->AddDirectory("assets/fonts", true);
     m_FontHolder->LoadDirectory();
+
+    // Load Texture
+    m_TextureHolder = std::make_unique<TextureHolder>();
+    m_TextureHolder->AddDirectory("assets/sprite", true);
+    m_TextureHolder->LoadDirectory();
 }
 
 bool ResourcesManager::LoadFile(ResourcesType Type, const std::string &File)
 {
-    switch (Type)
+    switch (Type)   
     {
     case ResourcesType::Font:
     {
         return m_FontHolder->LoadFile(File);
+    }
+    case ResourcesType::Texture:
+    {
+        return m_TextureHolder->LoadFile(File);
     }
     default:
         break;

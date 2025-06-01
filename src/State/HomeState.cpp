@@ -26,55 +26,12 @@ bool HomeState::HandleEvent(const std::optional<sf::Event> Event)
 {
     if (const auto *keyPressed = Event->getIf<sf::Event::KeyPressed>())
     {
-        this->activeKey.insert(keyPressed->code);
+        this->activeKey.insert(keyPressed->scancode);
     }
-    if (const auto *keyPressed = Event->getIf<sf::Event::KeyReleased>())
+    if (const auto *keyReleased = Event->getIf<sf::Event::KeyReleased>())
     {
-        this->activeKey.erase(keyPressed->code);
+        this->activeKey.erase(keyReleased->scancode);
     }
-
-    for (auto key : activeKey){
-        switch (key)
-        {
-        case sf::Keyboard::Key::Right:
-        {
-            this->Notelek.Next();
-            sf::Vector2f Position = this->Notelek.GetPosition();
-            Position.x += 2.5;
-            this->Notelek.SetPosition(Position);
-            break;
-        }
-        case sf::Keyboard::Key::Left:
-        {
-            this->Notelek.Next();
-            sf::Vector2f Position = this->Notelek.GetPosition();
-            Position.x -= 2.5;
-            this->Notelek.SetPosition(Position);
-            break;
-        }
-        
-        case sf::Keyboard::Key::Down:
-        {
-            this->Notelek.Next();
-            sf::Vector2f Position = this->Notelek.GetPosition();
-            Position.y += 2.5;
-            this->Notelek.SetPosition(Position);
-            break;
-        }
-        case sf::Keyboard::Key::Up:
-        {
-            this->Notelek.Next();
-            sf::Vector2f Position = this->Notelek.GetPosition();
-            Position.y -= 2.5;
-            this->Notelek.SetPosition(Position);
-            break;
-        }
-        default:
-            this->Notelek.Init();
-            break;
-        }
-    }
-
     return true;
 }
 
@@ -88,7 +45,49 @@ bool HomeState::FixLagUpdate(const sf::Time &DT)
     return true;
 }
 
+bool HomeState::IsDashTurn() const
+{
+    return true;
+}
+
 bool HomeState::Update(const sf::Time &DT)
 {
+    if (this->activeKey.empty()){
+        this->Notelek.Init();
+    }
+    else{
+        float moveX = 0.0f, moveY = 0.0f;
+        for (sf::Keyboard::Scancode key : activeKey){
+            switch (key)
+            {
+                case sf::Keyboard::Scancode::D:
+                    moveX += 2.5;
+                    break;
+                case sf::Keyboard::Scancode::A:
+                    moveX -= 2.5;
+                    break;
+                
+                case sf::Keyboard::Scancode::S:
+                    moveY += 2.5;
+                    break;
+                case sf::Keyboard::Scancode::W:
+                    moveY -= 2.5;
+                    break;
+                case sf::Keyboard::Scancode::Space:
+                    moveY = (moveY * 5) * IsDashTurn();
+                    moveX = (moveX * 5) * IsDashTurn();
+                default:
+                    break;
+            }
+        }
+        if (moveX != 0.0f || moveY != 0.0f){
+            sf::Vector2f Position = this->Notelek.GetPosition();
+            Position.x += moveX;
+            Position.y += moveY;
+            this->Notelek.Next();
+            this->Notelek.SetPosition(Position);
+        }
+    }
+
     return true;
 }
