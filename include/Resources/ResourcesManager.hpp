@@ -1,5 +1,6 @@
 #pragma once
 #include "Resources/FontHolder.hpp"
+#include "Resources/TextureHolder.hpp"
 #include "Utility/ResourcesUtility.hpp"
 
 class ResourcesManager
@@ -13,6 +14,7 @@ public:
 
 private:
     std::unique_ptr<FontHolder> m_FontHolder;
+    std::unique_ptr<TextureHolder> m_TextureHolder;
     ResourcesManager();
     ~ResourcesManager() = default;
 };

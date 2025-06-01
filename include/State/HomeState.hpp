@@ -15,8 +15,9 @@ public:
     bool HandleEvent(const std::optional<sf::Event> Event) override;
     bool HandleInput() override;
     bool FixLagUpdate(const sf::Time &DT) override;
+    bool IsDashTurn() const;
 
 private:
     Character Notelek;
-    std::set<sf::Keyboard::Key> activeKey;
+    std::set<sf::Keyboard::Scancode> activeKey;
 };

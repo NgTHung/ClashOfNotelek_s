@@ -12,12 +12,9 @@ public:
     virtual ~FontHolder() override;
     virtual void LoadDirectory() override;
     virtual bool LoadFile(const std::string &FontPath) override;
-    sf::Font &GetFont(const std::string FontName);
     const sf::Font &GetFont(const std::string FontName) const;
-    const std::vector<std::string> &GetFontTable() const;
 
 private:
     bool AddFont(const std::string &FontName, std::unique_ptr<sf::Font> Font);
     std::map<std::string, std::unique_ptr<sf::Font>> m_FontMap;
-    std::vector<std::string> m_FontTable;
 };

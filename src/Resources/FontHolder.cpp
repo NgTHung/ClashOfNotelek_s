@@ -1,8 +1,7 @@
 #include "Resources/FontHolder.hpp"
 #include "Utility/Logger.hpp"
 FontHolder::FontHolder() {};
-FontHolder::~FontHolder() {
-};
+FontHolder::~FontHolder() {};
 bool FontHolder::AddFont(const std::string &FontName, std::unique_ptr<sf::Font> Font)
 {
     auto InsertedFont = m_FontMap.insert(std::make_pair(FontName, std::move(Font)));
@@ -11,17 +10,9 @@ bool FontHolder::AddFont(const std::string &FontName, std::unique_ptr<sf::Font> 
         LOG_ERROR("Font {} already exists in the map.", FontName);
         throw "Cannot insert font " + FontName;
     }
-    m_FontTable.push_back(FontName);
     return true;
 }
 
-sf::Font &FontHolder::GetFont(const std::string FontName)
-{
-    auto SelectedFont = m_FontMap.find(FontName);
-    assert(SelectedFont != m_FontMap.end());
-
-    return *SelectedFont->second;
-}
 const sf::Font &FontHolder::GetFont(const std::string FontName) const
 {
     auto SelectedFont = m_FontMap.find(FontName);
@@ -64,9 +55,4 @@ void FontHolder::LoadDirectory()
             LoadFile(File.path().string());
         }
     }
-}
-
-const std::vector<std::string> &FontHolder::GetFontTable() const
-{
-    return this->m_FontTable;
 }
