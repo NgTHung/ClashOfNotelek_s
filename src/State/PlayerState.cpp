@@ -2,73 +2,41 @@
 #include "Resources/ResourcesManager.hpp"
 #include "Utility/Logger.hpp"
 #include "Graphic/Player.hpp"
+#include "State/StartScreen.hpp"
 
-void StandingState::EnterState(Player &PlayerInstance)
-{
-    PlayerInstance.ResetIndex();
-    PlayerInstance.SetName("Hello World");
-}
-
-void StandingState::ExitState(Player &PlayerInstance)
+PlayerState::PlayerState(Player &PlayerInstance) : BaseState(PlayerInstance)
 {
 }
 
-void StandingState::AddEvent(std::shared_ptr<BaseEvent> Event)
+StandingState::StandingState(Player &PlayerInstance) : PlayerState(PlayerInstance)
 {
-    this->m_EventQueue.PushEvent(Event);
 }
 
-std::unique_ptr<PlayerState> StandingState::FixLagUpdate(Player &PlayerInstance, const sf::Time &DT)
+void StandingState::EnterState()
+{
+    this->m_Instance.ResetIndex();
+    this->m_Instance.SetName("Hello World");
+    EventDispatcher::GetInstance().RegisterListener(
+        GlobalEventType::PlayerMoved,
+        [this](const std::shared_ptr<BaseEvent> &Event)
+        { return this->HandleEvent(Event); });
+}
+
+void StandingState::ExitState()
+{
+}
+
+std::unique_ptr<BaseState<Player>> StandingState::FixLagUpdate(const sf::Time &DT)
 {
     return nullptr;
 }
 
-std::unique_ptr<PlayerState> StandingState::Update(Player &PlayerInstance, const sf::Time &DT)
+std::unique_ptr<BaseState<Player>> StandingState::Update(const sf::Time &DT)
 {
     return nullptr;
 }
 
-std::unique_ptr<PlayerState> StandingState::HandleEvent(Player &PlayerInstance)
-{
-    while (!m_EventQueue.IsEmpty())
-    {
-        auto TopEvent = m_EventQueue.PopEvent();
-        if (!TopEvent.has_value())
-            continue;
-        LOG_DEBUG("Ref count: {}", TopEvent->use_count());
-        switch (TopEvent->get()->GetEventType())
-        {
-        case GlobalEventType::Generic:
-        {
-            LOG_ERROR("Incorrect populated Event");
-            throw "Incorrect populated Event";
-        }
-        case GlobalEventType::PlayerAttacked:
-        case GlobalEventType::GameQuit:
-        {
-            TopEvent.reset();
-            continue;
-        }
-        case GlobalEventType::PlayerAction:
-        {
-            LOG_ERROR("Incorrect populated Event");
-            throw "Incorrect populated Event";
-        }
-        case GlobalEventType::PlayerMoved:
-        {
-            TopEvent.reset();
-            return std::make_unique<MovingState>();
-        }
-        default:
-        {
-            throw "Incorrect populated Event";
-        }
-        }
-    }
-    return nullptr;
-}
-
-std::unique_ptr<PlayerState> StandingState::HandleInput(Player &PlayerInstance, const std::optional<sf::Event> Event)
+std::unique_ptr<BaseState<Player>> StandingState::HandleInput(const std::optional<sf::Event> Event)
 {
     if (const auto *KeyPressed = Event->getIf<sf::Event::KeyPressed>())
     {
@@ -76,7 +44,7 @@ std::unique_ptr<PlayerState> StandingState::HandleInput(Player &PlayerInstance, 
         {
         case sf::Keyboard::Scancode::Space:
         {
-            PlayerInstance.AdvanceIndex();
+            this->m_Instance.AdvanceIndex();
             break;
         }
         default:
@@ -88,32 +56,58 @@ std::unique_ptr<PlayerState> StandingState::HandleInput(Player &PlayerInstance, 
     return nullptr;
 }
 
-void MovingState::EnterState(Player &PlayerInstance)
+bool StandingState::HandleEvent(std::shared_ptr<BaseEvent> Event)
 {
-    PlayerInstance.SetName("Goodbye World");
-}
-
-void MovingState::ExitState(Player &PlayerInstance)
-{
-}
-
-void MovingState::AddEvent(std::shared_ptr<BaseEvent> Event)
-{
-    this->m_EventQueue.PushEvent(Event);
-}
-
-std::unique_ptr<PlayerState> MovingState::HandleInput(Player &PlayerInstance, const std::optional<sf::Event> Event)
-{
-    if (const auto *KeyPressed = Event->getIf<sf::Event::KeyReleased>())
+    if (!Event)
     {
-        switch (KeyPressed->scancode)
+        LOG_ERROR("Received null event in StandingState");
+        return false;
+    }
+
+    switch (Event->GetEventType())
+    {
+    case GlobalEventType::PlayerMoved:
+    {
+        this->m_Instance.ChangeState(std::make_unique<MovingState>(this->m_Instance));
+        return true;
+    }
+    default:
+    {
+        LOG_ERROR("Unhandled event type in StandingState: {}", static_cast<int>(Event->GetEventType()));
+        return false;
+    }
+    }
+}
+
+MovingState::MovingState(Player &PlayerInstance) : PlayerState(PlayerInstance)
+{
+}
+
+void MovingState::EnterState()
+{
+    this->m_Instance.SetName("Goodbye World");
+    EventDispatcher::GetInstance().RegisterListener(
+        GlobalEventType::PlayerStopMoved,
+        [this](const std::shared_ptr<BaseEvent> &Event)
+        { return this->HandleEvent(Event); });
+}
+
+void MovingState::ExitState()
+{
+}
+
+std::unique_ptr<BaseState<Player>> MovingState::HandleInput(const std::optional<sf::Event> Event)
+{
+    if (const auto *KeyReleased = Event->getIf<sf::Event::KeyReleased>())
+    {
+        switch (KeyReleased->scancode)
         {
         case sf::Keyboard::Scancode::W:
         case sf::Keyboard::Scancode::A:
         case sf::Keyboard::Scancode::S:
         case sf::Keyboard::Scancode::D:
         {
-            return std::make_unique<StandingState>();
+            return std::make_unique<StandingState>(m_Instance);
         }
         default:
         {
@@ -124,47 +118,35 @@ std::unique_ptr<PlayerState> MovingState::HandleInput(Player &PlayerInstance, co
     return nullptr;
 }
 
-std::unique_ptr<PlayerState> MovingState::HandleEvent(Player &PlayerInstance)
+std::unique_ptr<BaseState<Player>> MovingState::FixLagUpdate(const sf::Time &DT)
 {
-    while (!m_EventQueue.IsEmpty())
+    return nullptr;
+}
+
+std::unique_ptr<BaseState<Player>> MovingState::Update(const sf::Time &DT)
+{
+    return nullptr;
+}
+
+bool MovingState::HandleEvent(std::shared_ptr<BaseEvent> Event)
+{
+    if (!Event)
     {
-        auto TopEvent = m_EventQueue.PopEvent();
-        if (!TopEvent.has_value())
-            continue;
-        switch (TopEvent->get()->GetEventType())
-        {
-        case GlobalEventType::Generic:
-        {
-            LOG_ERROR("Incorrect populated Event");
-            throw "Incorrect populated Event";
-        }
-        case GlobalEventType::PlayerAttacked:
-        case GlobalEventType::GameQuit:
-        case GlobalEventType::PlayerMoved:
-        {
-            TopEvent.reset();
-            continue;
-        }
-        case GlobalEventType::PlayerAction:
-        {
-            LOG_ERROR("Incorrect populated Event");
-            throw "Incorrect populated Event";
-        }
-        default:
-        {
-            throw "Incorrect populated Event";
-        }
-        }
+        LOG_ERROR("Received null event in StandingState");
+        return false;
     }
-    return nullptr;
-}
 
-std::unique_ptr<PlayerState> MovingState::FixLagUpdate(Player &PlayerInstance, const sf::Time &DT)
-{
-    return nullptr;
-}
-
-std::unique_ptr<PlayerState> MovingState::Update(Player &PlayerInstance, const sf::Time &DT)
-{
-    return nullptr;
+    switch (Event->GetEventType())
+    {
+    case GlobalEventType::PlayerStopMoved:
+    {
+        this->m_Instance.ChangeState(std::make_unique<StandingState>(this->m_Instance));
+        return true;
+    }
+    default:
+    {
+        LOG_ERROR("Unhandled event type in StandingState: {}", static_cast<int>(Event->GetEventType()));
+        return false;
+    }
+    }
 }

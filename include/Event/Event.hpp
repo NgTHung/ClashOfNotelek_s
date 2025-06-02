@@ -6,6 +6,7 @@ enum class GlobalEventType
     SaveGame,
     PlayerAction,
     PlayerMoved,
+    PlayerStopMoved,
     PlayerAttacked
 };
 

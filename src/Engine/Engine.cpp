@@ -1,5 +1,5 @@
 #include "Engine/Engine.hpp"
-#include "State/StartState.hpp"
+#include "State/StartScreen.hpp"
 #include "Utility/Logger.hpp"
 
 Engine::Engine() : m_Window(sf::VideoMode({1280, 720}), "Clash of Notelek\'s"), m_ShouldPop(false), m_ShouldExit(false),
@@ -8,14 +8,14 @@ Engine::Engine() : m_Window(sf::VideoMode({1280, 720}), "Clash of Notelek\'s"), 
     m_Window.setFramerateLimit(60);
 }
 
-ScreenState &Engine::GetCurrentState() const
+Screen &Engine::GetCurrentState() const
 {
     return *this->m_States.back();
 }
 
 void Engine::Prepare()
 {
-    PushState<StartState>(this->m_Window);
+    PushState<StartScreen>(*this);
 }
 
 void Engine::PopState()
@@ -23,7 +23,7 @@ void Engine::PopState()
     m_ShouldPop = true;
 }
 
-bool Engine::PushState(std::unique_ptr<ScreenState> state)
+bool Engine::PushState(std::unique_ptr<Screen> state)
 {
     m_States.push_back(std::move(state));
     return true;
@@ -82,14 +82,30 @@ bool Engine::TryPop()
             m_ShouldChangeState = false;
             m_States.back().reset();
             m_States.pop_back();
-            this->PushState(std::move(m_ChangedState));
-            return true;
+            return this->PushState(std::move(m_ChangedState));
         }
 
         m_States.back().reset();
         m_States.pop_back();
     }
     return true;
+}
+
+void Engine::PostEvent(const std::shared_ptr<BaseEvent> &Event)
+{
+    this->m_EventQueue.PushEvent(Event);
+}
+
+void Engine::ProcessEvents()
+{
+    while (!m_EventQueue.IsEmpty())
+    {
+        auto Event = m_EventQueue.PopEvent();
+        if (!Event.has_value() || !Event.value())
+            continue;
+
+        EventDispatcher::GetInstance().Dispatch(Event.value());
+    }
 }
 
 void Engine::Run()
@@ -104,7 +120,7 @@ void Engine::Run()
     while (m_Window.isOpen() && !m_States.empty())
     {
         sf::Clock Timer;
-        ScreenState &State = this->GetCurrentState();
+        Screen &State = this->GetCurrentState();
 
         sf::Time Time = Timer.getElapsedTime();
         sf::Time Elapsed = Time - LastTime;
@@ -112,6 +128,7 @@ void Engine::Run()
         Lag += Elapsed;
 
         HandleInput();
+        ProcessEvents();
         State.Update(Elapsed);
 
         while (Lag >= TimePerUpdate)
@@ -125,7 +142,6 @@ void Engine::Run()
         State.Render(m_Window);
         m_Window.display();
 
-        State.HandleEvent();
         TryPop();
     }
 }

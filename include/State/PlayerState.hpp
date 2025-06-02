@@ -1,46 +1,43 @@
 #pragma once
-#include "State/ScreenState.hpp"
+#include "BaseState.hpp"
+#include "Graphic/Player.hpp"
+#include "State/Screen.hpp"
 
 class Player;
 
-class PlayerState
+class PlayerState : public BaseState<Player>
 {
 public:
-    virtual ~PlayerState() = default;
-    virtual void EnterState(Player &PlayerInstance) = 0;
-    virtual void ExitState(Player &PlayerInstance) = 0;
-    virtual std::unique_ptr<PlayerState> FixLagUpdate(Player &PlayerInstance, const sf::Time &DT) = 0;
-    virtual std::unique_ptr<PlayerState> HandleEvent(Player &PlayerInstance) = 0;
-    virtual std::unique_ptr<PlayerState> HandleInput(Player &PlayerInstance, const std::optional<sf::Event> Event) = 0;
-    virtual std::unique_ptr<PlayerState> Update(Player &PlayerInstance, const sf::Time &DT) = 0;
-    virtual void AddEvent(std::shared_ptr<BaseEvent> Event) = 0;
+    PlayerState(Player& PlayerInstance);
+    void EnterState() override = 0;
+    void ExitState() override = 0;
+    bool HandleEvent(std::shared_ptr<BaseEvent>) override = 0;
+    std::unique_ptr<BaseState> FixLagUpdate(const sf::Time &DT) override = 0;
+    std::unique_ptr<BaseState> HandleInput(std::optional<sf::Event> Event) override = 0;
+    std::unique_ptr<BaseState> Update(const sf::Time &DT) override = 0;
 
-protected:
-    EventQueue m_EventQueue;
 };
 
 class StandingState : public PlayerState
 {
 public:
-    StandingState() = default;
-    void EnterState(Player &PlayerInstance) override;
-    void ExitState(Player &PlayerInstance) override;
-    std::unique_ptr<PlayerState> FixLagUpdate(Player &PlayerInstance, const sf::Time &DT) override;
-    std::unique_ptr<PlayerState> HandleEvent(Player &PlayerInstance) override;
-    std::unique_ptr<PlayerState> HandleInput(Player &PlayerInstance, const std::optional<sf::Event> Event) override;
-    std::unique_ptr<PlayerState> Update(Player &PlayerInstance, const sf::Time &DT) override;
-    void AddEvent(std::shared_ptr<BaseEvent> Event) override;
+    StandingState(Player& PlayerInstance);
+    void EnterState() override;
+    void ExitState() override;
+    bool HandleEvent(std::shared_ptr<BaseEvent>) override;
+    std::unique_ptr<BaseState> FixLagUpdate(const sf::Time &DT) override;
+    std::unique_ptr<BaseState> HandleInput(std::optional<sf::Event> Event) override;
+    std::unique_ptr<BaseState> Update(const sf::Time &DT) override;
 };
 
 class MovingState : public PlayerState
 {
 public:
-    MovingState() = default;
-    void EnterState(Player &PlayerInstance) override;
-    void ExitState(Player &PlayerInstance) override;
-    std::unique_ptr<PlayerState> FixLagUpdate(Player &PlayerInstance, const sf::Time &DT) override;
-    std::unique_ptr<PlayerState> HandleEvent(Player &PlayerInstance) override;
-    std::unique_ptr<PlayerState> HandleInput(Player &PlayerInstance, const std::optional<sf::Event> Event) override;
-    std::unique_ptr<PlayerState> Update(Player &PlayerInstance, const sf::Time &DT) override;
-    void AddEvent(std::shared_ptr<BaseEvent> Event) override;
+    MovingState(Player& PlayerInstance);
+    void EnterState() override;
+    void ExitState() override;
+    bool HandleEvent(std::shared_ptr<BaseEvent>) override;
+    std::unique_ptr<BaseState> FixLagUpdate(const sf::Time &DT) override;
+    std::unique_ptr<BaseState> HandleInput(std::optional<sf::Event> Event) override;
+    std::unique_ptr<BaseState> Update(const sf::Time &DT) override;
 };
