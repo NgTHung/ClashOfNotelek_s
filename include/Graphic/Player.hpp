@@ -1,6 +1,5 @@
 #pragma once
 #include "State/PlayerState.hpp"
-#include <SFML/Graphics.hpp>
 #include <set>
 #include "Engine/Engine.hpp"
 

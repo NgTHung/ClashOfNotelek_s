@@ -1,6 +1,6 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "Event/EventQueue.hpp"
+#include <SFML/Graphics.hpp>
 class Engine;
 
 class Screen

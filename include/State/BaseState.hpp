@@ -1,8 +1,7 @@
 #pragma once
 #include <memory>
-#include <SFML/Graphics.hpp>
 #include "Event/EventQueue.hpp"
-
+#include <SFML/Graphics.hpp>
 template <class T>
 class BaseState
 {
@@ -10,7 +9,7 @@ protected:
     T &m_Instance;
 
 public:
-    BaseState(T &Instance): m_Instance(Instance) {};
+    BaseState(T &Instance) : m_Instance(Instance) {};
     virtual ~BaseState() = default;
     virtual void EnterState() = 0;
     virtual void ExitState() = 0;

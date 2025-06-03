@@ -25,43 +25,6 @@ bool Player::Render(sf::RenderTarget &Renderer) const
 
 bool Player::Update(const sf::Time &DT)
 {
-    sf::Vector2f NewPosition = {0, 0};
-    for (auto it : this->s)
-    {
-        switch (it)
-        {
-        case Direction::NONE:
-        {
-            LOG_DEBUG("ERROR in handle input");
-            break;
-        }
-        case Direction::WEST:
-        {
-            NewPosition.x -= 10;
-            break;
-        }
-        case Direction::EAST:
-        {
-            NewPosition.x += 10;
-            break;
-        }
-        case Direction::NORTH:
-        {
-            NewPosition.y -= 10;
-            break;
-        }
-        case Direction::SOUTH:
-        {
-            NewPosition.y += 10;
-        }
-        }
-    }
-    if (this->s.size() == 2)
-    {
-        NewPosition.x *= (std::sqrt(2) / 2.f);
-        NewPosition.y *= (std::sqrt(2) / 2.f);
-    }
-    this->setPosition(NewPosition + m_CurrentPosition);
     if (auto NewState = m_PlayerState->Update(DT))
     {
         ChangeState(std::move(NewState));

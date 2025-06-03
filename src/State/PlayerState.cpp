@@ -3,27 +3,109 @@
 #include "Utility/Logger.hpp"
 #include "Graphic/Player.hpp"
 #include "State/StartScreen.hpp"
+#include <cmath>
 
 PlayerState::PlayerState(Player &PlayerInstance) : BaseState(PlayerInstance)
 {
 }
 
+std::unique_ptr<BaseState<Player>> PlayerState::HandleInput(std::optional<sf::Event> Event)
+{
+    std::shared_ptr<BaseCommand> currentCommand = nullptr;
+    if (const auto *KeyPressed = Event->getIf<sf::Event::KeyPressed>())
+    {
+        switch (KeyPressed->scancode)
+        {
+        case sf::Keyboard::Scancode::Space:
+        {
+            currentCommand = this->m_SpacePressedCommand;
+            break;
+        }
+        case sf::Keyboard::Scancode::W:
+        {
+            currentCommand = this->m_WPressedCommand;
+            break;
+        }
+        case sf::Keyboard::Scancode::A:
+        {
+            currentCommand = this->m_APressedCommand;
+            break;
+        }
+        case sf::Keyboard::Scancode::S:
+        {
+            currentCommand = this->m_SPressedCommand;
+            break;
+        }
+        case sf::Keyboard::Scancode::D:
+        {
+            currentCommand = this->m_DPressedCommand;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+    }
+    if (const auto *KeyReleased = Event->getIf<sf::Event::KeyReleased>())
+    {
+        switch (KeyReleased->scancode)
+        {
+        case sf::Keyboard::Scancode::W:
+        {
+            currentCommand = this->m_WReleaseCommand;
+            break;
+        }
+        case sf::Keyboard::Scancode::A:
+        {
+            currentCommand = this->m_AReleaseCommand;
+            break;
+        }
+        case sf::Keyboard::Scancode::S:
+        {
+            currentCommand = this->m_SReleaseCommand;
+            break;
+        }
+        case sf::Keyboard::Scancode::D:
+        {
+            currentCommand = this->m_DReleaseCommand;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+    }
+    if (currentCommand.get() != nullptr)
+    {
+        currentCommand->execute();
+    }
+    return nullptr;
+}
+
 StandingState::StandingState(Player &PlayerInstance) : PlayerState(PlayerInstance)
 {
+    m_WPressedCommand = std::make_shared<MovePlayerCommand>(PlayerInstance, Direction::NORTH);
+    m_APressedCommand = std::make_shared<MovePlayerCommand>(PlayerInstance, Direction::WEST);
+    m_SPressedCommand = std::make_shared<MovePlayerCommand>(PlayerInstance, Direction::SOUTH);
+    m_DPressedCommand = std::make_shared<MovePlayerCommand>(PlayerInstance, Direction::EAST);
+    m_SpacePressedCommand = std::make_shared<AdvancePlayerIndexCommand>(PlayerInstance);
 }
 
 void StandingState::EnterState()
 {
     this->m_Instance.ResetIndex();
     this->m_Instance.SetName("Hello World");
+    this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event)
+    { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
-        GlobalEventType::PlayerMoved,
-        [this](const std::shared_ptr<BaseEvent> &Event)
-        { return this->HandleEvent(Event); });
+        GlobalEventType::PlayerMoved, m_Listener);
 }
 
 void StandingState::ExitState()
 {
+    EventDispatcher::GetInstance().UnRegisterListener(GlobalEventType::PlayerMoved, m_Listener);
 }
 
 std::unique_ptr<BaseState<Player>> StandingState::FixLagUpdate(const sf::Time &DT)
@@ -38,25 +120,10 @@ std::unique_ptr<BaseState<Player>> StandingState::Update(const sf::Time &DT)
 
 std::unique_ptr<BaseState<Player>> StandingState::HandleInput(const std::optional<sf::Event> Event)
 {
-    if (const auto *KeyPressed = Event->getIf<sf::Event::KeyPressed>())
-    {
-        switch (KeyPressed->scancode)
-        {
-        case sf::Keyboard::Scancode::Space:
-        {
-            this->m_Instance.AdvanceIndex();
-            break;
-        }
-        default:
-        {
-            break;
-        }
-        }
-    }
-    return nullptr;
+    return PlayerState::HandleInput(Event);
 }
 
-bool StandingState::HandleEvent(std::shared_ptr<BaseEvent> Event)
+bool StandingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
 {
     if (!Event)
     {
@@ -81,41 +148,33 @@ bool StandingState::HandleEvent(std::shared_ptr<BaseEvent> Event)
 
 MovingState::MovingState(Player &PlayerInstance) : PlayerState(PlayerInstance)
 {
+    m_WPressedCommand = std::make_shared<MovePlayerCommand>(PlayerInstance, Direction::NORTH);
+    m_APressedCommand = std::make_shared<MovePlayerCommand>(PlayerInstance, Direction::WEST);
+    m_SPressedCommand = std::make_shared<MovePlayerCommand>(PlayerInstance, Direction::SOUTH);
+    m_DPressedCommand = std::make_shared<MovePlayerCommand>(PlayerInstance, Direction::EAST);
+    m_WReleaseCommand = std::make_shared<StopPlayerMovingCommand>(PlayerInstance, Direction::NORTH);
+    m_AReleaseCommand = std::make_shared<StopPlayerMovingCommand>(PlayerInstance, Direction::WEST);
+    m_SReleaseCommand = std::make_shared<StopPlayerMovingCommand>(PlayerInstance, Direction::SOUTH);
+    m_DReleaseCommand = std::make_shared<StopPlayerMovingCommand>(PlayerInstance, Direction::EAST);
 }
 
 void MovingState::EnterState()
 {
     this->m_Instance.SetName("Goodbye World");
+    this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event)
+    { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
-        GlobalEventType::PlayerStopMoved,
-        [this](const std::shared_ptr<BaseEvent> &Event)
-        { return this->HandleEvent(Event); });
+        GlobalEventType::PlayerStopMoved, this->m_Listener);
 }
 
 void MovingState::ExitState()
 {
+    EventDispatcher::GetInstance().UnRegisterListener(GlobalEventType::PlayerStopMoved, this->m_Listener);
 }
 
 std::unique_ptr<BaseState<Player>> MovingState::HandleInput(const std::optional<sf::Event> Event)
 {
-    if (const auto *KeyReleased = Event->getIf<sf::Event::KeyReleased>())
-    {
-        switch (KeyReleased->scancode)
-        {
-        case sf::Keyboard::Scancode::W:
-        case sf::Keyboard::Scancode::A:
-        case sf::Keyboard::Scancode::S:
-        case sf::Keyboard::Scancode::D:
-        {
-            return std::make_unique<StandingState>(m_Instance);
-        }
-        default:
-        {
-            break;
-        }
-        }
-    }
-    return nullptr;
+    return PlayerState::HandleInput(Event);
 }
 
 std::unique_ptr<BaseState<Player>> MovingState::FixLagUpdate(const sf::Time &DT)
@@ -125,10 +184,47 @@ std::unique_ptr<BaseState<Player>> MovingState::FixLagUpdate(const sf::Time &DT)
 
 std::unique_ptr<BaseState<Player>> MovingState::Update(const sf::Time &DT)
 {
+    sf::Vector2f NewPosition = {0, 0};
+    for (const auto it : this->m_Instance.GetDirection())
+    {
+        switch (it)
+        {
+        case Direction::NONE:
+        {
+            LOG_DEBUG("ERROR in handle input");
+            break;
+        }
+        case Direction::WEST:
+        {
+            NewPosition.x -= 10;
+            break;
+        }
+        case Direction::EAST:
+        {
+            NewPosition.x += 10;
+            break;
+        }
+        case Direction::NORTH:
+        {
+            NewPosition.y -= 10;
+            break;
+        }
+        case Direction::SOUTH:
+        {
+            NewPosition.y += 10;
+        }
+        }
+    }
+    if (this->m_Instance.GetDirection().size() == 2)
+    {
+        NewPosition.x *= (std::sqrt(2) / 2.f);
+        NewPosition.y *= (std::sqrt(2) / 2.f);
+    }
+    this->m_Instance.setPosition(NewPosition + this->m_Instance.GetPosition());
     return nullptr;
 }
 
-bool MovingState::HandleEvent(std::shared_ptr<BaseEvent> Event)
+bool MovingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
 {
     if (!Event)
     {
@@ -140,8 +236,12 @@ bool MovingState::HandleEvent(std::shared_ptr<BaseEvent> Event)
     {
     case GlobalEventType::PlayerStopMoved:
     {
-        this->m_Instance.ChangeState(std::make_unique<StandingState>(this->m_Instance));
-        return true;
+        if (this->m_Instance.GetDirection().empty())
+        {
+            this->m_Instance.ChangeState(std::make_unique<StandingState>(this->m_Instance));
+            return true;
+        }
+        return false;
     }
     default:
     {
