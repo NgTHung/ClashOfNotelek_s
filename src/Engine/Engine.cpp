@@ -1,7 +1,7 @@
 #include "Engine/Engine.hpp"
 #include "State/StartScreen.hpp"
 #include "Utility/Logger.hpp"
-
+#include "State/HomeScreen.hpp"
 Engine::Engine() : m_Window(sf::VideoMode({1280, 720}), "Clash of Notelek\'s"), m_ShouldPop(false), m_ShouldExit(false),
                    m_ShouldChangeState(false)
 {
@@ -15,7 +15,7 @@ Screen &Engine::GetCurrentState() const
 
 void Engine::Prepare()
 {
-    PushState<StartScreen>(*this);
+    PushState<HomeScreen>(*this);
 }
 
 void Engine::PopState()
@@ -126,7 +126,7 @@ void Engine::Run()
         sf::Time Elapsed = Time - LastTime;
         LastTime = Time;
         Lag += Elapsed;
-
+ 
         HandleInput();
         ProcessEvents();
         State.Update(Elapsed);
