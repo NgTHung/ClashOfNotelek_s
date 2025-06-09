@@ -21,7 +21,7 @@ cd OOP-Game/
 After making some changes(or not), running these command will help you building the code to test the game.
 
 ```shell
-mkdir build
+mkdir buildbui
 cd build
 cmake clean .
 cmake -DCMAKE_BUILD_TYPE=Debug ..

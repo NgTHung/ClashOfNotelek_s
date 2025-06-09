@@ -1,25 +1,63 @@
 #pragma once
+#include "State/SpriteState.hpp"
+#include <set>
 #include <SFML/Graphics.hpp>
+#include "Engine/Engine.hpp"
+#include "Graphic/Player.hpp"
 
-
+enum class AnimationTag
+{
+    IDLE_S_W,
+    IDLE_S_E,
+    IDLE_N_W,
+    IDLE_N_E,
+    WALK_S_W,
+    WALK_S_E,
+    WALK_N_W,
+    WALK_N_E
+};
 class Character
 {
 private:
+    const Engine &m_Engine;
+    std::unique_ptr<BaseState<Character>> m_CharacterState;
     sf::Texture m_Texture;
     sf::Sprite m_Sprite;
-    int num;
+    sf::IntRect m_IntRect;
+    int m_Index;
+    sf::Vector2f m_CurrentPosition;
+    EventQueue m_EventQueue;
+    int m_HP;
+    std::set<Direction> s;
+    bool isNorth;
+    bool isSouth;
+    bool isWest;
+    bool isEast;
+    AnimationTag m_CurrentAnimationTag;
+
 public:
-    Character();
-    Character(sf::Vector2f Position, sf::IntRect IntRect);
+    int framecounter;
+    Character(const Engine &g_Engine);
     ~Character() = default;
-    //Setter
-    void SetPosition(sf::Vector2f NewPosition);
-    void SetIntRect(sf::IntRect NewIntRect);
-    void SetScale(sf::Vector2f Factors);
-    //Getter
-    sf::Vector2f GetPosition() const;
-    //Other
     bool Render(sf::RenderTarget &Renderer) const;
-    void Next();
-    void Init();
+    bool Update(const sf::Time &DT);
+    bool HandleEvent(std::shared_ptr<BaseEvent> Event);
+    bool HandleInput(const std::optional<sf::Event> &Event);
+    bool FixLagUpdate(const sf::Time &DT);
+    bool SetPosition(sf::Vector2f NewPosition);
+    bool SetIntRect(const sf::IntRect &Rect);
+    bool SetScale(sf::Vector2f Factor);
+    bool SetDirection(Direction NewDirection);
+    int AnimationTagToInt() const;
+    bool NextFrame(int maxframe);
+    bool ResetIndex();
+    void UpdateSprite();
+    bool UpdateAnimationTagIDLE();
+    bool UpdateAnimationTagWALK();
+    void ChangeState(std::unique_ptr<BaseState<Character>> NewState);
+    void AddDirection(const Direction NewDirection);
+    void RemoveDirection(const Direction NewDirection);
+
+    std::set<Direction> GetDirection();
+    sf::Vector2f GetPosition() const;
 };
