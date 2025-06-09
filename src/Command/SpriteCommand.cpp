@@ -8,7 +8,6 @@ MoveCharacterCommand::MoveCharacterCommand(Character &Character, const Direction
     : m_Character(Character), m_NewDirection(NewDirection) {}
 void MoveCharacterCommand::execute(){
     m_Character.AddDirection(m_NewDirection);
-    m_Character.SetDirection(m_NewDirection);
     EventDispatcher::GetInstance().Dispatch(std::make_shared<CharacterMovedEvent>(m_Character, m_NewDirection));
 }
 StopCharacterMovingCommand::StopCharacterMovingCommand(Character &Character, const Direction &OldDirection)

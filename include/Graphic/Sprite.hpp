@@ -3,7 +3,7 @@
 #include <set>
 #include <SFML/Graphics.hpp>
 #include "Engine/Engine.hpp"
-
+#include "Graphic/Player.hpp"
 
 enum class AnimationTag
 {
@@ -35,7 +35,6 @@ private:
     bool isEast;
     AnimationTag m_CurrentAnimationTag;
 
-
 public:
     int framecounter;
     Character(const Engine &g_Engine);
@@ -58,7 +57,6 @@ public:
     void ChangeState(std::unique_ptr<BaseState<Character>> NewState);
     void AddDirection(const Direction NewDirection);
     void RemoveDirection(const Direction NewDirection);
-
 
     std::set<Direction> GetDirection();
     sf::Vector2f GetPosition() const;

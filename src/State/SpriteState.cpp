@@ -1,5 +1,5 @@
 #include "State/SpriteState.hpp"
-#include"Graphic/Player.hpp"
+#include "Graphic/Player.hpp"
 #include "Resources/ResourcesManager.hpp"
 #include "Utility/Logger.hpp"
 #include "Graphic/Sprite.hpp"
@@ -52,11 +52,11 @@ std::unique_ptr<BaseState<Character>> CharacterState::HandleInput(std::optional<
     {
         switch (KeyReleased->scancode)
         {
-        // case sf::Keyboard::Scancode::W:
-        // {
-        //     currentCommand = this->m_WReleaseCommand;
-        //     break;
-        // }
+        case sf::Keyboard::Scancode::W:
+        {
+            currentCommand = this->m_WReleaseCommand;
+            break;
+        }
         case sf::Keyboard::Scancode::A:
         {
             currentCommand = this->m_AReleaseCommand;
@@ -91,7 +91,7 @@ CharacterStandingState::CharacterStandingState(Character &CharacterInstance) : C
     m_APressedCommand = std::make_shared<MoveCharacterCommand>(CharacterInstance, Direction::WEST);
     m_SPressedCommand = std::make_shared<MoveCharacterCommand>(CharacterInstance, Direction::SOUTH);
     m_DPressedCommand = std::make_shared<MoveCharacterCommand>(CharacterInstance, Direction::EAST);
-   // m_SpacePressedCommand = std::make_shared<AdvancePlayerIndexCommand>(CharacterInstance);
+    // m_SpacePressedCommand = std::make_shared<AdvancePlayerIndexCommand>(CharacterInstance);
 }
 
 void CharacterStandingState::EnterState()
@@ -106,7 +106,11 @@ void CharacterStandingState::EnterState()
 
 void CharacterStandingState::ExitState()
 {
-   
+}
+
+std::unique_ptr<BaseState<Character>> CharacterStandingState::HandleInput(std::optional<sf::Event> Event)
+{
+    return CharacterState::HandleInput(Event);
 }
 
 std::unique_ptr<BaseState<Character>> CharacterStandingState::FixLagUpdate(const sf::Time &DT)
@@ -116,7 +120,7 @@ std::unique_ptr<BaseState<Character>> CharacterStandingState::FixLagUpdate(const
 
 std::unique_ptr<BaseState<Character>> CharacterStandingState::Update(const sf::Time &DT)
 {
-    this->m_Instance.NextFrame(5); 
+    this->m_Instance.NextFrame(5);
     return nullptr;
 }
 
@@ -170,7 +174,7 @@ void CharacterMovingState::ExitState()
     EventDispatcher::GetInstance().UnRegisterListener(GlobalEventType::CharacterStopMoved, this->m_Listener);
 }
 
-std::unique_ptr<BaseState<Character>> CharacterMovingState::HandleInput(const std::optional<sf::Event> Event)
+std::unique_ptr<BaseState<Character>> CharacterMovingState::HandleInput(std::optional<sf::Event> Event)
 {
     return CharacterState::HandleInput(Event);
 }
@@ -182,6 +186,7 @@ std::unique_ptr<BaseState<Character>> CharacterMovingState::FixLagUpdate(const s
 
 std::unique_ptr<BaseState<Character>> CharacterMovingState::Update(const sf::Time &DT)
 {
+    this->m_Instance.UpdateAnimationTagWALK();
     sf::Vector2f NewPosition = {0, 0};
     for (const auto it : this->m_Instance.GetDirection())
     {
@@ -212,7 +217,9 @@ std::unique_ptr<BaseState<Character>> CharacterMovingState::Update(const sf::Tim
             NewPosition.y += 10;
         }
         }
+        this->m_Instance.SetDirection(it);
     }
+        
     if (this->m_Instance.GetDirection().size() == 2)
     {
         NewPosition.x *= (std::sqrt(2) / 2.f);
@@ -241,7 +248,7 @@ bool CharacterMovingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
             return true;
         }
         return false;
-    }           
+    }
     default:
     {
         LOG_ERROR("Unhandled event type in CharacterStandingState: {}", static_cast<int>(Event->GetEventType()));
