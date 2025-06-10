@@ -6,7 +6,7 @@
 #include "Graphic/Sprite.hpp"
 #include <cmath>
 
-Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture("assets/sprite/Notelek's Sprite.png"),m_Sprite(m_Texture)
+Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("hi.png")),m_Sprite(m_Texture)
 {
      sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     sf:: IntRect IntRect = {{0, 0}, {32, 32}};
