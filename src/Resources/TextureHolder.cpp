@@ -1,6 +1,14 @@
 #include "Resources/TextureHolder.hpp"
 #include "Utility/Logger.hpp"
 
+//JSON OBJECTs
+JsonObject::JsonObject(json JSON):m_Json(JSON){}
+
+const ObjectInfo JsonObject::GetInfo(){
+    json JSON = m_Json[""];
+    // sf::Vector2f Position = {}
+}
+
 TextureHolder::TextureHolder() {};
 TextureHolder::~TextureHolder() {};
 
@@ -12,17 +20,24 @@ void TextureHolder::LoadDirectory()
         throw "Not properly used.";
     }
     std::filesystem::path Path(m_SelectedDirectory);
+    
     if (!std::filesystem::is_directory(Path))
     {
         LOG_ERROR("Selected path is not a directory: {}", m_SelectedDirectory);
         throw "Directory not exist " + m_SelectedDirectory;
     }
+
     for (auto File : std::filesystem::directory_iterator(Path))
     {
-        if (File.path().extension().string() == ".png")
+        std::string FilePath = File.path().extension().string();
+        if (FilePath == ".png")
         {
             LOG_DEBUG("Loading texture file: {}", File.path().string());
             LoadFile(File.path().string());
+        }
+        if (FilePath == ".json"){
+            LOG_DEBUG("Loading texture file: {}", File.path().string());
+            LoadJsonFile(File.path().string());
         }
     }
 }
@@ -40,6 +55,19 @@ bool TextureHolder::LoadFile(const std::string &TexturePath)
     return true;
 }
 
+bool TextureHolder::LoadJsonFile(const std::string &JsonPath){
+    std::ifstream JsonFile(JsonPath);
+    if (!JsonFile.is_open()){
+        LOG_ERROR("Failed to load texture from file: {}", JsonPath);
+        return false;
+    }
+    json JSON;
+    JsonFile >> JSON;
+    JsonFile.close();
+
+    return true;
+}
+
 bool TextureHolder::AddTexture(const std::string &TextureName, std::unique_ptr<sf::Texture> Texture)
 {
     auto InsertedTexture = m_TextureMap.insert(std::make_pair(TextureName, std::move(Texture)));
@@ -47,6 +75,16 @@ bool TextureHolder::AddTexture(const std::string &TextureName, std::unique_ptr<s
     {
         LOG_ERROR("Texture {} already exists in the map.", TextureName);
         throw "Cannot insert texture " + TextureName;
+    }
+    return true;
+}
+
+bool TextureHolder::AddJson(const std::string &JsonName, JsonObject JSON){
+    auto InsertedJson = m_JsonMap.insert(std::make_pair(JsonName, JSON));
+    if (!InsertedJson.second)
+    {
+        LOG_ERROR("Texture {} already exists in the map.", JsonName);
+        throw "Cannot insert texture " + JsonName;
     }
     return true;
 }

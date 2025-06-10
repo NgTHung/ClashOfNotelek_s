@@ -15,6 +15,7 @@ Screen &Engine::GetCurrentState() const
 
 void Engine::Prepare()
 {
+    
     PushState<HomeScreen>(*this);
 }
 

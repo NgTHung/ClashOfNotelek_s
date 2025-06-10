@@ -7,6 +7,7 @@ class ResourcesManager
 {
 public:
     const FontHolder &GetFontHolder() const;
+    const TextureHolder &GetTextureHolder() const;
     const static ResourcesManager &GetManager();
     bool LoadFile(const ResourcesType Type, const std::string &Path);
     const std::vector<std::string> LoadFiles(ResourcesType Type, const std::vector<std::string> FileTable);

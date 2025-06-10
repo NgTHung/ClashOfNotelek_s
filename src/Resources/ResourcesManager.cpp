@@ -5,6 +5,11 @@ const FontHolder &ResourcesManager::GetFontHolder() const
     return *m_FontHolder;
 }
 
+const TextureHolder &ResourcesManager::GetTextureHolder() const
+{
+    return *m_TextureHolder;
+}
+
 const ResourcesManager &ResourcesManager::GetManager()
 {
     static ResourcesManager m_Instance{};
