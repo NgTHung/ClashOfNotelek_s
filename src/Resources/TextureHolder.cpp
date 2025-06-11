@@ -1,10 +1,11 @@
 #include "Resources/TextureHolder.hpp"
 #include "Utility/Logger.hpp"
+#include "Utility/Enviroment.hpp"
+// JSON OBJECTs
+JsonObject::JsonObject(json JSON) : m_Json(JSON) {}
 
-//JSON OBJECTs
-JsonObject::JsonObject(json JSON):m_Json(JSON){}
-
-const ObjectInfo JsonObject::GetInfo(){
+const ObjectInfo JsonObject::GetInfo()
+{
     json JSON = m_Json[""];
     // sf::Vector2f Position = {}
 }
@@ -20,7 +21,7 @@ void TextureHolder::LoadDirectory()
         throw "Not properly used.";
     }
     std::filesystem::path Path(m_SelectedDirectory);
-    
+
     if (!std::filesystem::is_directory(Path))
     {
         LOG_ERROR("Selected path is not a directory: {}", m_SelectedDirectory);
@@ -30,12 +31,13 @@ void TextureHolder::LoadDirectory()
     for (auto File : std::filesystem::directory_iterator(Path))
     {
         std::string FilePath = File.path().extension().string();
-        if (FilePath == ".png")
+        if (FilePath == Enviroment::ImageTextureExtention)
         {
             LOG_DEBUG("Loading texture file: {}", File.path().string());
             LoadFile(File.path().string());
         }
-        if (FilePath == ".json"){
+        if (FilePath == Enviroment::FormatTextureExtention)
+        {
             LOG_DEBUG("Loading texture file: {}", File.path().string());
             LoadJsonFile(File.path().string());
         }
@@ -55,9 +57,11 @@ bool TextureHolder::LoadFile(const std::string &TexturePath)
     return true;
 }
 
-bool TextureHolder::LoadJsonFile(const std::string &JsonPath){
+bool TextureHolder::LoadJsonFile(const std::string &JsonPath)
+{
     std::ifstream JsonFile(JsonPath);
-    if (!JsonFile.is_open()){
+    if (!JsonFile.is_open())
+    {
         LOG_ERROR("Failed to load texture from file: {}", JsonPath);
         return false;
     }
@@ -79,7 +83,8 @@ bool TextureHolder::AddTexture(const std::string &TextureName, std::unique_ptr<s
     return true;
 }
 
-bool TextureHolder::AddJson(const std::string &JsonName, JsonObject JSON){
+bool TextureHolder::AddJson(const std::string &JsonName, JsonObject JSON)
+{
     auto InsertedJson = m_JsonMap.insert(std::make_pair(JsonName, JSON));
     if (!InsertedJson.second)
     {
