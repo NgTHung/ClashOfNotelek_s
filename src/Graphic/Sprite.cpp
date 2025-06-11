@@ -4,30 +4,28 @@
 #include "Utility/Logger.hpp"
 #include "Resources/ResourcesManager.hpp"
 #include "Graphic/Sprite.hpp"
-#include <cmath>
+#include "Utility/Enviroment.hpp"
 
-Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("hi.png")),m_Sprite(m_Texture)
+Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("hi.png")), m_Sprite(m_Texture)
 {
-     sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
-    sf:: IntRect IntRect = {{0, 0}, {32, 32}};
-    sf::Vector2f Factors = {4.0f, 4.0f};             
+    sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
+    sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
     this->SetPosition(Position);
     this->SetIntRect(IntRect);
-    this->SetScale(Factors);
+    this->SetScale(Enviroment::SpriteScalingFactor);
     this->m_CharacterState = std::make_unique<CharacterStandingState>(*this);
-    
+
     this->m_CharacterState->EnterState();
-   // this->m_HP = 100; // Default HP value
-    //set Default Directions
+    // this->m_HP = 100; // Default HP value
+    // set Default Directions
     this->isSouth = true;
     this->isNorth = false;
-    this->isWest = true;  
+    this->isWest = true;
     this->isEast = false;
     framecounter = 0;
-    
-    //set Default AnimationTag
-    this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
 
+    // set Default AnimationTag
+    this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
 }
 bool Character::SetScale(sf::Vector2f Factor)
 {
@@ -39,13 +37,12 @@ bool Character::SetIntRect(const sf::IntRect &Rect)
     this->m_IntRect = Rect;
     this->m_Sprite.setTextureRect(Rect);
     return true;
-}   
+}
 bool Character::Render(sf::RenderTarget &Renderer) const
 {
     Renderer.draw(this->m_Sprite);
     return true;
 }
-
 
 bool Character::Update(const sf::Time &DT)
 {
@@ -105,7 +102,7 @@ bool Character::HandleInput(const std::optional<sf::Event> &Event)
 bool Character::FixLagUpdate(const sf::Time &DT)
 {
     if (auto NewState = m_CharacterState->FixLagUpdate(DT))
-    {   
+    {
         ChangeState(std::move(NewState));
     }
     return true;
@@ -246,7 +243,7 @@ bool Character::NextFrame(int maxframe)
 {
     int TagNum = AnimationTagToInt();
     m_Index = (m_Index + 1) % maxframe;
-    sf::IntRect Rect({32*m_Index,32*TagNum},{32,32});
+    sf::IntRect Rect(Enviroment::BaseSpriteSize * sf::Vector2i{m_Index, TagNum}, Enviroment::SpriteSize);
     this->SetIntRect(Rect);
     return true;
 }

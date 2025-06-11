@@ -1,5 +1,7 @@
 #include "Resources/FontHolder.hpp"
 #include "Utility/Logger.hpp"
+#include "Utility/Enviroment.hpp"
+
 FontHolder::FontHolder() {};
 FontHolder::~FontHolder() {};
 bool FontHolder::AddFont(const std::string &FontName, std::unique_ptr<sf::Font> Font)
@@ -49,7 +51,7 @@ void FontHolder::LoadDirectory()
     }
     for (auto File : std::filesystem::directory_iterator(Path))
     {
-        if (File.path().extension().string() == ".ttf")
+        if (File.path().extension().string() == Enviroment::FontExtention)
         {
             LOG_DEBUG("Loading font file: {}", File.path().string());
             LoadFile(File.path().string());

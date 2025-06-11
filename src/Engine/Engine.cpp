@@ -2,10 +2,12 @@
 #include "State/StartScreen.hpp"
 #include "Utility/Logger.hpp"
 #include "State/HomeScreen.hpp"
-Engine::Engine() : m_Window(sf::VideoMode({1280, 720}), "Clash of Notelek\'s"), m_ShouldPop(false), m_ShouldExit(false),
+#include "Utility/Enviroment.hpp"
+
+Engine::Engine() : m_Window(sf::VideoMode(Enviroment::ScreenResolution), Enviroment::GameName), m_ShouldPop(false), m_ShouldExit(false),
                    m_ShouldChangeState(false)
 {
-    m_Window.setFramerateLimit(60);
+    m_Window.setFramerateLimit(Enviroment::FrameLimit);
 }
 
 Screen &Engine::GetCurrentState() const
@@ -15,7 +17,7 @@ Screen &Engine::GetCurrentState() const
 
 void Engine::Prepare()
 {
-    
+
     PushState<HomeScreen>(*this);
 }
 
@@ -111,8 +113,6 @@ void Engine::ProcessEvents()
 
 void Engine::Run()
 {
-    constexpr int TPS = 30; // Tick Per Second
-    constexpr sf::Time TimePerUpdate = sf::seconds(1.f / TPS);
     int Ticks = 0;
 
     sf::Time LastTime = sf::Time::Zero;
@@ -127,15 +127,15 @@ void Engine::Run()
         sf::Time Elapsed = Time - LastTime;
         LastTime = Time;
         Lag += Elapsed;
- 
+
         HandleInput();
         ProcessEvents();
         State.Update(Elapsed);
 
-        while (Lag >= TimePerUpdate)
+        while (Lag >= Enviroment::TimePerUpdate)
         {
             Ticks++;
-            Lag -= TimePerUpdate;
+            Lag -= Enviroment::TimePerUpdate;
             State.FixLagUpdate(Elapsed);
         }
 

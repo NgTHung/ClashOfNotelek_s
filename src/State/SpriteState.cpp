@@ -4,7 +4,7 @@
 #include "Utility/Logger.hpp"
 #include "Graphic/Sprite.hpp"
 #include "State/HomeScreen.hpp"
-#include <cmath>
+#include "Utility/Enviroment.hpp"
 
 CharacterState::CharacterState(Character &CharacterInstance) : BaseState(CharacterInstance)
 {
@@ -187,7 +187,7 @@ std::unique_ptr<BaseState<Character>> CharacterMovingState::FixLagUpdate(const s
 std::unique_ptr<BaseState<Character>> CharacterMovingState::Update(const sf::Time &DT)
 {
     this->m_Instance.UpdateAnimationTagWALK();
-    sf::Vector2f NewPosition = {0, 0};
+    sf::Vector2f NewPosition = sf::Vector2f(Enviroment::BaseLocation);
     for (const auto it : this->m_Instance.GetDirection())
     {
         switch (it)
@@ -199,34 +199,33 @@ std::unique_ptr<BaseState<Character>> CharacterMovingState::Update(const sf::Tim
         }
         case Direction::WEST:
         {
-            NewPosition.x -= 10;
+            NewPosition.x -= Enviroment::Velocity;
             break;
         }
         case Direction::EAST:
         {
-            NewPosition.x += 10;
+            NewPosition.x += Enviroment::Velocity;
             break;
         }
         case Direction::NORTH:
         {
-            NewPosition.y -= 10;
+            NewPosition.y -= Enviroment::Velocity;
             break;
         }
         case Direction::SOUTH:
         {
-            NewPosition.y += 10;
+            NewPosition.y += Enviroment::Velocity;
         }
         }
         this->m_Instance.SetDirection(it);
     }
-        
+
     if (this->m_Instance.GetDirection().size() == 2)
     {
-        NewPosition.x *= (std::sqrt(2) / 2.f);
-        NewPosition.y *= (std::sqrt(2) / 2.f);
+        NewPosition *= Enviroment::VelocityNormalizationValue;
     }
     this->m_Instance.SetPosition(NewPosition + this->m_Instance.GetPosition());
-    this->m_Instance.NextFrame(7);
+    this->m_Instance.NextFrame(Enviroment::CharacterMovingFrameCount);
     return nullptr;
 }
 
