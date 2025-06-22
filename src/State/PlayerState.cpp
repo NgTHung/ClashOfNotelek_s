@@ -105,7 +105,6 @@ void StandingState::EnterState()
 
 void StandingState::ExitState()
 {
-    EventDispatcher::GetInstance().UnRegisterListener(GlobalEventType::PlayerMoved, m_Listener);
 }
 
 std::unique_ptr<BaseState<Player>> StandingState::FixLagUpdate(const sf::Time &DT)

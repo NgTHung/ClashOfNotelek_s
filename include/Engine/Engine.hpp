@@ -45,3 +45,18 @@ void Engine::PostEvent(Args &&...args)
 {
     this->m_EventQueue.PushEvent<T>(std::forward<Args>(args)...);
 }
+
+template <typename T, typename... Args>
+bool Engine::PushState(Args &&...args)
+{
+    return PushState(std::make_unique<T>(std::forward<Args>(args)...));
+}
+
+template <typename T, typename... Args>
+bool Engine::ChangeState(Args &&...args)
+{
+    m_ChangedState = std::make_unique<T>(std::forward<Args>(args)...);
+    m_ShouldPop = true;
+    m_ShouldChangeState = true;
+    return true;
+}

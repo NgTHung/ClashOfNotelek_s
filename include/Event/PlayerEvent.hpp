@@ -9,7 +9,7 @@ private:
     Direction m_NewDirection;
     Player &m_Player;
 public:
-    const GlobalEventType GetEventType() const override;
+    GlobalEventType GetEventType() const override;
     PlayerMovedEvent(Player &Player, const Direction &NewDirection);
 };
 
@@ -18,6 +18,6 @@ private:
     Direction m_OldDirection;
     Player &m_Player;
 public:
-    const GlobalEventType GetEventType() const override;
+    GlobalEventType GetEventType() const override;
     PlayerStopMoved(Player &Player, const Direction &OldDirection);
 };

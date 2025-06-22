@@ -5,7 +5,7 @@
 
 namespace Enviroment
 {
-    const double Velocity = 10;
+    const double Velocity = 200;
 
     const sf::Vector2u ScreenResolution = {1280, 720};
     const std::string GameName = "Clash of Notelek\'s";
@@ -27,4 +27,7 @@ namespace Enviroment
 
     const float VelocityNormalizationValue = (std::sqrt(2) / 2.f);
     const int CharacterMovingFrameCount = 7;
+    const int CharacterStandingFrameCount = 5;
+
+    const int ButtonPadding = 5;
 }

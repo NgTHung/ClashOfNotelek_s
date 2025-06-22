@@ -2,6 +2,7 @@
 #include "State/Screen.hpp"
 #include "Graphic/Player.hpp"
 #include "Command/Command.hpp"
+#include "Graphic/Button.hpp"
 #include <SFML/Graphics.hpp>
 
 class StartScreen : public Screen
@@ -16,5 +17,5 @@ public:
     bool HandleEvent(std::shared_ptr<BaseEvent> Event) override;
     // Player function
 private:
-    Player m_Player;
+    Button m_StartButton;
 };

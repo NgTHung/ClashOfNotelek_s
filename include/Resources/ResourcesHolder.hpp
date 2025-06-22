@@ -16,6 +16,6 @@ public:
     void ReloadDirectory(const std::string &DirectoryPath);
 
 protected:
-    std::string m_SelectedDirectory;
     std::unordered_set<std::string> m_DirectoryTable;
+    std::string m_SelectedDirectory;
 };

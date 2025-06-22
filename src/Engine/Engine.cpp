@@ -18,7 +18,7 @@ Screen &Engine::GetCurrentState() const
 void Engine::Prepare()
 {
 
-    PushState<HomeScreen>(*this);
+    PushState<StartScreen>(*this);
 }
 
 void Engine::PopState()
@@ -35,21 +35,6 @@ bool Engine::PushState(std::unique_ptr<Screen> state)
 const sf::RenderWindow &Engine::GetWindow() const
 {
     return m_Window;
-}
-
-template <typename T, typename... Args>
-bool Engine::PushState(Args &&...args)
-{
-    return PushState(std::make_unique<T>(std::forward<Args>(args)...));
-}
-
-template <typename T, typename... Args>
-bool Engine::ChangeState(Args &&...args)
-{
-    m_ChangedState = std::make_unique<T>(std::forward<Args>(args)...);
-    m_ShouldPop = true;
-    m_ShouldChangeState = true;
-    return true;
 }
 
 bool Engine::HandleInput()
@@ -115,19 +100,23 @@ void Engine::Run()
 {
     int Ticks = 0;
 
+    sf::Clock Timer;
     sf::Time LastTime = sf::Time::Zero;
     sf::Time Lag = sf::Time::Zero;
 
+    LOG_DEBUG("TPU: {}", Enviroment::TimePerUpdate.asSeconds());
+
     while (m_Window.isOpen() && !m_States.empty())
     {
-        sf::Clock Timer;
         Screen &State = this->GetCurrentState();
 
         sf::Time Time = Timer.getElapsedTime();
         sf::Time Elapsed = Time - LastTime;
+
+        LOG_DEBUG("Elapsed: {}", Elapsed.asSeconds());
+
         LastTime = Time;
         Lag += Elapsed;
-
         HandleInput();
         ProcessEvents();
         State.Update(Elapsed);
