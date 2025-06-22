@@ -120,7 +120,7 @@ std::unique_ptr<BaseState<Character>> CharacterStandingState::FixLagUpdate(const
 
 std::unique_ptr<BaseState<Character>> CharacterStandingState::Update(const sf::Time &DT)
 {
-    this->m_Instance.NextFrame(5);
+    this->m_Instance.NextFrame(Enviroment::CharacterStandingFrameCount);
     return nullptr;
 }
 
@@ -219,6 +219,8 @@ std::unique_ptr<BaseState<Character>> CharacterMovingState::Update(const sf::Tim
         }
         this->m_Instance.SetDirection(it);
     }
+
+    NewPosition *= DT.asSeconds();
 
     if (this->m_Instance.GetDirection().size() == 2)
     {
