@@ -11,7 +11,8 @@ Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(Res
     sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
     this->m_HitBox = std::make_unique<RectangleHitBox>(Enviroment::SpriteHitBoxOffset);
-
+    this->m_HitBox2 = std::make_unique<QuarterCircleHitBox>(32.0f,Position);
+    this->m_HitBox2->SetRotation(sf::degrees(-90));
     this->SetScale(Enviroment::SpriteScalingFactor);
     this->SetPosition(Position);
     this->SetIntRect(IntRect);
@@ -27,12 +28,13 @@ Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(Res
     this->isEast = false;
     // set Default AnimationTag
     this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
+
     // Initialize HitBox
    
 }
 bool Character::SetScale(sf::Vector2f Factor)
 {
-
+    this->m_HitBox2->SetScale(Factor);
     this->m_HitBox->SetScale(Factor);
     this->m_Sprite.setScale(Factor);
     return true;
@@ -45,6 +47,7 @@ bool Character::SetIntRect(const sf::IntRect &Rect)
 }
 bool Character::Render(sf::RenderTarget &Renderer) const
 {
+    this->m_HitBox2->RenderDebug(Renderer);
     this->m_HitBox->RenderDebug(Renderer);
     Renderer.draw(this->m_Sprite);
     return true;
@@ -125,9 +128,13 @@ bool Character::SetPosition(sf::Vector2f NewPosition)
         this->m_HitBox->SetPosition(oldposition);
         return false;
     }
+    this->m_HitBox2->SetPosition(NewPosition);
     this->m_CurrentPosition = NewPosition;
     this->m_Sprite.setPosition(NewPosition);
     this->m_HitBox->SetPosition(NewPosition);
+    bool flag = collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),this->m_HitBox2->GetTransformedPoints());
+    tmp *= (flag ? -1 : 1);
+    this->m_HitBox2->SetRotation(this->m_HitBox2->GetRotation() + sf::degrees(1.0f *tmp));
     return true;
 }
 

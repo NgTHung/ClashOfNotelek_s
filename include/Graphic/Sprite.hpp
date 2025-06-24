@@ -35,7 +35,11 @@ private:
     bool isEast;
     AnimationTag m_CurrentAnimationTag;
     std::unique_ptr<HitBox> m_HitBox;
+    std::unique_ptr<QuarterCircleHitBox> m_HitBox2;
      CollisionSystem collision;
+
+
+     int tmp = 1;
 
 public:
    
