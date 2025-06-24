@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Engine/Engine.hpp"
 #include "Graphic/Player.hpp"
-
+#include "Graphic/HitBox.hpp"
 enum class AnimationTag
 {
     IDLE_S_W,
@@ -34,9 +34,11 @@ private:
     bool isWest;
     bool isEast;
     AnimationTag m_CurrentAnimationTag;
+    std::unique_ptr<HitBox> m_HitBox;
+     CollisionSystem collision;
 
 public:
-    int framecounter;
+   
     Character(const Engine &g_Engine);
     ~Character() = default;
     bool Render(sf::RenderTarget &Renderer) const;
@@ -61,3 +63,4 @@ public:
     std::set<Direction> GetDirection();
     sf::Vector2f GetPosition() const;
 };
+

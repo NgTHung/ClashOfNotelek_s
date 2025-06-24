@@ -2,7 +2,6 @@
 #include <cmath>
 #include "SFML/System/Time.hpp"
 #include "SFML/System/Vector2.hpp"
-
 namespace Enviroment
 {
     const double Velocity = 200;
@@ -18,6 +17,7 @@ namespace Enviroment
     const sf::Vector2f SpriteScalingFactor = {4, 4};
     const int BaseSpriteSize = 32;
     const sf::Vector2i SpriteSize = {BaseSpriteSize, BaseSpriteSize};
+    const sf::FloatRect SpriteHitBoxOffset = {sf::Vector2f(5.0f,0.0f),sf::Vector2f(22.0f, 32.0f)};
 
     const std::string FontExtention = ".ttf";
     const std::string FontDirectory = "assets/fonts";

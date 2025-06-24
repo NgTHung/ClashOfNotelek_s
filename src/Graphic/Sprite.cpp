@@ -10,9 +10,12 @@ Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(Res
 {
     sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
+    this->m_HitBox = std::make_unique<RectangleHitBox>(Enviroment::SpriteHitBoxOffset);
+
+    this->SetScale(Enviroment::SpriteScalingFactor);
     this->SetPosition(Position);
     this->SetIntRect(IntRect);
-    this->SetScale(Enviroment::SpriteScalingFactor);
+    
     this->m_CharacterState = std::make_unique<CharacterStandingState>(*this);
 
     this->m_CharacterState->EnterState();
@@ -22,13 +25,15 @@ Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(Res
     this->isNorth = false;
     this->isWest = true;
     this->isEast = false;
-    framecounter = 0;
-
     // set Default AnimationTag
     this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
+    // Initialize HitBox
+   
 }
 bool Character::SetScale(sf::Vector2f Factor)
 {
+
+    this->m_HitBox->SetScale(Factor);
     this->m_Sprite.setScale(Factor);
     return true;
 }
@@ -40,6 +45,7 @@ bool Character::SetIntRect(const sf::IntRect &Rect)
 }
 bool Character::Render(sf::RenderTarget &Renderer) const
 {
+    this->m_HitBox->RenderDebug(Renderer);
     Renderer.draw(this->m_Sprite);
     return true;
 }
@@ -110,8 +116,18 @@ bool Character::FixLagUpdate(const sf::Time &DT)
 
 bool Character::SetPosition(sf::Vector2f NewPosition)
 {
+    sf::Vector2f oldposition = m_Sprite.getPosition();
+    this->m_HitBox->SetPosition(NewPosition);
+    if(collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),{sf::Vector2f(0,0),sf::Vector2f(1280,0)}) || 
+    collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),{sf::Vector2f(0,0),sf::Vector2f(0,720)}) ||
+    collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),{sf::Vector2f(1281,0),sf::Vector2f(1280,720)}) ||
+    collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),{sf::Vector2f(0,720),sf::Vector2f(1280,720)})){
+        this->m_HitBox->SetPosition(oldposition);
+        return false;
+    }
     this->m_CurrentPosition = NewPosition;
     this->m_Sprite.setPosition(NewPosition);
+    this->m_HitBox->SetPosition(NewPosition);
     return true;
 }
 
