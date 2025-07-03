@@ -11,14 +11,13 @@ Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(Res
     sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
     this->m_HitBox = std::make_unique<RectangleHitBox>(Enviroment::SpriteHitBoxOffset);
-    this->m_HitBox2 = std::make_unique<QuarterCircleHitBox>(32.0f,Position);
-    this->m_HitBox2->SetRotation(sf::degrees(-90));
+    this->m_Weapon = std::make_shared<Sword>();
     this->SetScale(Enviroment::SpriteScalingFactor);
     this->SetPosition(Position);
     this->SetIntRect(IntRect);
-    
-    this->m_CharacterState = std::make_unique<CharacterStandingState>(*this);
 
+    this->m_CharacterState = std::make_unique<CharacterStandingState>(*this);
+    
     this->m_CharacterState->EnterState();
     // this->m_HP = 100; // Default HP value
     // set Default Directions
@@ -28,15 +27,15 @@ Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(Res
     this->isEast = false;
     // set Default AnimationTag
     this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
-
-    // Initialize HitBox
-   
+}
+Weapon& Character::GetWeapon(){
+    return *m_Weapon;
 }
 bool Character::SetScale(sf::Vector2f Factor)
 {
-    this->m_HitBox2->SetScale(Factor);
     this->m_HitBox->SetScale(Factor);
     this->m_Sprite.setScale(Factor);
+    m_Weapon->SetScale(Factor);
     return true;
 }
 bool Character::SetIntRect(const sf::IntRect &Rect)
@@ -45,16 +44,16 @@ bool Character::SetIntRect(const sf::IntRect &Rect)
     this->m_Sprite.setTextureRect(Rect);
     return true;
 }
-bool Character::Render(sf::RenderTarget &Renderer) const
-{
-    this->m_HitBox2->RenderDebug(Renderer);
-    this->m_HitBox->RenderDebug(Renderer);
+bool Character::Render(sf::RenderTarget &Renderer){
     Renderer.draw(this->m_Sprite);
+    m_Weapon->RotateToMouse(m_Engine);
+    m_Weapon->Render(Renderer);
     return true;
 }
 
 bool Character::Update(const sf::Time &DT)
 {
+   // m_Sword.RotateToMouse();
     if (auto NewState = m_CharacterState->Update(DT))
     {
         ChangeState(std::move(NewState));
@@ -119,22 +118,10 @@ bool Character::FixLagUpdate(const sf::Time &DT)
 
 bool Character::SetPosition(sf::Vector2f NewPosition)
 {
-    sf::Vector2f oldposition = m_Sprite.getPosition();
-    this->m_HitBox->SetPosition(NewPosition);
-    if(collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),{sf::Vector2f(0,0),sf::Vector2f(1280,0)}) || 
-    collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),{sf::Vector2f(0,0),sf::Vector2f(0,720)}) ||
-    collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),{sf::Vector2f(1281,0),sf::Vector2f(1280,720)}) ||
-    collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),{sf::Vector2f(0,720),sf::Vector2f(1280,720)})){
-        this->m_HitBox->SetPosition(oldposition);
-        return false;
-    }
-    this->m_HitBox2->SetPosition(NewPosition);
     this->m_CurrentPosition = NewPosition;
     this->m_Sprite.setPosition(NewPosition);
     this->m_HitBox->SetPosition(NewPosition);
-    bool flag = collision.CheckSATCollision(this->m_HitBox->GetTransformedPoints(),this->m_HitBox2->GetTransformedPoints());
-    tmp *= (flag ? -1 : 1);
-    this->m_HitBox2->SetRotation(this->m_HitBox2->GetRotation() + sf::degrees(1.0f *tmp));
+    this->m_Weapon->SetPosition(NewPosition);
     return true;
 }
 

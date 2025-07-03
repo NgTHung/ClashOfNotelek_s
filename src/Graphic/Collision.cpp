@@ -1,4 +1,8 @@
-#include"Graphic/Collision.hpp"
+    #include"Graphic/Collision.hpp"
+CollisionSystem& CollisionSystem::Getinstance(){
+    static CollisionSystem collision;
+    return collision;
+}
 std::vector<sf::Vector2f> CollisionSystem::GetAxes(const std::vector<sf::Vector2f> &Points)
 {
     std::vector<sf::Vector2f> Axes;

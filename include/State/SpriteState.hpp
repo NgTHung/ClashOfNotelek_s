@@ -11,6 +11,8 @@ class Character;
 class CharacterState : public BaseState<Character>
 {
 protected:
+    std::shared_ptr<BaseCommand> m_LeftClickCommand = nullptr;
+    std::shared_ptr<BaseCommand> m_LeftClickReleaseCommand = nullptr;
     std::shared_ptr<BaseCommand> m_WPressedCommand = nullptr;
     std::shared_ptr<BaseCommand> m_APressedCommand = nullptr;
     std::shared_ptr<BaseCommand> m_SPressedCommand = nullptr;
@@ -53,6 +55,20 @@ private:
 
 public:
     CharacterMovingState(Character &CharacterInstance);
+    void EnterState() override;
+    void ExitState() override;
+    bool HandleEvent(std::shared_ptr<BaseEvent>) override;
+    std::unique_ptr<BaseState> FixLagUpdate(const sf::Time &DT) override;
+    std::unique_ptr<BaseState> HandleInput(std::optional<sf::Event> Event) override;
+    std::unique_ptr<BaseState> Update(const sf::Time &DT) override;
+};
+
+class CharacterAttackState: public CharacterState{
+private:
+    EventDispatcher::EventListener m_Listener;
+
+public:
+    CharacterAttackState(Character &CharacterInstance);
     void EnterState() override;
     void ExitState() override;
     bool HandleEvent(std::shared_ptr<BaseEvent>) override;

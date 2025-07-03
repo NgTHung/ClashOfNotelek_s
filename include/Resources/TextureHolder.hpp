@@ -4,7 +4,7 @@
 #include <memory>
 #include <map>
 #include <algorithm>
-#include <nlohmann/json.hpp>
+#include "External/json.hpp"
 #include <fstream>
 
 using json = nlohmann::json;

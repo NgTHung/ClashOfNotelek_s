@@ -5,6 +5,7 @@
 #include "Engine/Engine.hpp"
 #include "Graphic/Player.hpp"
 #include "Graphic/HitBox.hpp"
+#include "Graphic/Weapon.hpp"
 enum class AnimationTag
 {
     IDLE_S_W,
@@ -35,17 +36,12 @@ private:
     bool isEast;
     AnimationTag m_CurrentAnimationTag;
     std::unique_ptr<HitBox> m_HitBox;
-    std::unique_ptr<QuarterCircleHitBox> m_HitBox2;
-     CollisionSystem collision;
-
-
-     int tmp = 1;
+    std::shared_ptr<Weapon> m_Weapon;
 
 public:
-   
     Character(const Engine &g_Engine);
     ~Character() = default;
-    bool Render(sf::RenderTarget &Renderer) const;
+    bool Render(sf::RenderTarget &Renderer);
     bool Update(const sf::Time &DT);
     bool HandleEvent(std::shared_ptr<BaseEvent> Event);
     bool HandleInput(const std::optional<sf::Event> &Event);
@@ -63,6 +59,7 @@ public:
     void ChangeState(std::unique_ptr<BaseState<Character>> NewState);
     void AddDirection(const Direction NewDirection);
     void RemoveDirection(const Direction NewDirection);
+    Weapon& GetWeapon();
 
     std::set<Direction> GetDirection();
     sf::Vector2f GetPosition() const;

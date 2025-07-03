@@ -21,3 +21,11 @@ public:
     GlobalEventType GetEventType() const override;
     CharacterStopMoved(Character &Character, const Direction &OldDirection);
 };
+
+class CharacterAttackEvent: public BaseEvent {
+private:
+    Character &m_Character;
+public:
+    GlobalEventType GetEventType() const override;
+    CharacterAttackEvent(Character &Character);
+};
