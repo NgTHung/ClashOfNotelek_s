@@ -11,3 +11,10 @@ GlobalEventType CharacterStopMoved::GetEventType() const
 {
     return GlobalEventType::CharacterStopMoved;
 }
+
+CharacterAttackEvent::CharacterAttackEvent(Character& Character):m_Character(Character){}
+
+GlobalEventType CharacterAttackEvent::GetEventType() const
+{
+    return GlobalEventType::CharacterAttack;
+}

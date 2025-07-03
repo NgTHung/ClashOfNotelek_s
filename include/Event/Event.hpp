@@ -9,7 +9,8 @@ enum class GlobalEventType
     PlayerStopMoved,
     PlayerAttacked,
     CharacterMoved,
-    CharacterStopMoved
+    CharacterStopMoved,
+    CharacterAttack
 };
 
 class BaseEvent

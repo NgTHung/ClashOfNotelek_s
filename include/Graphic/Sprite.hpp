@@ -4,7 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include "Engine/Engine.hpp"
 #include "Graphic/Player.hpp"
-
+#include "Graphic/HitBox.hpp"
+#include "Graphic/Weapon.hpp"
 enum class AnimationTag
 {
     IDLE_S_W,
@@ -34,12 +35,13 @@ private:
     bool isWest;
     bool isEast;
     AnimationTag m_CurrentAnimationTag;
+    std::unique_ptr<HitBox> m_HitBox;
+    std::shared_ptr<Weapon> m_Weapon;
 
 public:
-    int framecounter;
     Character(const Engine &g_Engine);
     ~Character() = default;
-    bool Render(sf::RenderTarget &Renderer) const;
+    bool Render(sf::RenderTarget &Renderer);
     bool Update(const sf::Time &DT);
     bool HandleEvent(std::shared_ptr<BaseEvent> Event);
     bool HandleInput(const std::optional<sf::Event> &Event);
@@ -57,7 +59,9 @@ public:
     void ChangeState(std::unique_ptr<BaseState<Character>> NewState);
     void AddDirection(const Direction NewDirection);
     void RemoveDirection(const Direction NewDirection);
+    Weapon& GetWeapon();
 
     std::set<Direction> GetDirection();
     sf::Vector2f GetPosition() const;
 };
+

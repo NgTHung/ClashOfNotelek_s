@@ -2,6 +2,7 @@
 #include <iostream> 
 #include <exception>
 #include <Engine/Engine.hpp>
+#include"Graphic/Weapon.hpp"
 int main()
 {
     try

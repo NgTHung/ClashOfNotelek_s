@@ -8,6 +8,7 @@
 
 CharacterState::CharacterState(Character &CharacterInstance) : BaseState(CharacterInstance)
 {
+    m_LeftClickCommand = std::make_shared<CharacterAttackCommand>(CharacterInstance);
 }
 
 std::unique_ptr<BaseState<Character>> CharacterState::HandleInput(std::optional<sf::Event> Event)
@@ -21,7 +22,7 @@ std::unique_ptr<BaseState<Character>> CharacterState::HandleInput(std::optional<
         // {
         //     currentCommand = this->m_SpacePressedCommand;
         //     break;
-        // }
+        // }     
         case sf::Keyboard::Scancode::W:
         {
             currentCommand = this->m_WPressedCommand;
@@ -47,6 +48,10 @@ std::unique_ptr<BaseState<Character>> CharacterState::HandleInput(std::optional<
             break;
         }
         }
+    }
+    if (const auto *KeyPressed = Event->getIf<sf::Event::MouseButtonPressed>()){
+        if(KeyPressed->button == sf::Mouse::Button::Left)
+            currentCommand = this->m_LeftClickCommand;
     }
     if (const auto *KeyReleased = Event->getIf<sf::Event::KeyReleased>())
     {
@@ -138,6 +143,15 @@ bool CharacterStandingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
     {
         this->m_Instance.ChangeState(std::make_unique<CharacterMovingState>(this->m_Instance));
         return true;
+    }
+    case GlobalEventType::CharacterAttack:
+    {
+        if(this->m_Instance.GetWeapon().IsAttacking())
+        {
+            this->m_Instance.ChangeState(std::make_unique<CharacterAttackState>(this->m_Instance));
+            return true;
+        }
+        return false;
     }
     default:
     {
@@ -250,6 +264,15 @@ bool CharacterMovingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
         }
         return false;
     }
+    case GlobalEventType::CharacterAttack:
+    {
+        if(this->m_Instance.GetWeapon().IsAttacking())
+        {
+            this->m_Instance.ChangeState(std::make_unique<CharacterAttackState>(this->m_Instance));
+            return true;
+        }
+        return false;
+    }
     default:
     {
         LOG_ERROR("Unhandled event type in CharacterStandingState: {}", static_cast<int>(Event->GetEventType()));
@@ -257,3 +280,60 @@ bool CharacterMovingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
     }
     }
 }
+
+CharacterAttackState::CharacterAttackState(Character& CharacterInstance): CharacterState(CharacterInstance){
+}
+void CharacterAttackState::EnterState(){
+    this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event)
+    { return this->HandleEvent(Event); };
+    EventDispatcher::GetInstance().RegisterListener(
+        GlobalEventType::CharacterAttack, this->m_Listener);
+}
+void CharacterAttackState::ExitState(){
+    return;
+}
+bool CharacterAttackState::HandleEvent(std::shared_ptr<BaseEvent> Event){
+    if (!Event)
+    {
+        LOG_ERROR("Received null event in CharacterAttackState");
+        return false;
+    }
+    switch (Event->GetEventType())
+    {
+    case GlobalEventType::CharacterStopMoved:
+    {
+        if (this->m_Instance.GetDirection().empty())
+        {
+            this->m_Instance.ChangeState(std::make_unique<CharacterStandingState>(this->m_Instance));
+            return true;
+        }
+        return false;
+    }
+    case GlobalEventType::CharacterMoved:
+    {
+        this->m_Instance.ChangeState(std::make_unique<CharacterMovingState>(this->m_Instance));
+        return true;
+    }
+    default:
+    {
+        LOG_ERROR("Unhandled event type in CharacterStandingState: {}", static_cast<int>(Event->GetEventType()));
+        return false;
+    }
+    }
+}
+std::unique_ptr<BaseState<Character>> CharacterAttackState::HandleInput(std::optional<sf::Event> Event)
+{
+    return CharacterState::HandleInput(Event);
+}
+
+std::unique_ptr<BaseState<Character>> CharacterAttackState::FixLagUpdate(const sf::Time &DT)
+{
+    return nullptr;
+}
+
+std::unique_ptr<BaseState<Character>> CharacterAttackState::Update(const sf::Time &DT)
+{
+    return nullptr;
+}
+
+

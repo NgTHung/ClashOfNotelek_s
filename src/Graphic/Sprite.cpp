@@ -10,11 +10,14 @@ Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(Res
 {
     sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
+    this->m_HitBox = std::make_unique<RectangleHitBox>(Enviroment::SpriteHitBoxOffset);
+    this->m_Weapon = std::make_shared<Sword>();
+    this->SetScale(Enviroment::SpriteScalingFactor);
     this->SetPosition(Position);
     this->SetIntRect(IntRect);
-    this->SetScale(Enviroment::SpriteScalingFactor);
-    this->m_CharacterState = std::make_unique<CharacterStandingState>(*this);
 
+    this->m_CharacterState = std::make_unique<CharacterStandingState>(*this);
+    
     this->m_CharacterState->EnterState();
     // this->m_HP = 100; // Default HP value
     // set Default Directions
@@ -22,14 +25,17 @@ Character::Character(const Engine &g_Engine) : m_Engine(g_Engine), m_Texture(Res
     this->isNorth = false;
     this->isWest = true;
     this->isEast = false;
-    framecounter = 0;
-
     // set Default AnimationTag
     this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
 }
+Weapon& Character::GetWeapon(){
+    return *m_Weapon;
+}
 bool Character::SetScale(sf::Vector2f Factor)
 {
+    this->m_HitBox->SetScale(Factor);
     this->m_Sprite.setScale(Factor);
+    m_Weapon->SetScale(Factor);
     return true;
 }
 bool Character::SetIntRect(const sf::IntRect &Rect)
@@ -38,14 +44,16 @@ bool Character::SetIntRect(const sf::IntRect &Rect)
     this->m_Sprite.setTextureRect(Rect);
     return true;
 }
-bool Character::Render(sf::RenderTarget &Renderer) const
-{
+bool Character::Render(sf::RenderTarget &Renderer){
     Renderer.draw(this->m_Sprite);
+    m_Weapon->RotateToMouse(m_Engine);
+    m_Weapon->Render(Renderer);
     return true;
 }
 
 bool Character::Update(const sf::Time &DT)
 {
+   // m_Sword.RotateToMouse();
     if (auto NewState = m_CharacterState->Update(DT))
     {
         ChangeState(std::move(NewState));
@@ -112,6 +120,8 @@ bool Character::SetPosition(sf::Vector2f NewPosition)
 {
     this->m_CurrentPosition = NewPosition;
     this->m_Sprite.setPosition(NewPosition);
+    this->m_HitBox->SetPosition(NewPosition);
+    this->m_Weapon->SetPosition(NewPosition);
     return true;
 }
 

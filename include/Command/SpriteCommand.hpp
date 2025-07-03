@@ -24,3 +24,10 @@ public:
     void execute() override;
 };
 
+class CharacterAttackCommand: public BaseCommand {
+private:
+    Character &m_Character;
+public:
+    CharacterAttackCommand(Character& g_Character);
+    void execute() override;
+};

@@ -16,3 +16,10 @@ void StopCharacterMovingCommand::execute() {
    m_Character.RemoveDirection(m_OldDirection);
    EventDispatcher::GetInstance().Dispatch(std::make_shared<CharacterStopMoved>(m_Character, m_OldDirection));
 }    
+
+CharacterAttackCommand::CharacterAttackCommand(Character& g_Character): m_Character(g_Character){}
+
+void CharacterAttackCommand::execute(){
+    m_Character.GetWeapon().Attack();
+   EventDispatcher::GetInstance().Dispatch(std::make_shared<CharacterAttackEvent>(m_Character));
+}
