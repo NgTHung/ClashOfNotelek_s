@@ -45,6 +45,9 @@ bool AudioHolder::LoadFile(const std::string &FilePath)
 }
 const sf::Sound &AudioHolder::GetSound(std::string SoundName) const
 {
+    auto SelectSound = m_AudioMap.find(SoundName);
+    assert(SelectSound != m_AudioMap.end());
+    return *SelectSound->second;
 }
 bool AudioHolder::AddSound(const std::string &SoundName, std::unique_ptr<sf::Sound> n_Sound){
     auto InsertSound = m_AudioMap.insert(std::make_pair(SoundName, std::move(n_Sound)));
