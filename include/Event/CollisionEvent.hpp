@@ -7,42 +7,42 @@ class Collidable;
 
 class CollisionEvent : public BaseEvent {
 private:
-    std::shared_ptr<Collidable> m_CollidableA;
-    std::shared_ptr<Collidable> m_CollidableB;
+    Collidable* m_CollidableA;
+    Collidable* m_CollidableB;
 
 public:
-    CollisionEvent(const std::shared_ptr<Collidable> &A, const std::shared_ptr<Collidable> &B);
+    CollisionEvent(Collidable* &A, Collidable* &B);
     GlobalEventType GetEventType() const override;
-    std::shared_ptr<Collidable> GetCollidableA() const;
-    std::shared_ptr<Collidable> GetCollidableB() const;
+    Collidable* GetCollidableA() const;
+    Collidable* GetCollidableB() const;
 };
 
 class PlayerCollisionEvent : public CollisionEvent {
 private:
-    std::shared_ptr<Collidable> m_CollidableA;
-    std::shared_ptr<Collidable> m_CollidableB;
+    Collidable* m_CollidableA;
+    Collidable* m_CollidableB;
 
 public:
     GlobalEventType GetEventType() const override;
-    PlayerCollisionEvent(const std::shared_ptr<Collidable> &A, const std::shared_ptr<Collidable> &B);
+    PlayerCollisionEvent(Collidable* &A, Collidable* &B);
 };
 
 class WallCollisionEvent : public CollisionEvent {
 private:
-    std::shared_ptr<Collidable> m_CollidableA;
-    std::shared_ptr<Collidable> m_CollidableB;
+    Collidable* m_CollidableA;
+    Collidable* m_CollidableB;
 
 public:
-    WallCollisionEvent(const std::shared_ptr<Collidable> &A, const std::shared_ptr<Collidable> &B);
+    WallCollisionEvent(Collidable* &A, Collidable* &B);
     GlobalEventType GetEventType() const override;
 };
 
 class EnemyCollisionEvent : public CollisionEvent {
 private:
-    std::shared_ptr<Collidable> m_CollidableA;
-    std::shared_ptr<Collidable> m_CollidableB;
+    Collidable* m_CollidableA;
+    Collidable* m_CollidableB;
 
 public:
-    EnemyCollisionEvent(const std::shared_ptr<Collidable> &A, const std::shared_ptr<Collidable> &B);
+    EnemyCollisionEvent(Collidable* &A, Collidable* &B);
     GlobalEventType GetEventType() const override;
 };

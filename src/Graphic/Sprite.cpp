@@ -8,16 +8,15 @@
 #include "Utility/Enviroment.hpp"
 
 Character::Character(Engine &g_Engine) : m_Engine(g_Engine),
-                                         m_Texture(
-                                             ResourcesManager::GetManager().GetTextureHolder().GetTexture(
-                                                 "hi.png")), GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize))
-{
+                                         GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize)) {
     const sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     const sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
     this->m_Weapon = std::make_shared<Sword>(g_Engine);
     this->Character::SetScale(Enviroment::SpriteScalingFactor);
     this->Character::SetPosition(Position);
     this->SetIntRect(IntRect);
+    m_Shape.setSize(Character::GetSize());
+    m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("hi.png"));
 
     this->m_CharacterState = std::make_unique<CharacterStandingState>(m_Engine, *this);
 
@@ -32,137 +31,101 @@ Character::Character(Engine &g_Engine) : m_Engine(g_Engine),
     this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
 }
 
-Weapon &Character::GetWeapon() const
-{
+Weapon &Character::GetWeapon() const {
     return *m_Weapon;
 }
 
-bool Character::SetIntRect(const sf::IntRect &Rect)
-{
+bool Character::SetIntRect(const sf::IntRect &Rect) {
     this->m_IntRect = Rect;
-    this->m_vertices.clear();
-    this->m_vertices.setPrimitiveType(sf::PrimitiveType::TriangleStrip);
-    this->m_vertices.resize(4);
-    this->m_vertices[0].position = sf::Vector2f(Rect.position.x, Rect.position.y);
-    this->m_vertices[1].position = sf::Vector2f(Rect.position.x, Rect.position.y + Rect.size.y);
-    this->m_vertices[2].position = sf::Vector2f(Rect.position.x + Rect.size.x, Rect.position.y + Rect.size.y);
-    this->m_vertices[3].position = sf::Vector2f(Rect.position.x + Rect.size.x, Rect.position.y);
-    this->m_vertices[0].texCoords = sf::Vector2f(Rect.position.x, Rect.position.y);
-    this->m_vertices[1].texCoords = sf::Vector2f(Rect.position.x, Rect.position.y + Rect.size.y);
-    this->m_vertices[2].texCoords = sf::Vector2f(Rect.position.x + Rect.size.x, Rect.position.y + Rect.size.y);
-    this->m_vertices[3].texCoords = sf::Vector2f(Rect.position.x + Rect.size.x, Rect.position.y);
-
+    m_Shape.setTextureRect(this->m_IntRect);
     return true;
 }
 
-void Character::SetScale(const sf::Vector2f &Factor)
-{
+void Character::SetScale(const sf::Vector2f &Factor) {
     setScale(Factor);
     this->m_Weapon->SetScale(Factor);
 }
 
-bool Character::Update(const sf::Time &DT)
-{
+bool Character::Update(const sf::Time &DT) {
     // m_Sword.RotateToMouse();
-    if (auto NewState = m_CharacterState->Update(DT))
-    {
+    if (auto NewState = m_CharacterState->Update(DT)) {
         ChangeState(std::move(NewState));
     }
     return true;
 }
 
-bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event)
-{
-    switch (Event.get()->GetEventType())
-    {
-    case GlobalEventType::Generic:
-    {
-        LOG_ERROR("Incorrect populated Event");
-        throw "Incorrect populated Event";
-    }
-    case GlobalEventType::GameQuit:
-    {
-        break;
-    }
-    case GlobalEventType::PlayerAction:
-    {
-        LOG_ERROR("Incorrect populated Event");
-        throw "Incorrect populated Event";
-    }
-    case GlobalEventType::CharacterMoved:
-    case GlobalEventType::PlayerAttacked:
-    {
-        // this->m_PlayerState->AddEvent(Event.value());
-        Event.reset();
-        break;
-    }
-    case GlobalEventType::CharacterCollision:
-    {
-        auto CollisionEvent = std::dynamic_pointer_cast<PlayerCollisionEvent>(Event);
-        if (!CollisionEvent)
-        {
-            LOG_ERROR("Failed to cast Event to PlayerCollisionEvent");
-            return false;
+bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
+    switch (Event.get()->GetEventType()) {
+        case GlobalEventType::Generic: {
+            LOG_ERROR("Incorrect populated Event");
+            throw "Incorrect populated Event";
         }
-        std::shared_ptr<Collidable> CollidableA = CollisionEvent->GetCollidableA();
-        std::shared_ptr<Collidable> CollidableB = CollisionEvent->GetCollidableB();
-        if (!CollidableA || !CollidableB)
-        {
-            LOG_ERROR("CollidableA or CollidableB is null in PlayerCollisionEvent");
-            return false;
-        }
-        if (CollidableA->GetID() == this->GetID())
-        {
-        }
-        else if (CollidableB->GetID() == this->GetID())
-        {
-            swap(CollidableA, CollidableB);
-        }
-        else
-        {
-            LOG_ERROR("Neither CollidableA or CollidableB is the Character ID: {}", this->GetID());
+        case GlobalEventType::GameQuit: {
             break;
         }
-        switch (CollidableB->GetCollisionEventType())
-        {
-        case GlobalEventType::WallCollision:
-        {
-            LOG_DEBUG("Character collided with Wall ID: {}", CollidableB->GetID());
-            // Handle wall collision logic here
+        case GlobalEventType::PlayerAction: {
+            LOG_ERROR("Incorrect populated Event");
+            throw "Incorrect populated Event";
+        }
+        case GlobalEventType::CharacterMoved:
+        case GlobalEventType::PlayerAttacked: {
+            // this->m_PlayerState->AddEvent(Event.value());
+            Event.reset();
             break;
         }
-        case GlobalEventType::EnemyCollision:
-        {
-            LOG_DEBUG("Character collided with Enemy ID: {}", CollidableB->GetID());
-            // Handle enemy collision logic here
-            break;
+        case GlobalEventType::CharacterCollision: {
+            auto CollisionEvent = std::dynamic_pointer_cast<PlayerCollisionEvent>(Event);
+            if (!CollisionEvent) {
+                LOG_ERROR("Failed to cast Event to PlayerCollisionEvent");
+                return false;
+            }
+            Collidable *CollidableA = CollisionEvent->GetCollidableA();
+            Collidable *CollidableB = CollisionEvent->GetCollidableB();
+            if (!CollidableA || !CollidableB) {
+                LOG_ERROR("CollidableA or CollidableB is null in PlayerCollisionEvent");
+                return false;
+            }
+            if (CollidableB->GetID() == this->GetID()) {
+                if (CollidableA->GetID() == this->GetID()) {
+                    std::swap(CollidableA, CollidableB);
+                } else {
+                    LOG_ERROR("Neither CollidableA or CollidableB is the Character ID: {}", this->GetID());
+                    break;
+                }
+            }
+            switch (CollidableB->GetCollisionEventType()) {
+                case GlobalEventType::WallCollision: {
+                    LOG_DEBUG("Character collided with Wall ID: {}", CollidableB->GetID());
+                    // Handle wall collision logic here
+                    break;
+                }
+                case GlobalEventType::EnemyCollision: {
+                    LOG_DEBUG("Character collided with Enemy ID: {}", CollidableB->GetID());
+                    // Handle enemy collision logic here
+                    break;
+                }
+                case GlobalEventType::CharacterCollision: {
+                    LOG_DEBUG("Character collided with another Character ID: {}", CollidableB->GetID());
+                    // Handle character collision logic here
+                    this->m_HP -= 10;
+                    break;
+                }
+                case GlobalEventType::SwordCollision: {
+                    LOG_DEBUG("Character collided with Sword ID: {}", CollidableB->GetID());
+                    // Handle sword collision logic here
+                    this->m_HP -= 10;
+                    break;
+                }
+                default: {
+                    LOG_ERROR("Unhandled collision event type for collidable with ID: {}", CollidableB->GetID());
+                    return false;
+                }
+            }
         }
-        case GlobalEventType::CharacterCollision:
-        {
-            LOG_DEBUG("Character collided with another Character ID: {}", CollidableB->GetID());
-            // Handle character collision logic here
-            this->m_HP -= 10;
-            break;
+        default: {
+            LOG_ERROR("Incorrect populated Event");
+            throw "Incorrect populated Event";
         }
-        case GlobalEventType::SwordCollision:
-        {
-            LOG_DEBUG("Character collided with Sword ID: {}", CollidableB->GetID());
-            // Handle sword collision logic here
-            this->m_HP -= 10;
-            break;
-        }
-        default:
-        {
-            LOG_ERROR("Unhandled collision event type for collidable with ID: {}", CollidableB->GetID());
-            return false;
-        }
-        }
-    }
-    default:
-    {
-        LOG_ERROR("Incorrect populated Event");
-        throw "Incorrect populated Event";
-    }
     }
     // if (auto NewState = m_PlayerState->HandleEvent(*this))
     // {
@@ -171,186 +134,145 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event)
     return false;
 }
 
-bool Character::HandleInput(const sf::Event &Event)
-{
-    if (auto NewState = m_CharacterState->HandleInput(Event))
-    {
+bool Character::HandleInput(const sf::Event &Event) {
+    if (auto NewState = m_CharacterState->HandleInput(Event)) {
         ChangeState(std::move(NewState));
     }
     return true;
 }
 
-bool Character::FixLagUpdate(const sf::Time &DT)
-{
-    if (auto NewState = m_CharacterState->FixLagUpdate(DT))
-    {
+bool Character::FixLagUpdate(const sf::Time &DT) {
+    if (auto NewState = m_CharacterState->FixLagUpdate(DT)) {
         ChangeState(std::move(NewState));
     }
     return true;
 }
 
-void Character::SetPosition(const sf::Vector2f &position)
-{
+void Character::SetPosition(const sf::Vector2f &position) {
     setPosition(position);
     this->m_Weapon->SetPosition(position);
 }
 
-void Character::ChangeState(std::unique_ptr<BaseState<Character>> NewState)
-{
-    if (NewState == m_CharacterState || NewState == nullptr)
-    {
+void Character::ChangeState(std::unique_ptr<BaseState<Character> > NewState) {
+    if (NewState == m_CharacterState || NewState == nullptr) {
         return;
     }
-    if (m_CharacterState)
-    {
+    if (m_CharacterState) {
         m_CharacterState->ExitState();
     }
     m_CharacterState.reset();
     m_CharacterState = std::move(NewState);
-    if (m_CharacterState)
-    {
+    if (m_CharacterState) {
         m_CharacterState->EnterState();
     }
 }
 
-sf::Vector2f Character::GetPosition() const
-{
+sf::Vector2f Character::GetPosition() const {
     return getPosition();
 }
 
-void Character::SetRotation(const float angle)
-{
+void Character::SetRotation(const float angle) {
     setRotation(sf::degrees(angle));
 }
 
-void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const
-{
+void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const {
     States.transform *= getTransform();
-    States.texture = &m_Texture;
-    Target.draw(m_vertices, States);
-    if (m_Weapon)
-    {
-        Target.draw(*m_Weapon);
+    Target.draw(m_Shape, States);
+    if (m_Weapon) {
+        Target.draw(*m_Weapon, States);
     }
 }
 
-GlobalEventType Character::GetCollisionEventType() const
-{
+GlobalEventType Character::GetCollisionEventType() const {
     return GlobalEventType::CharacterCollision;
 }
 
-sf::Vector2f Character::GetSize() const
-{
+sf::Vector2f Character::GetSize() const {
     return sf::Vector2f(m_IntRect.size);
 }
 
-bool Character::SetDirection(Direction NewDirection)
-{
-    switch (NewDirection)
-    {
-    case Direction::NORTH:
-        this->isNorth = true;
-        this->isSouth = false;
-        break;
-    case Direction::SOUTH:
-        this->isSouth = true;
-        this->isNorth = false;
-        break;
-    case Direction::WEST:
-        this->isWest = true;
-        this->isEast = false;
-        break;
-    case Direction::EAST:
-        this->isEast = true;
-        this->isWest = false;
-        break;
-    default:
-        LOG_ERROR("Invalid direction");
-        return false;
+bool Character::SetDirection(Direction NewDirection) {
+    switch (NewDirection) {
+        case Direction::NORTH:
+            this->isNorth = true;
+            this->isSouth = false;
+            break;
+        case Direction::SOUTH:
+            this->isSouth = true;
+            this->isNorth = false;
+            break;
+        case Direction::WEST:
+            this->isWest = true;
+            this->isEast = false;
+            break;
+        case Direction::EAST:
+            this->isEast = true;
+            this->isWest = false;
+            break;
+        default:
+            LOG_ERROR("Invalid direction");
+            return false;
     }
     return true;
 }
 
-bool Character::UpdateAnimationTagIDLE()
-{
-    if (this->isNorth && this->isWest)
-    {
+bool Character::UpdateAnimationTagIDLE() {
+    if (this->isNorth && this->isWest) {
         this->m_CurrentAnimationTag = AnimationTag::IDLE_N_W;
-    }
-    else if (this->isNorth && this->isEast)
-    {
+    } else if (this->isNorth && this->isEast) {
         this->m_CurrentAnimationTag = AnimationTag::IDLE_N_E;
-    }
-    else if (this->isSouth && this->isWest)
-    {
+    } else if (this->isSouth && this->isWest) {
         this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
-    }
-    else if (this->isSouth && this->isEast)
-    {
+    } else if (this->isSouth && this->isEast) {
         this->m_CurrentAnimationTag = AnimationTag::IDLE_S_E;
-    }
-    else
-    {
+    } else {
         LOG_ERROR("Invalid direction combination");
         return false;
     }
     return true;
 }
 
-bool Character::UpdateAnimationTagWALK()
-{
-    if (this->isNorth && this->isWest)
-    {
+bool Character::UpdateAnimationTagWALK() {
+    if (this->isNorth && this->isWest) {
         this->m_CurrentAnimationTag = AnimationTag::WALK_N_W;
-    }
-    else if (this->isNorth && this->isEast)
-    {
+    } else if (this->isNorth && this->isEast) {
         this->m_CurrentAnimationTag = AnimationTag::WALK_N_E;
-    }
-    else if (this->isSouth && this->isWest)
-    {
+    } else if (this->isSouth && this->isWest) {
         this->m_CurrentAnimationTag = AnimationTag::WALK_S_W;
-    }
-    else if (this->isSouth && this->isEast)
-    {
+    } else if (this->isSouth && this->isEast) {
         this->m_CurrentAnimationTag = AnimationTag::WALK_S_E;
-    }
-    else
-    {
+    } else {
         LOG_ERROR("Invalid direction combination");
         return false;
     }
     return true;
 }
 
-int Character::AnimationTagToInt() const
-{
-    switch (this->m_CurrentAnimationTag)
-    {
-    case AnimationTag::IDLE_S_W:
-        return 0;
-    case AnimationTag::IDLE_S_E:
-        return 1;
-    case AnimationTag::IDLE_N_W:
-        return 2;
-    case AnimationTag::IDLE_N_E:
-        return 3;
-    case AnimationTag::WALK_S_W:
-        return 4;
-    case AnimationTag::WALK_S_E:
-        return 5;
-    case AnimationTag::WALK_N_W:
-        return 6;
-    case AnimationTag::WALK_N_E:
-        return 7;
-    default:
-        LOG_ERROR("Invalid animation tag");
-        return -1; // Error value
+int Character::AnimationTagToInt() const {
+    switch (this->m_CurrentAnimationTag) {
+        case AnimationTag::IDLE_S_W:
+            return 0;
+        case AnimationTag::IDLE_S_E:
+            return 1;
+        case AnimationTag::IDLE_N_W:
+            return 2;
+        case AnimationTag::IDLE_N_E:
+            return 3;
+        case AnimationTag::WALK_S_W:
+            return 4;
+        case AnimationTag::WALK_S_E:
+            return 5;
+        case AnimationTag::WALK_N_W:
+            return 6;
+        case AnimationTag::WALK_N_E:
+            return 7;
+        default:
+            LOG_ERROR("Invalid animation tag");
+            return -1; // Error value
     }
 }
 
-bool Character::NextFrame(int maxframe)
-{
+bool Character::NextFrame(int maxframe) {
     int TagNum = AnimationTagToInt();
     m_Index = (m_Index + 1) % maxframe;
     sf::IntRect Rect(Enviroment::BaseSpriteSize * sf::Vector2i{m_Index, TagNum}, Enviroment::SpriteSize);
@@ -358,24 +280,20 @@ bool Character::NextFrame(int maxframe)
     return true;
 }
 
-bool Character::ResetIndex()
-{
+bool Character::ResetIndex() {
     this->m_Index = 0;
     return true;
 }
 
-void Character::AddDirection(const Direction NewDirection)
-{
+void Character::AddDirection(const Direction NewDirection) {
     this->s.insert(NewDirection);
 }
 
-void Character::RemoveDirection(const Direction NewDirection)
-{
+void Character::RemoveDirection(const Direction NewDirection) {
     if (this->s.contains(NewDirection))
         this->s.erase(NewDirection);
 }
 
-std::set<Direction> Character::GetDirection()
-{
+std::set<Direction> Character::GetDirection() {
     return this->s;
 }

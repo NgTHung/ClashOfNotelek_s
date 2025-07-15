@@ -1,8 +1,9 @@
 #pragma once
 #include "State/Screen.hpp"
 #include "Graphic/Sprite.hpp"
-#include "Command/Command.hpp"
 #include <SFML/Graphics.hpp>
+
+#include "Graphic/Wall.hpp"
 
 class HomeScreen : public Screen
 {
@@ -17,4 +18,5 @@ public:
     // Player function
 private:
     Character m_Character;
+    Wall m_Wall;
 };

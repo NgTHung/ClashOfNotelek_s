@@ -19,11 +19,11 @@ public:
     bool HandleInput(const sf::Event &) override;
 
     sf::Vector2f GetSize() const override;
-    
+
     void SetText(const std::string &);
     void SetTexture(const sf::Texture &);
     void SetOnClick(std::function<void()> func);
-    
+
     void FixtateButtonSize();
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

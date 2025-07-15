@@ -6,26 +6,27 @@
 #include "Utility/IDGenerator.hpp"
 class Engine;
 
-class Collidable : public sf::Transformable, public sf::Drawable {
+class Collidable : public sf::Transformable, public sf::Drawable
+{
 private:
     ID m_ID;
     sf::Vector2f m_Size;
 
 protected:
-    sf::VertexArray m_vertices;
+    std::vector<sf::Vector2f> m_Vertices;
 
 public:
     Collidable(const sf::Vector2f &size);
 
     virtual void SetPosition(const sf::Vector2f &position);
 
-    virtual void SetScale(const sf::Vector2f &scale) ;
+    virtual void SetScale(const sf::Vector2f &scale);
 
     virtual void SetRotation(float angle);
 
     virtual GlobalEventType GetCollisionEventType() const = 0;
 
-    virtual sf::VertexArray GetTransformedPoints() const;
+    virtual std::vector<sf::Vector2f> GetTransformedPoints() const;
 
     virtual sf::FloatRect GetBoundingBox() const;
 
@@ -33,33 +34,36 @@ public:
 
     virtual sf::Vector2f GetPosition() const;
 
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-
-    int GetID() const;;
+    int GetID() const;
 };
 
-class CollisionSystem {
+class CollisionSystem
+{
 private:
     Engine &m_Engine;
-    std::array<std::vector<std::shared_ptr<Collidable> >, 16> m_CollisionLayers;
+    std::array<std::vector<Collidable*>, 16> m_CollisionLayers;
 
-    static std::shared_ptr<BaseEvent> CollisionEventFactory(const std::shared_ptr<Collidable> &A,
-                                                            const std::shared_ptr<Collidable> &B);
+    static std::shared_ptr<BaseEvent> CollisionEventFactory(Collidable* A,
+                                                            Collidable* B);
 
 public:
     CollisionSystem(Engine &g_Engine);
 
-    static std::vector<sf::Vector2f> GetAxes(const sf::VertexArray &Points);
+    ~CollisionSystem();
 
-    static sf::Vector2f Project(const sf::VertexArray &Points, const sf::Vector2f &Axis);
+    static std::vector<sf::Vector2f> GetAxes(const std::vector<sf::Vector2f> &Points);
 
-    static bool CheckSATCollision(const sf::VertexArray &PointsA, const sf::VertexArray &PointsB);
+    static sf::Vector2f Project(const std::vector<sf::Vector2f> &Points, const sf::Vector2f &Axis);
+
+    static bool CheckSATCollision(const std::vector<sf::Vector2f> &PointsA, const std::vector<sf::Vector2f> &PointsB);
 
     void HandleCollisions() const;
 
-    void AddCollidable(const std::shared_ptr<Collidable> &collidable, int layer);
+    void AddCollidable(Collidable* collidable, int layer);
 
-    void RemoveCollidable(const std::shared_ptr<Collidable> &collidable, int layer);
+    // void RemoveCollidable(const Collidable* &collidable, int layer);
 
-    bool IsFree(sf::Vector2f newPosition, const std::shared_ptr<Collidable*>& collidable, int layer) const;
+    void RemoveCollidable(const int &CollidableID, int layer);
+
+    bool IsFree(sf::Vector2f newPosition, Collidable &collidable, int layer) const;
 };

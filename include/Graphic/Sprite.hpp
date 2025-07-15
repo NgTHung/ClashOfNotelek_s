@@ -21,7 +21,6 @@ class Character : public GraphicBase {
 private:
     Engine &m_Engine;
     std::unique_ptr<BaseState<Character> > m_CharacterState;
-    sf::Texture m_Texture;
     sf::IntRect m_IntRect;
     int m_Index;
     int m_HP;
@@ -32,6 +31,7 @@ private:
     bool isEast;
     AnimationTag m_CurrentAnimationTag;
     std::shared_ptr<Weapon> m_Weapon;
+    sf::RectangleShape m_Shape;
 
 public:
     Character(Engine &g_Engine);
