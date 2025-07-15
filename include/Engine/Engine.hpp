@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Event/EventDispatcher.hpp"
+#include "Graphic/Collision.hpp"
 #include "State/Screen.hpp"
 
 class Engine
@@ -27,6 +28,8 @@ public:
     void PostEvent(Args &&...args);
     void ProcessEvents();
 
+    CollisionSystem &GetCollisionSystem();
+
 private:
     bool HandleInput();
     bool TryPop();
@@ -38,6 +41,7 @@ private:
     bool m_ShouldChangeState;
     std::unique_ptr<Screen> m_ChangedState;
     EventQueue m_EventQueue;
+    CollisionSystem m_CollisionSystem;
 };
 
 template <typename T, typename... Args>

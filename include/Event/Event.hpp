@@ -10,7 +10,13 @@ enum class GlobalEventType
     PlayerAttacked,
     CharacterMoved,
     CharacterStopMoved,
-    CharacterAttack
+    CharacterAttacked,
+    Collision,
+    CharacterCollision,
+    WallCollision,
+    EnemyCollision,
+    SwordCollision,
+    CharacterAttack,
 };
 
 class BaseEvent
