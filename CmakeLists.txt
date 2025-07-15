@@ -55,7 +55,7 @@ add_library(GameCommand STATIC
 target_include_directories(GameCommand PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(GameCommand PRIVATE
+target_link_libraries(GameCommand PUBLIC
     SFML::Graphics
     GameEvent
     GameGraphic
@@ -79,7 +79,7 @@ add_library(GameGraphic STATIC
 target_include_directories(GameGraphic PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(GameGraphic PRIVATE
+target_link_libraries(GameGraphic PUBLIC
     SFML::Graphics
     GameUtility
     GameState
@@ -96,7 +96,7 @@ add_library(GameResources STATIC
 target_include_directories(GameResources PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(GameResources PRIVATE
+target_link_libraries(GameResources PUBLIC
     SFML::Graphics 
     GameUtility    
     nlohmann_json::nlohmann_json
@@ -110,7 +110,7 @@ add_library(GameState STATIC
 target_include_directories(GameState PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(GameState PRIVATE
+target_link_libraries(GameState PUBLIC
     SFML::Graphics 
     GameGraphic    
     GameResources  
@@ -128,7 +128,7 @@ add_library(Engine STATIC
 target_include_directories(Engine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(Engine PRIVATE
+target_link_libraries(Engine PUBLIC
     SFML::Window   
     SFML::Graphics 
     SFML::System   
@@ -143,11 +143,11 @@ target_link_libraries(Engine PRIVATE
 # --- Main Executable ---
 add_executable(main src/main.cpp)
 
-target_include_directories(main PRIVATE
+target_include_directories(main PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(main PRIVATE
+target_link_libraries(main PUBLIC
     Engine         
     SFML::Graphics
     SFML::Window

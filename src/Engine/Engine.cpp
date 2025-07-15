@@ -5,7 +5,7 @@
 #include "Utility/Enviroment.hpp"
 
 Engine::Engine() : m_Window(sf::VideoMode(Enviroment::ScreenResolution), Enviroment::GameName), m_ShouldPop(false), m_ShouldExit(false),
-                   m_ShouldChangeState(false)
+                   m_ShouldChangeState(false), m_CollisionSystem(*this)
 {
     m_Window.setFramerateLimit(Enviroment::FrameLimit);
 }
@@ -96,6 +96,10 @@ void Engine::ProcessEvents()
     }
 }
 
+CollisionSystem & Engine::GetCollisionSystem() {
+    return m_CollisionSystem;   
+}
+
 void Engine::Run()
 {
     int Ticks = 0;
@@ -118,6 +122,7 @@ void Engine::Run()
         LastTime = Time;
         Lag += Elapsed;
         HandleInput();
+        m_CollisionSystem.HandleCollisions();
         ProcessEvents();
         State.Update(Elapsed);
 

@@ -30,4 +30,9 @@ namespace Enviroment
     const int CharacterStandingFrameCount = 5;
 
     const int ButtonPadding = 5;
+    const int DefaultTextureIndex = 0;
+    const bool DefaultAttackingState = false;
+    const float DefaultAttackingDamage = 50.0f;
+    const sf::IntRect DefaultIntRect = {BaseLocation, SpriteSize};
+    const int PlayerCollisionLayer = 1;
 }

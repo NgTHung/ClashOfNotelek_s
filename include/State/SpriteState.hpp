@@ -7,10 +7,12 @@
 
 class BaseCommand;  
 class Character;
+class Engine;
 
 class CharacterState : public BaseState<Character>
 {
 protected:
+    Engine &m_Engine;
     std::shared_ptr<BaseCommand> m_LeftClickCommand = nullptr;
     std::shared_ptr<BaseCommand> m_LeftClickReleaseCommand = nullptr;
     std::shared_ptr<BaseCommand> m_WPressedCommand = nullptr;
@@ -24,7 +26,7 @@ protected:
     std::shared_ptr<BaseCommand> m_SpacePressedCommand = nullptr;
 
 public:
-    CharacterState(Character &CharacterInstance);
+    CharacterState(Engine &g_Engine, Character &CharacterInstance);
     void EnterState() override = 0;
     void ExitState() override = 0;
     bool HandleEvent(std::shared_ptr<BaseEvent>) override = 0;
@@ -39,7 +41,7 @@ private:
     EventDispatcher::EventListener m_Listener;
 
 public:
-    CharacterStandingState(Character &CharacterInstance);
+    CharacterStandingState(Engine &g_Engine, Character &CharacterInstance);
     void EnterState() override;
     void ExitState() override;
     bool HandleEvent(std::shared_ptr<BaseEvent>) override;
@@ -54,7 +56,7 @@ private:
     EventDispatcher::EventListener m_Listener;
 
 public:
-    CharacterMovingState(Character &CharacterInstance);
+    CharacterMovingState(Engine &g_Engine, Character &CharacterInstance);
     void EnterState() override;
     void ExitState() override;
     bool HandleEvent(std::shared_ptr<BaseEvent>) override;
@@ -68,7 +70,7 @@ private:
     EventDispatcher::EventListener m_Listener;
 
 public:
-    CharacterAttackState(Character &CharacterInstance);
+    CharacterAttackState(Engine &g_Engine, Character &CharacterInstance);
     void EnterState() override;
     void ExitState() override;
     bool HandleEvent(std::shared_ptr<BaseEvent>) override;

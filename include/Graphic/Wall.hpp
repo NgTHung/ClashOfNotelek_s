@@ -1,0 +1,30 @@
+#pragma once
+
+#include "Graphic/Base.hpp"
+
+class Wall : public GraphicBase
+{
+private:
+    sf::Vector2f m_Size;
+    Engine &m_Engine;
+public:
+    Wall(Engine& g_engine, const sf::Vector2f &position, const sf::Vector2f &size);
+
+    void SetPosition(const sf::Vector2f &position) override;
+
+    void SetScale(const sf::Vector2f &scale) override;
+
+    void SetRotation(float angle) override;
+
+    GlobalEventType GetCollisionEventType() const override;
+
+    sf::Vector2f GetSize() const override;
+
+    bool Update(const sf::Time &) override;
+
+    bool FixLagUpdate(const sf::Time &) override;
+
+    bool HandleInput(const sf::Event &) override;
+
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+};

@@ -7,3 +7,6 @@ ArielText::ArielText() : Text(ResourcesManager::GetManager().GetFontHolder().Get
     setOutlineColor(sf::Color::Black);
     setFillColor(sf::Color::White);
 }
+
+GraphicBase::GraphicBase(const sf::Vector2f &size): Collidable(size) {
+}

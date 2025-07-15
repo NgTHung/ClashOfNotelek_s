@@ -8,13 +8,13 @@ HomeScreen::HomeScreen(Engine &g_Engine) : Screen(g_Engine), m_Character(g_Engin
 
 bool HomeScreen::Render(sf::RenderTarget &Renderer)
 {
-    m_Character.Render(Renderer);
+    Renderer.draw(m_Character);
     return true;
 }
 
 bool HomeScreen::HandleInput(const std::optional<sf::Event> Event)
 {
-    return m_Character.HandleInput(Event);
+    return m_Character.HandleInput(Event.value());
 }
 
 bool HomeScreen::HandleEvent(std::shared_ptr<BaseEvent> Event)

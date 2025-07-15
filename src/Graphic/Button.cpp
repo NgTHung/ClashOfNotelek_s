@@ -3,13 +3,25 @@
 #include "Engine/Engine.hpp"
 #include "Utility/Enviroment.hpp"
 
-Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_Engine(g_Engine)
+Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_Engine(g_Engine), GraphicBase({1.f,2.f})
 {
     this->m_Button.setOutlineThickness(1);
     this->m_Button.setOutlineColor(sf::Color::White);
     this->m_Button.setFillColor(sf::Color::Black);
     this->m_Button.setPosition(this->m_Position);
     this->m_Text.setPosition(this->m_Position);
+}
+
+void Button::SetScale(const sf::Vector2f &scale) {
+    setScale(scale);
+}
+
+void Button::SetRotation(float angle) {
+    setRotation(sf::degrees(angle));
+}
+
+GlobalEventType Button::GetCollisionEventType() const {
+    return GlobalEventType::Generic;
 }
 
 Button::Button(Engine &g_Engine, const sf::Vector2f pos, const std::string &value) : Button(g_Engine, pos)
@@ -28,13 +40,6 @@ Button::Button(Engine &g_Engine, const sf::Vector2f pos, const sf::Texture &text
     this->m_Button.setTexture(&texture);
 }
 
-bool Button::Render(sf::RenderTarget &renderer) const
-{
-    renderer.draw(this->m_Button);
-    renderer.draw(this->m_Text);
-    return true;
-}
-
 bool Button::Update(const sf::Time &DT)
 {
     return true;
@@ -45,11 +50,10 @@ bool Button::FixLagUpdate(const sf::Time &DT)
     return true;
 }
 
-bool Button::SetPosition(const sf::Vector2f &NewPos)
+void Button::SetPosition(const sf::Vector2f &NewPos)
 {
     this->m_Button.setPosition(NewPos);
     this->m_Text.setPosition(NewPos);
-    return true;
 }
 
 bool Button::HandleInput(const sf::Event &event)
@@ -91,3 +95,12 @@ void Button::FixtateButtonSize()
 {
     this->m_Button.setSize({this->m_Text.getLocalBounds().size.x + Enviroment::ButtonPadding, this->m_Text.getLocalBounds().size.y + Enviroment::ButtonPadding});
 }
+
+void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+    states.transform *= getTransform();
+    states.texture = m_Button.getTexture();
+    target.draw(m_Button, states);
+    target.draw(m_Text, states);
+    GraphicBase::draw(target, states);
+}
+

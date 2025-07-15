@@ -4,7 +4,7 @@
 #include "State/HomeScreen.hpp"
 // Define start State
 
-StartScreen::StartScreen(Engine &g_Engine) : Screen(g_Engine), m_StartButton(g_Engine, (sf::Vector2f)g_Engine.GetWindow().getSize() / 2.f, std::string("Start Playing"))
+StartScreen::StartScreen(Engine &g_Engine) : Screen(g_Engine), m_StartButton(g_Engine, static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f, std::string("Start Playing"))
 {
     m_StartButton.SetOnClick([this]()
                              { this->m_Engine.PushState<HomeScreen>(this->m_Engine); });
@@ -12,7 +12,7 @@ StartScreen::StartScreen(Engine &g_Engine) : Screen(g_Engine), m_StartButton(g_E
 
 bool StartScreen::Render(sf::RenderTarget &Renderer)
 {
-    m_StartButton.Render(Renderer);
+    Renderer.draw(m_StartButton);
     return true;
 }
 
