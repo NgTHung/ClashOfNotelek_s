@@ -3,7 +3,7 @@
 #include "Engine/Engine.hpp"
 #include "Utility/Enviroment.hpp"
 
-Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_Engine(g_Engine), GraphicBase({1.f,2.f})
+Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_Engine(g_Engine), GraphicBase(m_Button.getSize())
 {
     this->m_Button.setOutlineThickness(1);
     this->m_Button.setOutlineColor(sf::Color::White);
@@ -12,15 +12,18 @@ Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_E
     this->m_Text.setPosition(this->m_Position);
 }
 
-void Button::SetScale(const sf::Vector2f &scale) {
+void Button::SetScale(const sf::Vector2f &scale)
+{
     setScale(scale);
 }
 
-void Button::SetRotation(float angle) {
+void Button::SetRotation(float angle)
+{
     setRotation(sf::degrees(angle));
 }
 
-GlobalEventType Button::GetCollisionEventType() const {
+GlobalEventType Button::GetCollisionEventType() const
+{
     return GlobalEventType::Generic;
 }
 
@@ -96,11 +99,10 @@ void Button::FixtateButtonSize()
     this->m_Button.setSize({this->m_Text.getLocalBounds().size.x + Enviroment::ButtonPadding, this->m_Text.getLocalBounds().size.y + Enviroment::ButtonPadding});
 }
 
-void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
     states.transform *= getTransform();
     states.texture = m_Button.getTexture();
     target.draw(m_Button, states);
     target.draw(m_Text, states);
-    GraphicBase::draw(target, states);
 }
-

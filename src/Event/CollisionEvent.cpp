@@ -2,7 +2,7 @@
 
 #include "Utility/Logger.hpp"
 
-CollisionEvent::CollisionEvent(const std::shared_ptr<Collidable> &A, const std::shared_ptr<Collidable> &B):
+CollisionEvent::CollisionEvent(Collidable* &A, Collidable* &B):
     m_CollidableA(A), m_CollidableB(B) {
     if (!m_CollidableA || !m_CollidableB) {
         LOG_ERROR("CollidableA or CollidableB is null in CollisionEvent");
@@ -14,11 +14,11 @@ GlobalEventType CollisionEvent::GetEventType() const {
     return GlobalEventType::Collision;
 }
 
-std::shared_ptr<Collidable> CollisionEvent::GetCollidableA() const {
+Collidable* CollisionEvent::GetCollidableA() const {
     return m_CollidableA;
 }
 
-std::shared_ptr<Collidable> CollisionEvent::GetCollidableB() const {
+Collidable* CollisionEvent::GetCollidableB() const {
     return m_CollidableB;
 }
 
@@ -26,11 +26,11 @@ GlobalEventType PlayerCollisionEvent::GetEventType() const {
     return GlobalEventType::CharacterCollision;
 }
 
-PlayerCollisionEvent::PlayerCollisionEvent(const std::shared_ptr<Collidable> &A, const std::shared_ptr<Collidable> &B): CollisionEvent(A,B) {
+PlayerCollisionEvent::PlayerCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A,B) {
 }
-WallCollisionEvent::WallCollisionEvent(const std::shared_ptr<Collidable> &A, const std::shared_ptr<Collidable> &B): CollisionEvent(A,B) {
+WallCollisionEvent::WallCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A,B) {
 }
-EnemyCollisionEvent::EnemyCollisionEvent(const std::shared_ptr<Collidable> &A, const std::shared_ptr<Collidable> &B): CollisionEvent(A,B) {
+EnemyCollisionEvent::EnemyCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A,B) {
 }
 
 GlobalEventType WallCollisionEvent::GetEventType() const {

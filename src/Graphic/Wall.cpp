@@ -2,13 +2,22 @@
 
 #include "Engine/Engine.hpp"
 #include "Event/CollisionEvent.hpp"
-#include "Event/EventDispatcher.hpp"
 #include "Utility/Enviroment.hpp"
 
-Wall::Wall(Engine& g_engine, const sf::Vector2f &position, const sf::Vector2f &size): m_Engine(g_engine), GraphicBase(size) {
+Wall::Wall(Engine &g_engine, const sf::Vector2f &position, const sf::Vector2f &size): GraphicBase(size),
+    m_Engine(g_engine) {
     setPosition(position);
     m_Size = size;
-    m_Engine.GetCollisionSystem().AddCollidable(std::shared_ptr<Collidable>(this), Enviroment::PlayerCollisionLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
+    m_Shape.setSize(size);
+    m_Shape.setPosition(position);
+    m_Shape.setFillColor(sf::Color::White);
+    m_Shape.setOutlineColor(sf::Color::White);
+    m_Shape.setOutlineThickness(1.f);
+    m_Vertices.push_back(sf::Vector2f(0, 0));
+    m_Vertices.push_back(sf::Vector2f(size.x, 0));
+    m_Vertices.push_back(sf::Vector2f(size.x, size.y));
+    m_Vertices.push_back(sf::Vector2f(0, size.y));
 }
 
 void Wall::SetPosition(const sf::Vector2f &position) {
@@ -44,5 +53,6 @@ bool Wall::HandleInput(const sf::Event &) {
 }
 
 void Wall::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    GraphicBase::draw(target, states);
+    states.transform *= getTransform();
+    target.draw(m_Shape, states);
 }

@@ -1,25 +1,23 @@
 #pragma once
-#include<SFML/Graphics.hpp>
-#include"Engine/Engine.hpp"
+#include <SFML/Graphics.hpp>
 
 #include "Base.hpp"
 #include "Utility/Enviroment.hpp"
 
-class Weapon : public GraphicBase {
+class Weapon : public GraphicBase
+{
 protected:
-    sf::Texture m_Texture;
     sf::IntRect m_Rect;
     int m_Index = Enviroment::DefaultTextureIndex;
     bool m_Attacking = Enviroment::DefaultAttackingState;
     float m_Damage = Enviroment::DefaultAttackingDamage;
+
 public:
-    Weapon(sf::Texture Texture, const sf::IntRect &Rect = Enviroment::DefaultIntRect);
+    Weapon(const sf::IntRect &Rect = Enviroment::DefaultIntRect);
 
     void SetPosition(const sf::Vector2f &position) override = 0;
 
     void SetScale(const sf::Vector2f &Scale) override = 0;
-
-    virtual void RotateToMouse(const Engine &engine) = 0;
 
     virtual void SetDamage(const float &damage) = 0;
 
@@ -27,18 +25,22 @@ public:
 
     virtual void SetOrigin(const sf::Vector2f &Origin) = 0;
 
-    virtual sf::VertexArray GetHitBoxPoint() = 0;
+    virtual std::vector<sf::Vector2f> GetHitBoxPoint() = 0;
 
     virtual void Attack() = 0;
 
     virtual bool IsAttacking() const = 0;
 };
 
-class Sword : public Weapon {
+class Sword : public Weapon
+{
 private:
-    const Engine &m_Engine;
+    Engine &m_Engine;
+    sf::RectangleShape m_Shape;
 public:
     Sword(Engine &g_Engine);
+
+    ~Sword();
 
     void SetPosition(const sf::Vector2f &position) override;
 
@@ -46,7 +48,7 @@ public:
 
     float GetDamage() const override;
 
-    void RotateToMouse(const Engine &engine) override;
+    void RotateToMouse();
 
     void SetRotation(const float angle) override;
 
@@ -60,7 +62,7 @@ public:
 
     bool IsAttacking() const override;
 
-    sf::VertexArray GetHitBoxPoint() override;
+    std::vector<sf::Vector2f> GetHitBoxPoint() override;
 
     GlobalEventType GetCollisionEventType() const override;
 

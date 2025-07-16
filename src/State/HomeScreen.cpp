@@ -2,13 +2,14 @@
 #include "Utility/Logger.hpp"
 // Define start State
 
-HomeScreen::HomeScreen(Engine &g_Engine) : Screen(g_Engine), m_Character(g_Engine)
+HomeScreen::HomeScreen(Engine &g_Engine) : Screen(g_Engine), m_Character(g_Engine), m_Wall(g_Engine, sf::Vector2f(100,100), sf::Vector2f(32.f,32.f))
 {
 }
 
 bool HomeScreen::Render(sf::RenderTarget &Renderer)
 {
     Renderer.draw(m_Character);
+    Renderer.draw(m_Wall);
     return true;
 }
 
