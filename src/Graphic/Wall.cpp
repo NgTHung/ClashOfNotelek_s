@@ -3,14 +3,16 @@
 #include "Engine/Engine.hpp"
 #include "Event/CollisionEvent.hpp"
 #include "Utility/Enviroment.hpp"
+#include "Utility/Logger.hpp"
 
 Wall::Wall(Engine &g_engine, const sf::Vector2f &position, const sf::Vector2f &size): GraphicBase(size),
-    m_Engine(g_engine) {
-    setPosition(position);
+                                                                                      m_Engine(g_engine) {
+        
     m_Size = size;
     m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
     m_Shape.setSize(size);
     m_Shape.setPosition(position);
+    setPosition(position);
     m_Shape.setFillColor(sf::Color::White);
     m_Shape.setOutlineColor(sf::Color::White);
     m_Shape.setOutlineThickness(1.f);
@@ -53,6 +55,6 @@ bool Wall::HandleInput(const sf::Event &) {
 }
 
 void Wall::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    states.transform *= getTransform();
-    target.draw(m_Shape, states);
+    //states.transform *= getTransform();
+    target.draw(m_Shape);
 }

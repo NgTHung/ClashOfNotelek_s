@@ -17,11 +17,8 @@ Sword::Sword(Engine &g_Engine) : m_Shape(sf::Vector2f(Enviroment::DefaultIntRect
     m_Index = 0;
     m_Attacking = false;
     m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("sword.png"));
-    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
-    this->m_Vertices.push_back(sf::Vector2f(m_Rect.position));
-    this->m_Vertices.push_back(sf::Vector2f(m_Rect.position.x + m_Rect.size.x, m_Rect.position.y));
-    this->m_Vertices.push_back(sf::Vector2f(m_Rect.position.x + m_Rect.size.x, m_Rect.position.y + m_Rect.size.y));
-    this->m_Vertices.push_back(sf::Vector2f(m_Rect.position.x, m_Rect.position.y + m_Rect.size.y));
+    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::AttackableLayer);
+    //this->m_Vertices.push_back(sf::Vector2f(-2,-15));
 }
 
 Sword::~Sword()
@@ -31,12 +28,15 @@ Sword::~Sword()
 
 void Sword::SetPosition(const sf::Vector2f &position)
 {
-    setPosition(sf::Vector2f(position.x + 14 * abs(getScale().x),
-                             position.y + 24 * abs(getScale().y)));
+    m_Shape.setPosition(sf::Vector2f(position.x + m_Shape.getOrigin().x * abs(getScale().x),
+                             position.y + m_Shape.getOrigin().y * abs(getScale().y)));
+    setPosition(sf::Vector2f(position.x + m_Shape.getOrigin().x * abs(getScale().x),
+                             position.y + m_Shape.getOrigin().y * abs(getScale().y)));
 }
 
 void Sword::SetScale(const sf::Vector2f &Scale)
 {
+    m_Shape.setScale(Scale);
     setScale(Scale);
 }
 
@@ -73,17 +73,48 @@ bool Sword::Update(const sf::Time &)
 {
     if (m_Attacking)
     {
-        m_Index = (m_Index + 1) % 5;
+        m_Index = (m_Index + 1) % 3;
+        float angle = (m_Index == 1 ? 30 : 60);
+        int Segment = angle/7;
+        float AngleStep = angle/static_cast<float>(Segment);
+        if(m_Index == 1){
+            m_Vertices.clear();
+            m_Vertices.push_back(sf::Vector2f(0,0));
+            m_Vertices.push_back(sf::Vector2f(-2,-15));
+        }
+        else{
+            sf::Vector2f tmp = m_Vertices.back();
+            m_Vertices.clear();
+            m_Vertices.push_back(sf::Vector2f(0,0));
+            m_Vertices.push_back(tmp);
+        }
+        float AngleStepRad = AngleStep * M_PI / 180.f;
+        sf::Vector2f PrevPoint = m_Vertices.back();
+        for (int i = 1; i <= Segment; ++i){
+            float x = PrevPoint.x;
+            float y = PrevPoint.y;
+            sf::Vector2f Rotated;
+            Rotated.x = x * std::cos(AngleStepRad) - y * std::sin(AngleStepRad);
+            Rotated.y = x * std::sin(AngleStepRad) + y * std::cos(AngleStepRad);
+            m_Vertices.push_back(Rotated);
+            PrevPoint = Rotated;
+        }
     }
     else
     {
-        RotateToMouse();
+        if(m_Index != 0)
+            m_Index = (m_Index + 1) % 5;
+        else
+            RotateToMouse();
+        m_Vertices.clear();
     }
-    if (m_Index == 0)
+    if (m_Index == 2)
     {
         m_Attacking = false;
+        
     }
     m_Rect.position.x = 0 + m_Index * Enviroment::BaseSpriteSize;
+    m_Shape.setTextureRect(m_Rect);
     return true;
 }
 
@@ -99,18 +130,21 @@ bool Sword::HandleInput(const sf::Event &Event)
 
 void Sword::SetRotation(const float angle)
 {
+    m_Shape.setRotation(sf::degrees(angle));
     setRotation(sf::degrees(angle));
 }
 
 void Sword::SetOrigin(const sf::Vector2f &Origin)
 {
+    m_Shape.setOrigin(Origin);
     setOrigin(Origin);
 }
 
 void Sword::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    // states.transform *= getTransform();
-    target.draw(m_Shape, states);
+   // states.transform *= getTransform();
+    DrawDebug(target);
+    target.draw(m_Shape);
 }
 
 void Sword::Attack()

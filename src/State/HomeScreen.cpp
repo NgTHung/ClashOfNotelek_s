@@ -10,6 +10,7 @@ bool HomeScreen::Render(sf::RenderTarget &Renderer)
 {
     Renderer.draw(m_Character);
     Renderer.draw(m_Wall);
+    m_Wall.DrawDebug(Renderer);
     return true;
 }
 

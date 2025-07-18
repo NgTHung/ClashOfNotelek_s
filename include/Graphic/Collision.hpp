@@ -35,6 +35,8 @@ public:
     virtual sf::Vector2f GetPosition() const;
 
     int GetID() const;
+
+    void DrawDebug(sf::RenderTarget& Renderer) const;
 };
 
 class CollisionSystem
