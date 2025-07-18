@@ -2,6 +2,7 @@
 #include <cmath>
 #include "SFML/System/Time.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "SFML/Graphics.hpp"
 namespace Enviroment
 {
     const double Velocity = 200;
@@ -35,4 +36,5 @@ namespace Enviroment
     const float DefaultAttackingDamage = 50.0f;
     const sf::IntRect DefaultIntRect = {BaseLocation, SpriteSize};
     const int PlayerCollisionLayer = 1;
+    const int AttackableLayer = 2;
 }

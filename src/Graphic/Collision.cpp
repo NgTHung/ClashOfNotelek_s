@@ -57,6 +57,19 @@ int Collidable::GetID() const
     return m_ID.GetID();
 }
 
+void Collidable::DrawDebug(sf::RenderTarget& Renderer) const {
+    std::vector<sf::Vector2f> Points;
+    Points = this->GetTransformedPoints();
+    sf::VertexArray shape(sf::PrimitiveType::LineStrip,Points.size() + 1);
+    for (size_t i = 0; i < Points.size(); ++i) {
+        shape[i].position = Points[i];
+        shape[i].color = sf::Color::Red;
+    }
+    if(Points.size() > 0)
+        shape[Points.size()].position = Points[0];
+    shape[Points.size()].color = sf::Color::Red;
+    Renderer.draw(shape);
+}
 
 std::shared_ptr<BaseEvent> CollisionSystem::CollisionEventFactory(Collidable *A,
                                                                   Collidable *B)

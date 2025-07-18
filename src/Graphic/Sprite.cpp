@@ -7,11 +7,14 @@
 #include "Resources/ResourcesManager.hpp"
 #include "Utility/Enviroment.hpp"
 
+#include <iostream>
+
 Character::Character(Engine &g_Engine) : m_Engine(g_Engine),
                                          GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize)) {
     const sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     const sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
     this->m_Weapon = std::make_shared<Sword>(g_Engine);
+    this->m_Weapon->SetScale(Enviroment::SpriteScalingFactor);
     this->Character::SetScale(Enviroment::SpriteScalingFactor);
     this->Character::SetPosition(Position);
     this->SetIntRect(IntRect);
@@ -29,6 +32,12 @@ Character::Character(Engine &g_Engine) : m_Engine(g_Engine),
     this->isEast = false;
     // set Default AnimationTag
     this->m_CurrentAnimationTag = AnimationTag::IDLE_S_W;
+
+    this->m_Vertices.resize(4);
+    this->m_Vertices[0] = sf::Vector2f{6,0};
+    this->m_Vertices[1] = sf::Vector2f{26,0};
+    this->m_Vertices[2] = sf::Vector2f{26,32};
+    this->m_Vertices[3] = sf::Vector2f{6,32};
 }
 
 Weapon &Character::GetWeapon() const {
@@ -48,6 +57,7 @@ void Character::SetScale(const sf::Vector2f &Factor) {
 
 bool Character::Update(const sf::Time &DT) {
     // m_Sword.RotateToMouse();
+    m_Weapon->Update(DT);
     if (auto NewState = m_CharacterState->Update(DT)) {
         ChangeState(std::move(NewState));
     }
@@ -82,7 +92,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             Collidable *CollidableA = CollisionEvent->GetCollidableA();
             Collidable *CollidableB = CollisionEvent->GetCollidableB();
             if (!CollidableA || !CollidableB) {
-                LOG_ERROR("CollidableA or CollidableB is null in PlayerCollisionEvent");
+                LOG_ERROR("CollidableA or CfollidableB is null in PlayerCollisionEvent");
                 return false;
             }
             if (CollidableB->GetID() == this->GetID()) {
@@ -178,6 +188,18 @@ void Character::SetRotation(const float angle) {
 void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const {
     States.transform *= getTransform();
     Target.draw(m_Shape, States);
+
+    std::vector<sf::Vector2f> Points = this->GetTransformedPoints();
+    sf::VertexArray shape(sf::PrimitiveType::LineStrip,Points.size() + 1);
+    for (size_t i = 0; i < Points.size(); ++i) {
+        shape[i].position = Points[i];
+        shape[i].color = sf::Color::Red;
+    }
+    if(Points.size() > 0)
+        shape[Points.size()].position = Points[0];
+    // for(auto i : Points)
+    //     std::cout<< i.x << " " << i.y << '\n';
+    Target.draw(shape);
     if (m_Weapon) {
         Target.draw(*m_Weapon, States);
     }
