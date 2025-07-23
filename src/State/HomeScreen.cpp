@@ -1,16 +1,22 @@
 #include "State/HomeScreen.hpp"
+
+#include "Resources/ResourcesHolder.hpp"
+#include "Resources/ResourcesManager.hpp"
 #include "Utility/Logger.hpp"
 // Define start State
 
-HomeScreen::HomeScreen(Engine &g_Engine) : Screen(g_Engine), m_Character(g_Engine), m_Wall(g_Engine, sf::Vector2f(100,100), sf::Vector2f(32.f,32.f))
+HomeScreen::HomeScreen(Engine &g_Engine) : Screen(g_Engine), m_Character(g_Engine), m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),m_Slime(g_Engine)
 {
+
+    m_MapTexture.setScale(Enviroment::SpriteScalingFactor);
+    m_MapTexture.setPosition(sf::Vector2f(0,0));
 }
 
 bool HomeScreen::Render(sf::RenderTarget &Renderer)
 {
+    Renderer.draw(m_MapTexture);
     Renderer.draw(m_Character);
-    Renderer.draw(m_Wall);
-    m_Wall.DrawDebug(Renderer);
+    Renderer.draw(m_Slime);
     return true;
 }
 
@@ -31,5 +37,6 @@ bool HomeScreen::FixLagUpdate(const sf::Time &DT)
 
 bool HomeScreen::Update(const sf::Time &DT)
 {
+    m_Engine.SetCenter(sf::Vector2f(m_Character.GetPosition().x + Enviroment::CenterPointofPlayer.x,m_Character.GetPosition().y + Enviroment::CenterPointofPlayer.y));
     return m_Character.Update(DT);
 }
