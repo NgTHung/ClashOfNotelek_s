@@ -3,6 +3,7 @@
 #include "Graphic/Sprite.hpp"
 #include <SFML/Graphics.hpp>
 
+#include "Graphic/Enemy.hpp"
 #include "Graphic/Wall.hpp"
 
 class HomeScreen : public Screen
@@ -18,5 +19,8 @@ public:
     // Player function
 private:
     Character m_Character;
-    Wall m_Wall;
+    std::vector<std::shared_ptr<Wall>> m_Walls;
+    std::vector<std::shared_ptr<Wall>> m_BoundingBoxes;
+    sf::Sprite m_MapTexture;
+    Slime m_Slime;
 };

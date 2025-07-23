@@ -5,10 +5,25 @@
 #include "Utility/Enviroment.hpp"
 
 Engine::Engine() : m_Window(sf::VideoMode(Enviroment::ScreenResolution), Enviroment::GameName), m_ShouldPop(false), m_ShouldExit(false),
-                   m_ShouldChangeState(false), m_CollisionSystem(*this)
+                   m_ShouldChangeState(false), m_CollisionSystem(*this),
+                    m_View(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(Enviroment::ScreenResolution.x,Enviroment::ScreenResolution.y)))
 {
     m_Window.setFramerateLimit(Enviroment::FrameLimit);
+
 }
+
+void Engine::ResetWindow()
+{
+    m_Window.setPosition(sf::Vector2i(0,0));
+}
+
+
+void Engine::SetCenter(sf::Vector2f Position)
+{
+    m_View.setCenter(Position);
+    m_Window.setView(m_View);
+}
+
 
 Screen &Engine::GetCurrentState() const
 {
@@ -136,7 +151,6 @@ void Engine::Run()
         m_Window.clear();
         State.Render(m_Window);
         m_Window.display();
-
         TryPop();
     }
 }
