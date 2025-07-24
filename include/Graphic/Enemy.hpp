@@ -1,5 +1,5 @@
 #include <Graphic/Base.hpp>
-class Enemy
+class Enemy : public GraphicBase
 {
 public:
         Enemy(Engine &g_Engine);
@@ -13,7 +13,7 @@ protected:
 
 };
 
-class Slime: public Enemy, public GraphicBase
+class Slime: public Enemy
 {
 public:
         Slime(Engine &g_Engine);

@@ -16,6 +16,7 @@ namespace Enviroment
 
     const sf::Vector2i BaseLocation = {0, 0};
     const sf::Vector2f SpriteScalingFactor = {4, 4};
+    const sf::Vector2f MapScalingFactor = {1, 1};
     const int BaseSpriteSize = 32;
     const sf::Vector2f CenterPointofPlayer = {15,21};
     const sf::Vector2i SpriteSize = {BaseSpriteSize, BaseSpriteSize};
