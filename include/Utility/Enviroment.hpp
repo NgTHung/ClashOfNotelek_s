@@ -9,6 +9,7 @@ namespace Enviroment
 
     const sf::Vector2u ScreenResolution = {1280, 720};
     const std::string GameName = "Clash of Notelek\'s";
+    const sf::View DefaultView(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(Enviroment::ScreenResolution.x,Enviroment::ScreenResolution.y)));
 
     const int FrameLimit = 60;
     const int TickPerSecond = 30;
@@ -18,7 +19,7 @@ namespace Enviroment
     const sf::Vector2f SpriteScalingFactor = {4, 4};
     const sf::Vector2f MapScalingFactor = {1, 1};
     const int BaseSpriteSize = 32;
-    const sf::Vector2f CenterPointofPlayer = {15,21};
+    const sf::Vector2f CenterPointOfPlayer = sf::Vector2f(16,17);
     const sf::Vector2i SpriteSize = {BaseSpriteSize, BaseSpriteSize};
     const sf::FloatRect SpriteHitBoxOffset = {sf::Vector2f(5.0f,0.0f),sf::Vector2f(22.0f, 32.0f)};
 
@@ -41,4 +42,8 @@ namespace Enviroment
     const sf::IntRect DefaultIntRect = {BaseLocation, SpriteSize};
     const int PlayerCollisionLayer = 1;
     const int AttackableLayer = 2;
+
+
+    const float SwordAttackCooldown = 1.0f;
+    const int SwordDame = 10;
 }

@@ -1,4 +1,7 @@
+#pragma once
 #include <Graphic/Base.hpp>
+#include <Utility/Logger.hpp>
+#include <Graphic/Sprite.hpp>
 class Enemy : public GraphicBase
 {
 public:
@@ -10,11 +13,14 @@ protected:
         int m_HP;
         Engine& m_Engine;
         float m_Radius;
+        int m_LastAttackID;
 
 };
 
 class Slime: public Enemy
 {
+private:
+        EventDispatcher::EventListener m_Listener;
 public:
         Slime(Engine &g_Engine);
         ~Slime() = default;

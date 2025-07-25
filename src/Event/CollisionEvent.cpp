@@ -40,3 +40,13 @@ GlobalEventType WallCollisionEvent::GetEventType() const {
 GlobalEventType EnemyCollisionEvent::GetEventType() const {
     return GlobalEventType::EnemyCollision;
 }
+
+SwordCollisionEvent::SwordCollisionEvent(Collidable*& A, Collidable*& B): CollisionEvent(A,B)
+{
+}
+
+GlobalEventType SwordCollisionEvent::GetEventType() const
+{
+    return GlobalEventType::SwordCollision;
+}
+

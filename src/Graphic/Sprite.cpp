@@ -93,7 +93,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             Collidable *CollidableA = CollisionEvent->GetCollidableA();
             Collidable *CollidableB = CollisionEvent->GetCollidableB();
             if (!CollidableA || !CollidableB) {
-                LOG_ERROR("CollidableA or CfollidableB is null in PlayerCollisionEvent");
+                LOG_ERROR("CollidableA or CollidableB is null in PlayerCollisionEvent");
                 return false;
             }
             if (CollidableB->GetID() == this->GetID()) {

@@ -3,9 +3,17 @@
 #include "Engine/Engine.hpp"
 #include "Resources/ResourcesManager.hpp"
 
+int Weapon::s_AttackCount = 0;
+
 Weapon::Weapon(const sf::IntRect &Rect) : GraphicBase(sf::Vector2f(Rect.size)),
     m_Rect(Rect) {
 }
+
+int Weapon::GetAttackID() const
+{
+    return this->m_AttackID;
+}
+
 
 Sword::Sword(Engine &g_Engine) : m_Shape(sf::Vector2f(Enviroment::DefaultIntRect.size)), Weapon(Enviroment::DefaultIntRect),
                                  m_Engine(g_Engine)
@@ -14,6 +22,8 @@ Sword::Sword(Engine &g_Engine) : m_Shape(sf::Vector2f(Enviroment::DefaultIntRect
     m_Rect.position.y = Enviroment::BaseSpriteSize;
     m_Shape.setTextureRect(m_Rect);
     m_Shape.setOrigin(sf::Vector2f(14.0f, 24.0f));
+    //setOrigin(sf::Vector2f(14.0f, 24.0f));
+    this->SetDamage(Enviroment::SwordDame);
     m_Index = 0;
     m_Attacking = false;
     m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("sword.png"));
@@ -69,7 +79,7 @@ sf::Vector2f Sword::GetSize() const
     return sf::Vector2f(m_Rect.size.x * std::abs(getScale().x), m_Rect.size.y * std::abs(getScale().y));
 }
 
-bool Sword::Update(const sf::Time &)
+bool Sword::Update(const sf::Time &DT)
 {
     if (m_Attacking)
     {
@@ -77,17 +87,17 @@ bool Sword::Update(const sf::Time &)
         float angle = (m_Index == 1 ? 30 : 60);
         int Segment = angle/7;
         float AngleStep = angle/static_cast<float>(Segment);
-        if(m_Index == 1){
-            m_Vertices.clear();
-            m_Vertices.push_back(sf::Vector2f(0,0));
-            m_Vertices.push_back(sf::Vector2f(-2,-15));
-        }
-        else{
-            sf::Vector2f tmp = m_Vertices.back();
-            m_Vertices.clear();
-            m_Vertices.push_back(sf::Vector2f(0,0));
-            m_Vertices.push_back(tmp);
-        }
+         if(m_Index == 1){
+             m_Vertices.clear();
+             m_Vertices.push_back(sf::Vector2f(0,0));
+             m_Vertices.push_back(sf::Vector2f(-2,-15));
+         }
+          else{
+             sf::Vector2f tmp = m_Vertices.back();
+             m_Vertices.clear();
+              m_Vertices.push_back(sf::Vector2f(0,0));
+              m_Vertices.push_back(tmp);
+         }
         float AngleStepRad = AngleStep * M_PI / 180.f;
         sf::Vector2f PrevPoint = m_Vertices.back();
         for (int i = 1; i <= Segment; ++i){
@@ -149,6 +159,7 @@ void Sword::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 void Sword::Attack()
 {
+    m_AttackID = ++s_AttackCount;
     m_Attacking = true;
 }
 
