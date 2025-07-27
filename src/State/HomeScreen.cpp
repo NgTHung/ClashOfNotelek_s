@@ -11,7 +11,7 @@ HomeScreen::HomeScreen(Engine &g_Engine)
       m_Slime(g_Engine)
 {
 
-    m_MapTexture.setScale(Enviroment::MapScalingFactor);
+    m_MapTexture.setScale(Enviroment::SpriteScalingFactor);
     m_MapTexture.setPosition(sf::Vector2f(0, 0));
     m_Enemy.clear();
 }
@@ -31,6 +31,7 @@ bool HomeScreen::HandleInput(const std::optional<sf::Event> Event)
 
 bool HomeScreen::HandleEvent(std::shared_ptr<BaseEvent> Event)
 {
+
     return false;
 }
 
@@ -41,8 +42,31 @@ bool HomeScreen::FixLagUpdate(const sf::Time &DT)
 
 bool HomeScreen::Update(const sf::Time &DT)
 {
-    m_Engine.SetCenter(sf::Vector2f(m_Character.GetPosition().x + Enviroment::CenterPointofPlayer.x, m_Character.GetPosition().y + Enviroment::CenterPointofPlayer.y));
+    this->CameraProcess();
     return m_Character.Update(DT);
+}
+
+void HomeScreen::CameraProcess()
+{
+    sf::View view = m_Engine.GetWindow().getView();
+    sf::Vector2f ViewSize = view.getSize();
+    sf::Vector2f CenterPoint = sf::Vector2f(m_Character.GetPosition().x + Enviroment::CenterPointOfPlayer.x * Enviroment::SpriteScalingFactor.x,m_Character.GetPosition().y + Enviroment::CenterPointOfPlayer.y* Enviroment::SpriteScalingFactor.y);
+    sf::Vector2f PlayerPosition = CenterPoint;
+    sf::Vector2f MapSize = m_MapTexture.getGlobalBounds().size;
+    sf::Vector2f HaftView = sf::Vector2f(ViewSize.x / 2, ViewSize.y / 2);
+
+    if (MapSize.x > ViewSize.x)
+        CenterPoint.x = std::clamp(PlayerPosition.x, HaftView.x, MapSize.x - HaftView.x);
+    else
+        CenterPoint.x = MapSize.x / 2.f;
+
+    if (MapSize.y > ViewSize.y)
+        CenterPoint.y = std::clamp(PlayerPosition.y, HaftView.y, MapSize.y - HaftView.y);
+    else
+        CenterPoint.y = MapSize.y / 2.f;
+
+    view.setCenter(CenterPoint);
+    m_Engine.SetView(view);
 }
 
 

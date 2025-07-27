@@ -23,6 +23,7 @@ public:
     bool HandleInput(std::optional<sf::Event> Event) override;
     bool FixLagUpdate(const sf::Time &DT) override;
     bool HandleEvent(std::shared_ptr<BaseEvent> Event) override;
+    void CameraProcess();
     // Player function
     // Enemy function
     void SpawnEnemy(Engine &g_Engine);

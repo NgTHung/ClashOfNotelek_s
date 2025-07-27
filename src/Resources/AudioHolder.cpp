@@ -29,20 +29,20 @@ void AudioHolder::LoadDirectory()
         }
     }
 }
-bool AudioHolder::LoadFile(const std::string &FilePath)
-{
-    std::unique_ptr<sf::Sound> Sound = std::make_unique<sf::Sound>();
-    std::filesystem::path Path(FilePath);
-    sf::SoundBuffer buffer;
-    if (!buffer.loadFromFile(Path))
-    {
-        LOG_ERROR("Failed to load Sound from file: {}", Path.string());
-        return false;
-    }
-    Sound->setBuffer(buffer);
-    AddSound(Path.filename().string(), std::move(Sound));
-    return true;
-}
+// bool AudioHolder::LoadFile(const std::string &FilePath)
+// {
+//     std::unique_ptr<sf::Sound> Sound = std::make_unique<sf::Sound>();
+//     std::filesystem::path Path(FilePath);
+//     sf::SoundBuffer buffer;
+//     if (!buffer.loadFromFile(Path))
+//     {
+//         LOG_ERROR("Failed to load Sound from file: {}", Path.string());
+//         return false;
+//     }
+//     Sound->setBuffer(buffer);
+//     AddSound(Path.filename().string(), std::move(Sound));
+//     return true;
+// }
 const sf::Sound &AudioHolder::GetSound(std::string SoundName) const
 {
     auto SelectSound = m_AudioMap.find(SoundName);

@@ -5,8 +5,7 @@
 #include "Utility/Enviroment.hpp"
 
 Engine::Engine() : m_Window(sf::VideoMode(Enviroment::ScreenResolution), Enviroment::GameName), m_ShouldPop(false), m_ShouldExit(false),
-                   m_ShouldChangeState(false), m_CollisionSystem(*this),
-                    m_View(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(Enviroment::ScreenResolution.x,Enviroment::ScreenResolution.y)))
+                   m_ShouldChangeState(false), m_CollisionSystem(*this)
 {
     m_Window.setFramerateLimit(Enviroment::FrameLimit);
 
@@ -18,12 +17,15 @@ void Engine::ResetWindow()
 }
 
 
-void Engine::SetCenter(sf::Vector2f Position)
+void Engine::SetView(const sf::View& view)
 {
-    m_View.setCenter(Position);
-    m_Window.setView(m_View);
+    m_Window.setView(view);
 }
 
+void Engine::ResetView()
+{
+    m_Window.setView(Enviroment::DefaultView);
+}
 
 Screen &Engine::GetCurrentState() const
 {

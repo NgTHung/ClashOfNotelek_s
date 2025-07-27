@@ -11,8 +11,11 @@ protected:
     int m_Index = Enviroment::DefaultTextureIndex;
     bool m_Attacking = Enviroment::DefaultAttackingState;
     float m_Damage = Enviroment::DefaultAttackingDamage;
+    int m_AttackID;
 
 public:
+    static int s_AttackCount;
+
     Weapon(const sf::IntRect &Rect = Enviroment::DefaultIntRect);
 
     void SetPosition(const sf::Vector2f &position) override = 0;
@@ -30,6 +33,8 @@ public:
     virtual void Attack() = 0;
 
     virtual bool IsAttacking() const = 0;
+
+    int GetAttackID() const;
 };
 
 class Sword : public Weapon
@@ -37,6 +42,7 @@ class Sword : public Weapon
 private:
     Engine &m_Engine;
     sf::RectangleShape m_Shape;
+
 public:
     Sword(Engine &g_Engine);
 
