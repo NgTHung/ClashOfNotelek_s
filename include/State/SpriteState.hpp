@@ -78,3 +78,4 @@ public:
     std::unique_ptr<BaseState> HandleInput(std::optional<sf::Event> Event) override;
     std::unique_ptr<BaseState> Update(const sf::Time &DT) override;
 };
+

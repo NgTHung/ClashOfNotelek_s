@@ -8,6 +8,23 @@ Engine::Engine() : m_Window(sf::VideoMode(Enviroment::ScreenResolution), Envirom
                    m_ShouldChangeState(false), m_CollisionSystem(*this)
 {
     m_Window.setFramerateLimit(Enviroment::FrameLimit);
+
+}
+
+void Engine::ResetWindow()
+{
+    m_Window.setPosition(sf::Vector2i(0,0));
+}
+
+
+void Engine::SetView(const sf::View& view)
+{
+    m_Window.setView(view);
+}
+
+void Engine::ResetView()
+{
+    m_Window.setView(Enviroment::DefaultView);
 }
 
 Screen &Engine::GetCurrentState() const
@@ -129,7 +146,6 @@ void Engine::Run()
         m_Window.clear();
         State.Render(m_Window);
         m_Window.display();
-
         TryPop();
     }
 }

@@ -10,7 +10,8 @@
 #include <iostream>
 
 Character::Character(Engine &g_Engine) : m_Engine(g_Engine),
-                                         GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize)) {
+                                         GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize))
+                                           {
     const sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     const sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
     this->m_Weapon = std::make_shared<Sword>(g_Engine);
@@ -92,7 +93,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             Collidable *CollidableA = CollisionEvent->GetCollidableA();
             Collidable *CollidableB = CollisionEvent->GetCollidableB();
             if (!CollidableA || !CollidableB) {
-                LOG_ERROR("CollidableA or CfollidableB is null in PlayerCollisionEvent");
+                LOG_ERROR("CollidableA or CollidableB is null in PlayerCollisionEvent");
                 return false;
             }
             if (CollidableB->GetID() == this->GetID()) {

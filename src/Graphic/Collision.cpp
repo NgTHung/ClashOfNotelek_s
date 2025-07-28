@@ -86,6 +86,10 @@ std::shared_ptr<BaseEvent> CollisionSystem::CollisionEventFactory(Collidable *A,
     {
         return std::make_shared<EnemyCollisionEvent>(A, B);
     }
+    if (A->GetCollisionEventType() == GlobalEventType::SwordCollision)
+    {
+        return std::make_shared<SwordCollisionEvent>(A, B);
+    }
     LOG_ERROR("Unknown collision event type for collidable with ID: {}", A->GetID());
     return nullptr;
 }

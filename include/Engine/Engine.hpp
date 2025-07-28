@@ -21,6 +21,9 @@ public:
     template <typename T, typename... Args>
     bool ChangeState(Args &&...args);
 
+    void ResetWindow();
+    void SetView(const sf::View& view);
+    void ResetView();
     const sf::RenderWindow &GetWindow() const;
     Screen &GetCurrentState() const;
     void PostEvent(const std::shared_ptr<BaseEvent> &Event);
@@ -33,6 +36,7 @@ public:
 private:
     bool HandleInput();
     bool TryPop();
+
 
     sf::RenderWindow m_Window;
     std::vector<std::unique_ptr<Screen>> m_States;

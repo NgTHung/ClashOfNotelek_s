@@ -9,6 +9,7 @@ namespace Enviroment
 
     const sf::Vector2u ScreenResolution = {1280, 720};
     const std::string GameName = "Clash of Notelek\'s";
+    const sf::View DefaultView(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(Enviroment::ScreenResolution.x,Enviroment::ScreenResolution.y)));
 
     const int FrameLimit = 60;
     const int TickPerSecond = 30;
@@ -16,7 +17,9 @@ namespace Enviroment
 
     const sf::Vector2i BaseLocation = {0, 0};
     const sf::Vector2f SpriteScalingFactor = {4, 4};
+    const sf::Vector2f MapScalingFactor = {1, 1};
     const int BaseSpriteSize = 32;
+    const sf::Vector2f CenterPointOfPlayer = sf::Vector2f(16,17);
     const sf::Vector2i SpriteSize = {BaseSpriteSize, BaseSpriteSize};
     const sf::FloatRect SpriteHitBoxOffset = {sf::Vector2f(5.0f,0.0f),sf::Vector2f(22.0f, 32.0f)};
 
@@ -25,6 +28,8 @@ namespace Enviroment
     const std::string ImageTextureExtention = ".png";
     const std::string FormatTextureExtention = ".json";
     const std::string TextureDirectory = "assets/sprite";
+    const std::string AudioExtention = ".mp3";
+    const std::string AudioDirectory = "assets/audio";
 
     const float VelocityNormalizationValue = (std::sqrt(2) / 2.f);
     const int CharacterMovingFrameCount = 7;
@@ -37,4 +42,8 @@ namespace Enviroment
     const sf::IntRect DefaultIntRect = {BaseLocation, SpriteSize};
     const int PlayerCollisionLayer = 1;
     const int AttackableLayer = 2;
+
+
+    const float SwordAttackCooldown = 1.0f;
+    const int SwordDame = 10;
 }
