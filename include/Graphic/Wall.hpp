@@ -11,12 +11,6 @@ private:
 public:
     Wall(Engine& g_engine, const sf::Vector2f &position, const sf::Vector2f &size);
 
-    void SetPosition(const sf::Vector2f &position) override;
-
-    void SetScale(const sf::Vector2f &scale) override;
-
-    void SetRotation(float angle) override;
-
     GlobalEventType GetCollisionEventType() const override;
 
     sf::Vector2f GetSize() const override;

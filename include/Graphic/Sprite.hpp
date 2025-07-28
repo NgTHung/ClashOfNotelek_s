@@ -75,10 +75,6 @@ public:
 
     std::set<Direction> GetDirection();
 
-    sf::Vector2f GetPosition() const;
-
-    void SetRotation(float angle) override;
-
     void draw(sf::RenderTarget &Target, sf::RenderStates States) const override;
 
     GlobalEventType GetCollisionEventType() const override;

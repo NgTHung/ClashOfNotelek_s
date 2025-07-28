@@ -34,6 +34,23 @@ sf::Vector2f Collidable::GetPosition() const
     return getPosition();
 }
 
+sf::Transform Collidable::GetTransform() const {
+    return getTransform();
+}
+
+sf::Vector2f Collidable::GetScale() const
+{
+    return getScale();
+}
+
+sf::Vector2f Collidable::GetOrigin() const {
+    return getOrigin();
+}
+
+void Collidable::SetOrigin(sf::Vector2f origin) {
+    setOrigin(origin);
+}
+
 std::vector<sf::Vector2f> Collidable::GetTransformedPoints() const
 {
     auto transform = getTransform();
@@ -147,8 +164,8 @@ void CollisionSystem::RemoveCollidable(const int &ID, int layer)
 
 bool CollisionSystem::IsFree(sf::Vector2f newPosition, Collidable &collidable, const int layer) const
 {
-    sf::Vector2f OldPosition = collidable.getPosition();
-    collidable.setPosition(newPosition);
+    sf::Vector2f OldPosition = collidable.GetPosition();
+    collidable.SetPosition(newPosition);
     for (auto &OtherCollidable : m_CollisionLayers[layer])
     {
         if (OtherCollidable->GetID() == collidable.GetID())
@@ -157,11 +174,11 @@ bool CollisionSystem::IsFree(sf::Vector2f newPosition, Collidable &collidable, c
         }
         if (CheckSATCollision(collidable.GetTransformedPoints(), OtherCollidable->GetTransformedPoints()))
         {
-            collidable.setPosition(OldPosition);
+            collidable.SetPosition(OldPosition);
             return false;
         }
     }
-    collidable.setPosition(OldPosition);
+    collidable.SetPosition(OldPosition);
     return true;
 }
 

@@ -18,15 +18,9 @@ public:
 
     Weapon(const sf::IntRect &Rect = Enviroment::DefaultIntRect);
 
-    void SetPosition(const sf::Vector2f &position) override = 0;
-
-    void SetScale(const sf::Vector2f &Scale) override = 0;
-
     virtual void SetDamage(const float &damage) = 0;
 
     virtual float GetDamage() const = 0;
-
-    virtual void SetOrigin(const sf::Vector2f &Origin) = 0;
 
     virtual std::vector<sf::Vector2f> GetHitBoxPoint() = 0;
 
@@ -60,7 +54,7 @@ public:
 
     void SetScale(const sf::Vector2f &Scale) override;
 
-    void SetOrigin(const sf::Vector2f &Origin) override;
+    void SetOrigin(sf::Vector2f origin) override;
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
