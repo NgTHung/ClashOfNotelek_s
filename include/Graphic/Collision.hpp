@@ -6,8 +6,7 @@
 #include "Utility/IDGenerator.hpp"
 class Engine;
 
-class Collidable : public sf::Transformable, public sf::Drawable
-{
+class Collidable : private sf::Transformable, public sf::Drawable {
 private:
     ID m_ID;
     sf::Vector2f m_Size;
@@ -34,19 +33,26 @@ public:
 
     virtual sf::Vector2f GetPosition() const;
 
+    virtual sf::Transform GetTransform() const;
+
+    virtual sf::Vector2f GetScale() const;
+
+    virtual sf::Vector2f GetOrigin() const;
+
+    virtual void SetOrigin(sf::Vector2f origin);
+
     int GetID() const;
 
-    void DrawDebug(sf::RenderTarget& Renderer) const;
+    void DrawDebug(sf::RenderTarget &Renderer) const;
 };
 
-class CollisionSystem
-{
+class CollisionSystem {
 private:
     Engine &m_Engine;
-    std::array<std::vector<Collidable*>, 16> m_CollisionLayers;
+    std::array<std::vector<Collidable *>, 16> m_CollisionLayers;
 
-    static std::shared_ptr<BaseEvent> CollisionEventFactory(Collidable* A,
-                                                            Collidable* B);
+    static std::shared_ptr<BaseEvent> CollisionEventFactory(Collidable *A,
+                                                            Collidable *B);
 
 public:
     CollisionSystem(Engine &g_Engine);
@@ -61,7 +67,7 @@ public:
 
     void HandleCollisions() const;
 
-    void AddCollidable(Collidable* collidable, int layer);
+    void AddCollidable(Collidable *collidable, int layer);
 
     // void RemoveCollidable(const Collidable* &collidable, int layer);
 

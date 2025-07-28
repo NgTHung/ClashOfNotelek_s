@@ -15,15 +15,15 @@ int Weapon::GetAttackID() const
 }
 
 
-Sword::Sword(Engine &g_Engine) : m_Shape(sf::Vector2f(Enviroment::DefaultIntRect.size)), Weapon(Enviroment::DefaultIntRect),
-                                 m_Engine(g_Engine)
+Sword::Sword(Engine &g_Engine) : Weapon(Enviroment::DefaultIntRect), m_Engine(g_Engine),
+                                 m_Shape(sf::Vector2f(Enviroment::DefaultIntRect.size))
 {
     m_Rect = Enviroment::DefaultIntRect;
     m_Rect.position.y = Enviroment::BaseSpriteSize;
     m_Shape.setTextureRect(m_Rect);
     m_Shape.setOrigin(sf::Vector2f(14.0f, 24.0f));
     //setOrigin(sf::Vector2f(14.0f, 24.0f));
-    this->SetDamage(Enviroment::SwordDame);
+    this->Sword::SetDamage(Enviroment::SwordDame);
     m_Index = 0;
     m_Attacking = false;
     m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("sword.png"));
@@ -38,16 +38,16 @@ Sword::~Sword()
 
 void Sword::SetPosition(const sf::Vector2f &position)
 {
-    m_Shape.setPosition(sf::Vector2f(position.x + m_Shape.getOrigin().x * abs(getScale().x),
-                             position.y + m_Shape.getOrigin().y * abs(getScale().y)));
-    setPosition(sf::Vector2f(position.x + m_Shape.getOrigin().x * abs(getScale().x),
-                             position.y + m_Shape.getOrigin().y * abs(getScale().y)));
+    m_Shape.setPosition(sf::Vector2f(position.x + m_Shape.getOrigin().x * abs(GetScale().x),
+                             position.y + m_Shape.getOrigin().y * abs(GetScale().y)));
+    Collidable::SetPosition(sf::Vector2f(position.x + m_Shape.getOrigin().x * abs(GetScale().x),
+                             position.y + m_Shape.getOrigin().y * abs(GetScale().y)));
 }
 
 void Sword::SetScale(const sf::Vector2f &Scale)
 {
     m_Shape.setScale(Scale);
-    setScale(Scale);
+    Collidable::SetScale(Scale);
 }
 
 void Sword::RotateToMouse()
@@ -55,11 +55,11 @@ void Sword::RotateToMouse()
     if (m_Attacking)
         return;
     sf::Vector2f MousePos = m_Engine.GetWindow().mapPixelToCoords(sf::Mouse::getPosition(m_Engine.GetWindow()));
-    sf::Vector2f worldPoint = getTransform().transformPoint({getOrigin().x, getOrigin().y - 1.0f});
+    sf::Vector2f worldPoint = GetTransform().transformPoint({GetOrigin().x, GetOrigin().y - 1.0f});
     sf::Vector2f direction(MousePos.x - worldPoint.x, MousePos.y - worldPoint.y);
     bool flip = direction.x < 0.f;
-    float scaleX = std::abs(getScale().x);
-    float scaleY = getScale().y;
+    float scaleX = std::abs(GetScale().x);
+    float scaleY = GetScale().y;
     SetScale(flip ? sf::Vector2f(-scaleX, scaleY) : sf::Vector2f(scaleX, scaleY));
     float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
@@ -76,7 +76,7 @@ GlobalEventType Sword::GetCollisionEventType() const
 
 sf::Vector2f Sword::GetSize() const
 {
-    return sf::Vector2f(m_Rect.size.x * std::abs(getScale().x), m_Rect.size.y * std::abs(getScale().y));
+    return sf::Vector2f(m_Rect.size.x * std::abs(GetScale().x), m_Rect.size.y * std::abs(GetScale().y));
 }
 
 bool Sword::Update(const sf::Time &DT)
@@ -141,13 +141,13 @@ bool Sword::HandleInput(const sf::Event &Event)
 void Sword::SetRotation(const float angle)
 {
     m_Shape.setRotation(sf::degrees(angle));
-    setRotation(sf::degrees(angle));
+    Collidable::SetRotation(angle);
 }
 
-void Sword::SetOrigin(const sf::Vector2f &Origin)
+void Sword::SetOrigin(sf::Vector2f origin)
 {
-    m_Shape.setOrigin(Origin);
-    setOrigin(Origin);
+    m_Shape.setOrigin(origin);
+    Collidable::SetOrigin(origin);
 }
 
 void Sword::draw(sf::RenderTarget &target, sf::RenderStates states) const

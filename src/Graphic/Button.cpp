@@ -12,16 +12,6 @@ Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_E
     this->m_Text.setPosition(this->m_Position);
 }
 
-void Button::SetScale(const sf::Vector2f &scale)
-{
-    setScale(scale);
-}
-
-void Button::SetRotation(float angle)
-{
-    setRotation(sf::degrees(angle));
-}
-
 GlobalEventType Button::GetCollisionEventType() const
 {
     return GlobalEventType::Generic;
@@ -101,7 +91,7 @@ void Button::FixtateButtonSize()
 
 void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    states.transform *= getTransform();
+    states.transform *= GetTransform();
     states.texture = m_Button.getTexture();
     target.draw(m_Button, states);
     target.draw(m_Text, states);

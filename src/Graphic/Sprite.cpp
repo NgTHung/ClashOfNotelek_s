@@ -9,8 +9,8 @@
 
 #include <iostream>
 
-Character::Character(Engine &g_Engine) : m_Engine(g_Engine),
-                                         GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize))
+Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize)),
+                                         m_Engine(g_Engine)
                                            {
     const sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
     const sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
@@ -52,7 +52,7 @@ bool Character::SetIntRect(const sf::IntRect &Rect) {
 }
 
 void Character::SetScale(const sf::Vector2f &Factor) {
-    setScale(Factor);
+    Collidable::SetScale(Factor);
     this->m_Weapon->SetScale(Factor);
 }
 
@@ -132,6 +132,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                     return false;
                 }
             }
+            break;
         }
         default: {
             LOG_ERROR("Incorrect populated Event");
@@ -160,7 +161,7 @@ bool Character::FixLagUpdate(const sf::Time &DT) {
 }
 
 void Character::SetPosition(const sf::Vector2f &position) {
-    setPosition(position);
+    Collidable::SetPosition(position);
     this->m_Weapon->SetPosition(position);
 }
 
@@ -178,16 +179,8 @@ void Character::ChangeState(std::unique_ptr<BaseState<Character> > NewState) {
     }
 }
 
-sf::Vector2f Character::GetPosition() const {
-    return getPosition();
-}
-
-void Character::SetRotation(const float angle) {
-    setRotation(sf::degrees(angle));
-}
-
 void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const {
-    States.transform *= getTransform();
+    States.transform *= GetTransform();
     Target.draw(m_Shape, States);
 
     std::vector<sf::Vector2f> Points = this->GetTransformedPoints();
