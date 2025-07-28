@@ -105,21 +105,14 @@ void Engine::Run()
     int Ticks = 0;
 
     sf::Clock Timer;
-    sf::Time LastTime = sf::Time::Zero;
     sf::Time Lag = sf::Time::Zero;
-
-    LOG_DEBUG("TPU: {}", Enviroment::TimePerUpdate.asSeconds());
 
     while (m_Window.isOpen() && !m_States.empty())
     {
         Screen &State = this->GetCurrentState();
 
-        sf::Time Time = Timer.getElapsedTime();
-        sf::Time Elapsed = Time - LastTime;
+        sf::Time Elapsed = Timer.restart();
 
-        LOG_DEBUG("Elapsed: {}", Elapsed.asSeconds());
-
-        LastTime = Time;
         Lag += Elapsed;
         HandleInput();
         m_CollisionSystem.HandleCollisions();
