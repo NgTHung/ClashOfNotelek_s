@@ -103,7 +103,7 @@ std::unique_ptr<BaseState<Character> > CharacterStandingState::FixLagUpdate(cons
 }
 
 std::unique_ptr<BaseState<Character> > CharacterStandingState::Update(const sf::Time &DT) {
-    this->m_Instance.NextFrame(Enviroment::CharacterStandingFrameCount);
+    this->m_Instance.NextFrame(Enviroment::CharacterStandingFrameCount,DT);
     return nullptr;
 }
 
@@ -202,7 +202,7 @@ std::unique_ptr<BaseState<Character> > CharacterMovingState::Update(const sf::Ti
     } else {
         LOG_DEBUG("Character Moving State: Collision Detected, not moving");
     }
-    this->m_Instance.NextFrame(Enviroment::CharacterMovingFrameCount);
+    this->m_Instance.NextFrame(Enviroment::CharacterMovingFrameCount,DT);
     return nullptr;
 }
 

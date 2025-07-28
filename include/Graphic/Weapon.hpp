@@ -43,6 +43,8 @@ private:
     Engine &m_Engine;
     sf::RectangleShape m_Shape;
 
+
+
 public:
     Sword(Engine &g_Engine);
 

@@ -295,9 +295,14 @@ int Character::AnimationTagToInt() const {
     }
 }
 
-bool Character::NextFrame(int maxframe) {
+bool Character::NextFrame(int maxframe,const sf::Time &DT) {
     int TagNum = AnimationTagToInt();
-    m_Index = (m_Index + 1) % maxframe;
+    this->m_MiliSecondUpdate += DT.asMilliseconds();
+    if (this->m_MiliSecondUpdate > 150)
+    {
+        this->m_MiliSecondUpdate -= 150;
+        m_Index = (m_Index + 1) % maxframe;
+    }
     sf::IntRect Rect(Enviroment::BaseSpriteSize * sf::Vector2i{m_Index, TagNum}, Enviroment::SpriteSize);
     this->SetIntRect(Rect);
     return true;

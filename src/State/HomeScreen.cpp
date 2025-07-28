@@ -10,8 +10,7 @@ HomeScreen::HomeScreen(Engine &g_Engine)
       m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),
       m_Slime(g_Engine)
 {
-
-    m_MapTexture.setScale(Enviroment::SpriteScalingFactor);
+    m_MapTexture.setScale(sf::Vector2f(10,10));
     m_MapTexture.setPosition(sf::Vector2f(0, 0));
     m_Enemy.clear();
 }
