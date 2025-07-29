@@ -70,7 +70,12 @@ void HomeScreen::SpawnEnemy(Engine &g_Engine){
         // random position to spawn
         // set position for each enemy
         // fac_Enemy->SetPosition(n_Position); need to edit
-
+        std::uniform_int_distribution<> distrib(0, Enviroment::ScreenResolution.x);
+        int x = distrib(gen);
+        std::uniform_int_distribution<> distrib(0, Enviroment::ScreenResolution.y);
+        int y = distrib(gen);
+        sf::Vector2f pos = {x, y};
+        fac_Enemy->SetPosition(pos);
         m_Enemy.emplace_back(fac_Enemy);
     }
 }
