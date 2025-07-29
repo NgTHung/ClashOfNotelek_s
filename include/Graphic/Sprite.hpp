@@ -32,6 +32,7 @@ private:
     AnimationTag m_CurrentAnimationTag;
     std::shared_ptr<Weapon> m_Weapon;
     sf::RectangleShape m_Shape;
+    int m_MiliSecondUpdate = 0;
 
 public:
     Character(Engine &g_Engine);
@@ -56,7 +57,7 @@ public:
 
     int AnimationTagToInt() const;
 
-    bool NextFrame(int maxframe);
+    bool NextFrame(int maxframe,const sf::Time & DT);
 
     bool ResetIndex();
 

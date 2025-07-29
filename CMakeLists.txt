@@ -14,20 +14,20 @@ add_compile_options(-Wall -Wextra)
 # --- SFML Dependency (FetchContent) ---
 include(FetchContent)
 FetchContent_Declare(SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.1 
-    GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL
-    SYSTEM
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 3.0.1
+        GIT_SHALLOW ON
+        EXCLUDE_FROM_ALL
+        SYSTEM
 )
 FetchContent_MakeAvailable(SFML)
 
 # --- nlohmann/json Dependency (FetchContent) ---
 include(FetchContent)
 FetchContent_Declare(
-    json
-    GIT_REPOSITORY https://github.com/nlohmann/json.git
-    GIT_TAG v3.11.3 
+        json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.3
 )
 FetchContent_MakeAvailable(json)
 
@@ -50,16 +50,16 @@ target_include_directories(GameEvent PUBLIC
 
 file(GLOB GameCommandSource "src/Command/*.cpp")
 add_library(GameCommand STATIC
-    ${GameCommandSource}
+        ${GameCommandSource}
 )
 target_include_directories(GameCommand PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_link_libraries(GameCommand PUBLIC
-    SFML::Graphics
-    GameEvent
-    GameGraphic
-    GameState
+        SFML::Graphics
+        GameEvent
+        GameGraphic
+        GameState
 )
 
 file(GLOB GameUtilitySource "src/Utility/*.cpp")
@@ -91,75 +91,76 @@ target_link_libraries(GameGraphic PUBLIC
 file(GLOB GameResourcesSource "src/Resources/*.cpp")
 # Resources Library
 add_library(GameResources STATIC
-    ${GameResourcesSource}
+        ${GameResourcesSource}
 )
 target_include_directories(GameResources PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_link_libraries(GameResources PUBLIC
-    SFML::Graphics 
-    GameUtility    
-    nlohmann_json::nlohmann_json
+        SFML::Graphics
+        GameUtility
+        nlohmann_json::nlohmann_json
 )
 
 file(GLOB GameStateSource "src/State/*.cpp")
 # State Library
 add_library(GameState STATIC
-    ${GameStateSource}
+        ${GameStateSource}
 )
 target_include_directories(GameState PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_link_libraries(GameState PUBLIC
-    SFML::Graphics 
-    GameGraphic    
-    GameResources  
-    GameUtility    
-    GameEvent
-    Engine
-    nlohmann_json::nlohmann_json
+        SFML::Graphics
+        GameGraphic
+        GameResources
+        GameUtility
+        GameEvent
+        Engine
+        nlohmann_json::nlohmann_json
 )
 
 file(GLOB EngineSource "src/Engine/*.cpp")
-# Engine Library 
-add_library(Engine STATIC 
-    ${EngineSource}
+# Engine Library
+add_library(Engine STATIC
+        ${EngineSource}
 )
 target_include_directories(Engine PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_link_libraries(Engine PUBLIC
-    SFML::Window   
-    SFML::Graphics 
-    SFML::System   
-    GameState      
-    GameGraphic    
-    GameResources  
-    GameUtility    
-    GameEvent
-    GameCommand
+        SFML::Window
+        SFML::Graphics
+        SFML::System
+        GameState
+        GameGraphic
+        GameResources
+        GameUtility
+        GameEvent
+        GameCommand
+
 )
 
 # --- Main Executable ---
 add_executable(main src/main.cpp)
 
 target_include_directories(main PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(main PUBLIC
-    Engine         
-    SFML::Graphics
-    SFML::Window
-    SFML::System
+        Engine
+        SFML::Graphics
+        SFML::Window
+        SFML::System
 )
 set(ASSETS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 set(ASSETS_DESTINATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
 
 add_custom_command(
-    TARGET main POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different 
-            "${ASSETS_SOURCE_DIR}"
-            "${ASSETS_DESTINATION_DIR}"
-    COMMENT "Copying assets to output directory"
+        TARGET main POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+        "${ASSETS_SOURCE_DIR}"
+        "${ASSETS_DESTINATION_DIR}"
+        COMMENT "Copying assets to output directory"
 )

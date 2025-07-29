@@ -81,6 +81,7 @@ sf::Vector2f Sword::GetSize() const
 
 bool Sword::Update(const sf::Time &DT)
 {
+
     if (m_Attacking)
     {
         m_Index = (m_Index + 1) % 3;
@@ -121,8 +122,8 @@ bool Sword::Update(const sf::Time &DT)
     if (m_Index == 2)
     {
         m_Attacking = false;
-        
     }
+
     m_Rect.position.x = 0 + m_Index * Enviroment::BaseSpriteSize;
     m_Shape.setTextureRect(m_Rect);
     return true;
