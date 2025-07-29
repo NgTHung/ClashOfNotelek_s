@@ -32,20 +32,20 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(json)
 
 FetchContent_Declare(googletest
-        GIT_REPOSITORY https://github.com/google/googletest
-        GIT_TAG v1.17.0
-        GIT_SHALLOW ON
-        EXCLUDE_FROM_ALL
-        SYSTEM
+    GIT_REPOSITORY https://github.com/google/googletest
+    GIT_TAG v1.17.0
+    GIT_SHALLOW ON
+    EXCLUDE_FROM_ALL
+    SYSTEM
 )
 FetchContent_MakeAvailable(googletest)
 
 file(GLOB GameEventSource "src/Event/*.cpp")
 add_library(GameEvent STATIC
-        ${GameEventSource}
+    ${GameEventSource}
 )
 target_include_directories(GameEvent PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 file(GLOB GameCommandSource "src/Command/*.cpp")
@@ -65,27 +65,27 @@ target_link_libraries(GameCommand PUBLIC
 file(GLOB GameUtilitySource "src/Utility/*.cpp")
 # Utility Library
 add_library(GameUtility STATIC
-        ${GameUtilitySource}
+    ${GameUtilitySource}
 )
 target_include_directories(GameUtility PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 file(GLOB GameGraphicSource "src/Graphic/*.cpp")
 # Graphic Library
 add_library(GameGraphic STATIC
-        ${GameGraphicSource}
+    ${GameGraphicSource}
 )
 target_include_directories(GameGraphic PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_link_libraries(GameGraphic PUBLIC
-        SFML::Graphics
-        GameUtility
-        GameState
-        GameEvent
-        GameCommand
-        nlohmann_json::nlohmann_json
+    SFML::Graphics
+    GameUtility
+    GameState
+    GameEvent
+    GameCommand
+    nlohmann_json::nlohmann_json
 )
 
 file(GLOB GameResourcesSource "src/Resources/*.cpp")
@@ -138,6 +138,7 @@ target_link_libraries(Engine PUBLIC
         GameUtility
         GameEvent
         GameCommand
+
 )
 
 # --- Main Executable ---

@@ -32,10 +32,6 @@ private:
     Button(Engine &g_Engine, const sf::Vector2f &);
 
 public:
-    void SetScale(const sf::Vector2f &scale) override;
-
-    void SetRotation(float angle) override;
-
     GlobalEventType GetCollisionEventType() const override;
 
 private:

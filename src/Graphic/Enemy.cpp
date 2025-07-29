@@ -81,7 +81,10 @@ bool Slime::HandleEvent(std::shared_ptr<BaseEvent> Event)
             }
 
         }
-
+        default: {
+            LOG_ERROR("Unhandled event type in Slime: {}", static_cast<int>(Event->GetEventType()));
+            return false;
+        }
     }
     return false;
 }

@@ -12,7 +12,7 @@ Wall::Wall(Engine &g_engine, const sf::Vector2f &position, const sf::Vector2f &s
     m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
     m_Shape.setSize(size);
     m_Shape.setPosition(position);
-    setPosition(position);
+    Collidable::SetPosition(position);
     m_Shape.setFillColor(sf::Color::White);
     m_Shape.setOutlineColor(sf::Color::White);
     m_Shape.setOutlineThickness(1.f);
@@ -20,18 +20,6 @@ Wall::Wall(Engine &g_engine, const sf::Vector2f &position, const sf::Vector2f &s
     m_Vertices.push_back(sf::Vector2f(size.x, 0));
     m_Vertices.push_back(sf::Vector2f(size.x, size.y));
     m_Vertices.push_back(sf::Vector2f(0, size.y));
-}
-
-void Wall::SetPosition(const sf::Vector2f &position) {
-    setPosition(position);
-}
-
-void Wall::SetScale(const sf::Vector2f &scale) {
-    setScale(scale);
-}
-
-void Wall::SetRotation(float angle) {
-    setRotation(sf::degrees(angle));
 }
 
 GlobalEventType Wall::GetCollisionEventType() const {
