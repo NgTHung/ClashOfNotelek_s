@@ -33,5 +33,6 @@ public:
         void SetScale(const sf::Vector2f& scale) override;
         void draw(sf::RenderTarget &Target, sf::RenderStates states) const override;
         GlobalEventType GetCollisionEventType() const override;
+        float GetYAxisPoint() override;
 
 };

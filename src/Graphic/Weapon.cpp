@@ -28,7 +28,7 @@ Sword::Sword(Engine &g_Engine) : Weapon(Enviroment::DefaultIntRect), m_Engine(g_
     m_Attacking = false;
     m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("sword.png"));
     m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::AttackableLayer);
-    //this->m_Vertices.push_back(sf::Vector2f(-2,-15));
+
 }
 
 Sword::~Sword()

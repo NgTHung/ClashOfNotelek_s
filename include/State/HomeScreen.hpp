@@ -7,7 +7,7 @@
 #include "Graphic/Wall.hpp"
 
 #include <random>
-
+#include "Graphic/MapEntity.hpp"
 enum EnemyType{
     slime,
     EnemyTypeCount
@@ -30,7 +30,11 @@ public:
 private:
     Character m_Character;
     std::vector<std::shared_ptr<Wall>> m_Walls;
-    std::vector<std::shared_ptr<Wall>> m_BoundingBoxes;
+    std::vector<std::shared_ptr<Tree>> m_Trees;
+    std::vector<std::shared_ptr<Grass>> m_Grasses;
+    std::vector<std::shared_ptr<TinyGrass>> m_TinyGrasses;
+    std::vector<std::shared_ptr<Box>> m_Boxes;
+    std::vector<GraphicBase*> m_RenderQueue;
     sf::Sprite m_MapTexture;
     Slime m_Slime;
     std::vector<std::shared_ptr<Enemy>> m_Enemy;

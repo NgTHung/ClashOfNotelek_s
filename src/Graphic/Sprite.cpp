@@ -18,6 +18,7 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_Weapon->SetScale(Enviroment::SpriteScalingFactor);
     this->Character::SetScale(Enviroment::SpriteScalingFactor);
     this->Character::SetPosition(Position);
+    m_OldPosition = {0,0};
     this->SetIntRect(IntRect);
     m_Shape.setSize(Character::GetSize());
     m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("hi.png"));
@@ -39,6 +40,19 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_Vertices[1] = sf::Vector2f{26,0};
     this->m_Vertices[2] = sf::Vector2f{26,32};
     this->m_Vertices[3] = sf::Vector2f{6,32};
+
+    this->m_FootVertices.resize(4);
+    this->m_FootVertices[0] = sf::Vector2f{11,29};
+    this->m_FootVertices[2] = sf::Vector2f{22,29};
+    this->m_FootVertices[3] = sf::Vector2f{22,32};
+    this->m_FootVertices[1] = sf::Vector2f{11,32};
+
+    m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::PlayerCollisionLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::FootCollisionLayer);
+
+    this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
+    EventDispatcher::GetInstance().RegisterListener(
+            GlobalEventType::CharacterCollision, m_Listener);
 }
 
 Weapon &Character::GetWeapon() const {
@@ -105,9 +119,18 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                 }
             }
             switch (CollidableB->GetCollisionEventType()) {
+                case GlobalEventType::MapEntityCollision:
+                    {
+                        if (m_Engine.GetCollisionSystem().CheckSATCollision(this->GetFootVertices(),CollidableB->GetTransformedPoints()))
+                        {
+                            LOG_DEBUG("Character Foot collided with MapEntity ID: {}", CollidableB->GetID());
+                            Character::SetPosition(m_OldPosition);
+                        }
+                        break;
+                    }
                 case GlobalEventType::WallCollision: {
                     LOG_DEBUG("Character collided with Wall ID: {}", CollidableB->GetID());
-                    // Handle wall collision logic here
+                    Character::SetPosition(m_OldPosition);
                     break;
                 }
                 case GlobalEventType::EnemyCollision: {
@@ -161,6 +184,9 @@ bool Character::FixLagUpdate(const sf::Time &DT) {
 }
 
 void Character::SetPosition(const sf::Vector2f &position) {
+    if (this->m_OldPosition != position)
+        this->m_OldPosition = Collidable::GetPosition();
+    //m_Shape.setPosition(position);
     Collidable::SetPosition(position);
     this->m_Weapon->SetPosition(position);
 }
@@ -317,4 +343,20 @@ void Character::RemoveDirection(const Direction NewDirection) {
 
 std::set<Direction> Character::GetDirection() {
     return this->s;
+}
+
+float Character::GetYAxisPoint()
+{
+    sf::Transform tf = Collidable::GetTransform();
+    sf::Vector2f tmp = tf.transformPoint(this->m_Vertices[3]);
+    return tmp.y;
+}
+
+std::vector<sf::Vector2f> Character::GetFootVertices() const
+{
+    std::vector<sf::Vector2f> tmp;
+    sf::Transform tf = this->GetTransform();
+    for (auto vertices : m_FootVertices)
+        tmp.push_back(tf.transformPoint(vertices));
+    return tmp;
 }

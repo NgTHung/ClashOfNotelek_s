@@ -50,3 +50,12 @@ GlobalEventType SwordCollisionEvent::GetEventType() const
     return GlobalEventType::SwordCollision;
 }
 
+MapEntityCollisionEvent::MapEntityCollisionEvent(Collidable*& A, Collidable*& B): CollisionEvent(A,B)
+{
+}
+
+GlobalEventType MapEntityCollisionEvent::GetEventType() const
+{
+    return GlobalEventType::MapEntityCollision;
+}
+

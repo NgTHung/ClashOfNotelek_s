@@ -197,11 +197,12 @@ std::unique_ptr<BaseState<Character> > CharacterMovingState::Update(const sf::Ti
     if (this->m_Instance.GetDirection().size() == 2) {
         NewPosition *= Enviroment::VelocityNormalizationValue;
     }
-    if (m_Engine.GetCollisionSystem().IsFree(this->m_Instance.GetPosition() + NewPosition, m_Instance, Enviroment::PlayerCollisionLayer)) {
-        this->m_Instance.SetPosition(NewPosition + this->m_Instance.GetPosition());
-    } else {
-        LOG_DEBUG("Character Moving State: Collision Detected, not moving");
-    }
+    this->m_Instance.SetPosition(NewPosition + this->m_Instance.GetPosition());
+    // if (m_Engine.GetCollisionSystem().IsFree(this->m_Instance.GetPosition() + NewPosition, m_Instance, Enviroment::PlayerCollisionLayer)) {
+    //
+    // } else {
+    //     LOG_DEBUG("Character Moving State: Collision Detected, not moving");
+    // }
     this->m_Instance.NextFrame(Enviroment::CharacterMovingFrameCount,DT);
     return nullptr;
 }

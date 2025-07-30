@@ -5,6 +5,7 @@
 #include "Base.hpp"
 #include "Graphic/Player.hpp"
 #include "Graphic/Weapon.hpp"
+#include "SFML/Audio/Listener.hpp"
 
 enum class AnimationTag {
     IDLE_S_W,
@@ -19,6 +20,7 @@ enum class AnimationTag {
 
 class Character : public GraphicBase {
 private:
+    EventDispatcher::EventListener m_Listener;
     Engine &m_Engine;
     std::unique_ptr<BaseState<Character> > m_CharacterState;
     sf::IntRect m_IntRect;
@@ -32,7 +34,9 @@ private:
     AnimationTag m_CurrentAnimationTag;
     std::shared_ptr<Weapon> m_Weapon;
     sf::RectangleShape m_Shape;
+    sf::Vector2f m_OldPosition;
     int m_MiliSecondUpdate = 0;
+    std::vector<sf::Vector2f> m_FootVertices;
 
 public:
     Character(Engine &g_Engine);
@@ -81,4 +85,8 @@ public:
     GlobalEventType GetCollisionEventType() const override;
 
     sf::Vector2f GetSize() const override;
+
+    float GetYAxisPoint() override;
+
+    std::vector<sf::Vector2f> GetFootVertices() const;
 };
