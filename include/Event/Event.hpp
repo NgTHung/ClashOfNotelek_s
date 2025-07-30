@@ -15,8 +15,10 @@ enum class GlobalEventType
     CharacterCollision,
     WallCollision,
     EnemyCollision,
+    MapEntityCollision,
     SwordCollision,
     CharacterAttack,
+
 };
 
 class BaseEvent

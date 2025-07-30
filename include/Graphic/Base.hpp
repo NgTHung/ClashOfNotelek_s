@@ -16,4 +16,5 @@ public:
     virtual bool Update(const sf::Time &) = 0;
     virtual bool FixLagUpdate(const sf::Time &) = 0;
     virtual bool HandleInput(const sf::Event &) = 0;
+    virtual float GetYAxisPoint();
 };

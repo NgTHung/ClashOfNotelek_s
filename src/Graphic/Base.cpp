@@ -10,3 +10,9 @@ ArielText::ArielText() : Text(ResourcesManager::GetManager().GetFontHolder().Get
 
 GraphicBase::GraphicBase(const sf::Vector2f &size): Collidable(size) {
 }
+
+float GraphicBase::GetYAxisPoint()
+{
+    return -1.0f;
+}
+

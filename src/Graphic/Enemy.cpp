@@ -131,3 +131,11 @@ GlobalEventType Slime::GetCollisionEventType() const
     return GlobalEventType::EnemyCollision;
 }
 
+float Slime::GetYAxisPoint()
+{
+    sf::Transform tf = Collidable::GetTransform();
+    sf::Vector2f tmp = tf.transformPoint(this->m_Vertices[3]);
+    return tmp.y;
+}
+
+

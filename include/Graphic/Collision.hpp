@@ -73,5 +73,5 @@ public:
 
     void RemoveCollidable(const int &CollidableID, int layer);
 
-    bool IsFree(sf::Vector2f newPosition, Collidable &collidable, int layer) const;
+   // bool IsFree(sf::Vector2f newPosition, Collidable &collidable, int layer) const;
 };

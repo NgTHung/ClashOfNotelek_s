@@ -107,6 +107,11 @@ std::shared_ptr<BaseEvent> CollisionSystem::CollisionEventFactory(Collidable *A,
     {
         return std::make_shared<SwordCollisionEvent>(A, B);
     }
+    if (A->GetCollisionEventType() == GlobalEventType::MapEntityCollision)
+    {
+        return std::make_shared<MapEntityCollisionEvent>(A, B);
+    }
+
     LOG_ERROR("Unknown collision event type for collidable with ID: {}", A->GetID());
     return nullptr;
 }
@@ -162,25 +167,25 @@ void CollisionSystem::RemoveCollidable(const int &ID, int layer)
     }
 }
 
-bool CollisionSystem::IsFree(sf::Vector2f newPosition, Collidable &collidable, const int layer) const
-{
-    sf::Vector2f OldPosition = collidable.GetPosition();
-    collidable.SetPosition(newPosition);
-    for (auto &OtherCollidable : m_CollisionLayers[layer])
-    {
-        if (OtherCollidable->GetID() == collidable.GetID())
-        {
-            continue;
-        }
-        if (CheckSATCollision(collidable.GetTransformedPoints(), OtherCollidable->GetTransformedPoints()))
-        {
-            collidable.SetPosition(OldPosition);
-            return false;
-        }
-    }
-    collidable.SetPosition(OldPosition);
-    return true;
-}
+// bool CollisionSystem::IsFree(sf::Vector2f newPosition, Collidable &collidable, const int layer) const
+// {
+//     sf::Vector2f OldPosition = collidable.GetPosition();
+//     collidable.SetPosition(newPosition);
+//     for (auto &OtherCollidable : m_CollisionLayers[layer])
+//     {
+//         if (OtherCollidable->GetID() == collidable.GetID())
+//         {
+//             continue;
+//         }
+//         if (CheckSATCollision(collidable.GetTransformedPoints(), OtherCollidable->GetTransformedPoints()))
+//         {
+//             collidable.SetPosition(OldPosition);
+//             return false;
+//         }
+//     }
+//     collidable.SetPosition(OldPosition);
+//     return true;
+// }
 
 std::vector<sf::Vector2f> CollisionSystem::GetAxes(const std::vector<sf::Vector2f> &Points)
 {
