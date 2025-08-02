@@ -26,7 +26,7 @@ public:
     void CameraProcess();
     // Player function
     // Enemy function
-    void SpawnEnemy(Engine &g_Engine);
+    void SpawnEnemy();
 private:
     Character m_Character;
     std::vector<std::shared_ptr<Wall>> m_Walls;
@@ -36,6 +36,5 @@ private:
     std::vector<std::shared_ptr<Box>> m_Boxes;
     std::vector<GraphicBase*> m_RenderQueue;
     sf::Sprite m_MapTexture;
-    Slime m_Slime;
     std::vector<std::shared_ptr<Enemy>> m_Enemy;
 };

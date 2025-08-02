@@ -7,8 +7,7 @@
 
 HomeScreen::HomeScreen(Engine &g_Engine)
     : Screen(g_Engine), m_Character(g_Engine),
-      m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),
-      m_Slime(g_Engine)
+      m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png"))
 {
     //m_Walls.push_back(std::make_shared<Wall>(this->m_Engine,sf::Vector2f(0,0),sf::Vector2f(26,299)));
     m_MapTexture.setScale(sf::Vector2f(10,10));
@@ -47,6 +46,7 @@ HomeScreen::HomeScreen(Engine &g_Engine)
     for (auto wall : m_Walls)
         wall->SetScale(sf::Vector2f(10,10));
     m_Enemy.clear();
+    SpawnEnemy();
 }
 
 bool HomeScreen::Render(sf::RenderTarget &Renderer)
@@ -130,7 +130,7 @@ void HomeScreen::CameraProcess()
 
 
 //Enemy function
-void HomeScreen::SpawnEnemy(Engine &g_Engine){
+void HomeScreen::SpawnEnemy(){
     std::random_device rd; 
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distrib(1, 10);
@@ -144,7 +144,7 @@ void HomeScreen::SpawnEnemy(Engine &g_Engine){
         switch (type)
         {
         case EnemyType::slime:
-            fac_Enemy = new Slime(g_Engine);
+            fac_Enemy = new Slime(m_Engine);
             break;
         default:
             break;
