@@ -102,6 +102,7 @@ bool Slime::FixLagUpdate(const sf::Time& DT)
 void Slime::SetPosition(const sf::Vector2f& position)
 {
     GraphicBase::SetPosition(position);
+    this->m_Shape.setPosition(position);
 }
 
 bool Slime::SetIntRect(const sf::IntRect& rect)
