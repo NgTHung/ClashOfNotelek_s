@@ -22,6 +22,16 @@ void Engine::SetView(const sf::View& view)
     m_Window.setView(view);
 }
 
+void Engine::ShakeScreen()
+{
+    m_ScreenShake.Start();
+}
+
+ScreenShake& Engine::GetScreenShake()
+{
+    return m_ScreenShake;
+}
+
 void Engine::ResetView()
 {
     m_Window.setView(Enviroment::DefaultView);

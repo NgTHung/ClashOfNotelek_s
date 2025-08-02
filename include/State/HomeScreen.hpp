@@ -6,8 +6,10 @@
 #include "Graphic/Enemy.hpp"
 #include "Graphic/Wall.hpp"
 
+#pragma once
 #include <random>
 #include "Graphic/MapEntity.hpp"
+#include "Graphic/ScreenShake.hpp"
 enum EnemyType{
     slime,
     EnemyTypeCount
@@ -26,8 +28,9 @@ public:
     void CameraProcess();
     // Player function
     // Enemy function
-    void SpawnEnemy(Engine &g_Engine);
+    void SpawnEnemy();
 private:
+
     Character m_Character;
     std::vector<std::shared_ptr<Wall>> m_Walls;
     std::vector<std::shared_ptr<Tree>> m_Trees;

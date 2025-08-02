@@ -6,6 +6,7 @@
 #include "Event/EventDispatcher.hpp"
 #include "Graphic/Collision.hpp"
 #include "State/Screen.hpp"
+#include "Graphic/ScreenShake.hpp"
 
 class Engine
 {
@@ -23,6 +24,8 @@ public:
 
     void ResetWindow();
     void SetView(const sf::View& view);
+    void ShakeScreen();
+    ScreenShake& GetScreenShake();
     void ResetView();
     const sf::RenderWindow &GetWindow() const;
     Screen &GetCurrentState() const;
@@ -37,7 +40,7 @@ private:
     bool HandleInput();
     bool TryPop();
 
-
+    ScreenShake m_ScreenShake;
     sf::RenderWindow m_Window;
     std::vector<std::unique_ptr<Screen>> m_States;
     bool m_ShouldPop;

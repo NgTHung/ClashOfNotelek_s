@@ -6,9 +6,9 @@
 // Define start State
 
 HomeScreen::HomeScreen(Engine &g_Engine)
-    : Screen(g_Engine), m_Character(g_Engine),
+    : Screen(g_Engine),m_Character(g_Engine),
       m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),
-      m_Slime(g_Engine)
+      m_Slime(m_Character,g_Engine)
 {
     //m_Walls.push_back(std::make_shared<Wall>(this->m_Engine,sf::Vector2f(0,0),sf::Vector2f(26,299)));
     m_MapTexture.setScale(sf::Vector2f(10,10));
@@ -73,9 +73,7 @@ bool HomeScreen::Render(sf::RenderTarget &Renderer)
 
     for (auto renderthing : m_RenderQueue)
         Renderer.draw(*renderthing);
-    //Renderer.draw(m_Tree);
-    //Renderer.draw(m_Character);
-    // Renderer.draw(m_Slime);
+
     return true;
 }
 
@@ -97,13 +95,40 @@ bool HomeScreen::FixLagUpdate(const sf::Time &DT)
 
 bool HomeScreen::Update(const sf::Time &DT)
 {
+
     for (auto tinygrass: m_TinyGrasses)
         tinygrass->Update(DT);
     for (auto grass : m_Grasses)
         grass->Update(DT);
+    for (auto enemy : m_Enemy)
+        enemy->Update(DT);
+
+    //delete dead enemy
+    for (const auto& enemy : m_Enemy)
+    {
+        if (enemy->GetState() == EnemyState::Dead)
+        {
+            m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::AttackableLayer);
+        }
+    }
+    m_Enemy.erase(
+    std::remove_if(m_Enemy.begin(), m_Enemy.end(),
+        [](const std::shared_ptr<Enemy>& enemy)
+        {
+            return enemy->GetState() == EnemyState::Dead;
+        }),
+    m_Enemy.end());
+
     this->CameraProcess();
+    m_Engine.SetView(m_Engine.GetScreenShake().GetShakeViewUpdate(DT,m_Engine.GetWindow().getView()));
+    if (this->m_Enemy.size() < 2)
+        this->SpawnEnemy();
+
     return m_Character.Update(DT);
 }
+
+
+
 
 void HomeScreen::CameraProcess()
 {
@@ -129,13 +154,14 @@ void HomeScreen::CameraProcess()
 }
 
 
+
 //Enemy function
-void HomeScreen::SpawnEnemy(Engine &g_Engine){
+void HomeScreen::SpawnEnemy(){
     std::random_device rd; 
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distrib(1, 10);
-    int num = distrib(gen);
-
+//int num = distrib(gen);
+    int num = 2;
     Enemy * fac_Enemy;
     for (int i = 0; i < num; i ++){
         std::uniform_int_distribution<> count(0, EnemyTypeCount - 1);
@@ -144,7 +170,7 @@ void HomeScreen::SpawnEnemy(Engine &g_Engine){
         switch (type)
         {
         case EnemyType::slime:
-            fac_Enemy = new Slime(g_Engine);
+            fac_Enemy = new Slime(m_Character,this->m_Engine);
             break;
         default:
             break;
@@ -153,12 +179,15 @@ void HomeScreen::SpawnEnemy(Engine &g_Engine){
         // random position to spawn
         // set position for each enemy
         // fac_Enemy->SetPosition(n_Position); need to edit
-        std::uniform_int_distribution<> distribx(0, Enviroment::ScreenResolution.x);
+       // std::uniform_int_distribution<> distribx(0, m_MapTexture.getGlobalBounds().size.x);
+        std::uniform_int_distribution<> distribx(0, Enviroment::ScreenResolution.x - 1);
         int x = distribx(gen);
-        std::uniform_int_distribution<> distriby(0, Enviroment::ScreenResolution.y);
+        //std::uniform_int_distribution<> distriby(0, m_MapTexture.getGlobalBounds().size.y);
+        std::uniform_int_distribution<> distriby(0, Enviroment::ScreenResolution.y - 1);
         int y = distriby(gen);
         sf::Vector2f pos = {x, y};
         fac_Enemy->SetPosition(pos);
+        fac_Enemy->SetStartPosition(pos);
         m_Enemy.emplace_back(fac_Enemy);
     }
 }

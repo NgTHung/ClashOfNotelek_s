@@ -49,6 +49,7 @@ namespace Enviroment
 
     const float SwordAttackCooldown = 1.0f;
     const int SwordDame = 10;
+    const float KnockBackStrength = 250.0f;
 
     const std::vector<sf::Vector2f> TreePositions = {
         sf::Vector2f{40,35},

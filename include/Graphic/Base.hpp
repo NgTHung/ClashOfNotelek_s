@@ -11,6 +11,8 @@ public:
 
 class GraphicBase: public Collidable
 {
+protected:
+    int m_MiliSecondUpdate = 0;
 public:
     GraphicBase(const sf::Vector2f &size);
     virtual bool Update(const sf::Time &) = 0;

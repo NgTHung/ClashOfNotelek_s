@@ -5,7 +5,10 @@
 #include "Base.hpp"
 #include "Graphic/Player.hpp"
 #include "Graphic/Weapon.hpp"
+#include "State/KnockbackHandler.hpp"
 #include "SFML/Audio/Listener.hpp"
+
+
 
 enum class AnimationTag {
     IDLE_S_W,
@@ -20,6 +23,7 @@ enum class AnimationTag {
 
 class Character : public GraphicBase {
 private:
+
     EventDispatcher::EventListener m_Listener;
     Engine &m_Engine;
     std::unique_ptr<BaseState<Character> > m_CharacterState;
@@ -35,7 +39,6 @@ private:
     std::shared_ptr<Weapon> m_Weapon;
     sf::RectangleShape m_Shape;
     sf::Vector2f m_OldPosition;
-    int m_MiliSecondUpdate = 0;
     std::vector<sf::Vector2f> m_FootVertices;
 
 public:
@@ -89,4 +92,49 @@ public:
     float GetYAxisPoint() override;
 
     std::vector<sf::Vector2f> GetFootVertices() const;
+
+};
+
+enum EnemyState
+{
+    Patrol,
+    Chase,
+    Dying,
+    Dead,
+    None
+};
+
+class Enemy : public GraphicBase
+{
+public:
+    virtual ~Enemy() = default;
+    KnockBackHandler m_KnockBackHandler;
+    Enemy(Character& Player,Engine &g_Engine);
+    void SetStartPosition(const sf::Vector2f& position);
+    EnemyState GetState() const;
+    virtual void BeHitProcess() = 0;
+    virtual void Flash() = 0;
+    virtual void Die() = 0;
+protected:
+    sf::Vector2f m_StartPosition;
+    bool m_MovingRight;
+    float m_PatrolRange;
+    float m_Speed;
+    EnemyState m_State;
+    Character& m_Player;
+    sf::RectangleShape m_Shape;
+    sf::IntRect m_TextureRect;
+    int m_Index;
+    int m_HP;
+    Engine& m_Engine;
+    float m_Radius;
+    int m_LastAttackID;
+
+    //magic number
+    float m_DeathTimer = 0.f;
+    float m_DeathDuration = .6f;
+    float m_RotationSpeed = 1800.f;
+    float m_KnockbackSpeed =  500.f;
+
+    sf::Vector2f m_KnockBackDirection;
 };

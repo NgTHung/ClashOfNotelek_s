@@ -53,6 +53,9 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
             GlobalEventType::CharacterCollision, m_Listener);
+    EventDispatcher::GetInstance().RegisterListener(
+            GlobalEventType::EnemyCollision,m_Listener);
+
 }
 
 Weapon &Character::GetWeapon() const {
@@ -76,10 +79,12 @@ bool Character::Update(const sf::Time &DT) {
     if (auto NewState = m_CharacterState->Update(DT)) {
         ChangeState(std::move(NewState));
     }
+
     return true;
 }
 
 bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
+
     switch (Event.get()->GetEventType()) {
         case GlobalEventType::Generic: {
             LOG_ERROR("Incorrect populated Event");
@@ -93,6 +98,33 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             throw "Incorrect populated Event";
         }
         case GlobalEventType::CharacterMoved:
+            break;
+        case GlobalEventType::EnemyCollision:
+        {
+
+            auto CollisionEvent = std::dynamic_pointer_cast<EnemyCollisionEvent>(Event);
+            if (!CollisionEvent)
+            {
+                LOG_ERROR("Failed to cast Event to EnemyCollisionEvent");
+                return false;
+            }
+            Collidable *CollidableA = CollisionEvent->GetCollidableA();
+            Collidable *CollidableB = CollisionEvent->GetCollidableB();
+            if (!CollidableA || !CollidableB) {
+                LOG_ERROR("CollidableA or CollidableB is null in EnemyCollisionEvent");
+                return false;
+            }
+            if (CollidableA->GetID() == this->m_Weapon->GetID()) {
+                std::swap(CollidableA, CollidableB);
+            }
+            else if (CollidableB->GetID() != this->m_Weapon->GetID())
+            {
+                break;
+            }
+            if (CollidableB->GetCollisionEventType() != GlobalEventType::SwordCollision)
+                break;
+           break;
+        }
         case GlobalEventType::PlayerAttacked: {
             // this->m_PlayerState->AddEvent(Event.value());
             Event.reset();
@@ -162,6 +194,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             throw "Incorrect populated Event";
         }
     }
+
     // if (auto NewState = m_PlayerState->HandleEvent(*this))
     // {
     //     ChangeState(std::move(NewState));
@@ -170,6 +203,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
 }
 
 bool Character::HandleInput(const sf::Event &Event) {
+
     if (auto NewState = m_CharacterState->HandleInput(Event)) {
         ChangeState(std::move(NewState));
     }
@@ -359,4 +393,19 @@ std::vector<sf::Vector2f> Character::GetFootVertices() const
     for (auto vertices : m_FootVertices)
         tmp.push_back(tf.transformPoint(vertices));
     return tmp;
+}
+
+Enemy::Enemy(Character& Player, Engine &g_Engine): GraphicBase(sf::Vector2f(Enviroment::SpriteSize)), m_Engine(g_Engine),m_Player(Player)
+{
+    m_State = Patrol;
+}
+
+void Enemy::SetStartPosition(const sf::Vector2f& position)
+{
+    this->m_StartPosition = position;
+}
+
+EnemyState Enemy::GetState() const
+{
+    return this->m_State;
 }

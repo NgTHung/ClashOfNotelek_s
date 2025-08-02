@@ -6,7 +6,7 @@
 #include "Utility/IDGenerator.hpp"
 class Engine;
 
-class Collidable : private sf::Transformable, public sf::Drawable {
+class Collidable : public sf::Transformable, public sf::Drawable {
 private:
     ID m_ID;
     sf::Vector2f m_Size;
