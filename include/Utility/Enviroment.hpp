@@ -43,8 +43,8 @@ namespace Enviroment
     const float DefaultAttackingDamage = 50.0f;
     const sf::IntRect DefaultIntRect = {BaseLocation, SpriteSize};
     const int PlayerCollisionLayer = 1;
+    const int MapEntityCollisionLayer = 3;
     const int AttackableLayer = 2;
-    const int FootCollisionLayer = 3;
 
 
     const float SwordAttackCooldown = 1.0f;
@@ -100,5 +100,35 @@ namespace Enviroment
 
     const std::vector<sf::Vector2f> BoxPositions = {
         sf::Vector2f{91,23}
+    };
+
+    const std::vector<sf::FloatRect> WaterWall = {
+        {sf::Vector2f{0,0},sf::Vector2f{32,300}},
+        {sf::Vector2f{33,277},sf::Vector2f{330,24}},
+        {sf::Vector2f{33,124},sf::Vector2f{50,38}}  ,
+        {sf::Vector2f{111,123},sf::Vector2f{73,39}},
+        {sf::Vector2f{142,162},sf::Vector2f{41,52}},
+        {sf::Vector2f{228,166},sf::Vector2f{20,48}},
+        {sf::Vector2f{248,172},sf::Vector2f{67,42}},
+        {sf::Vector2f{337,244},sf::Vector2f{26,33}},
+        {sf::Vector2f{294,250},sf::Vector2f{43,27}},
+        {sf::Vector2f{290,213},sf::Vector2f{25,6}},
+        {sf::Vector2f{315,172},sf::Vector2f{91,16}},
+        {sf::Vector2f{362,103},sf::Vector2f{45,69}},
+        {sf::Vector2f{141,45},sf::Vector2f{98,48}},
+        {sf::Vector2f{363,296},sf::Vector2f{97,5}},
+        {sf::Vector2f{460,273},sf::Vector2f{62,28}},
+        {sf::Vector2f{522,0},sf::Vector2f{12,300}},
+        {sf::Vector2f{502,115},sf::Vector2f{20,73}},
+        {sf::Vector2f{32,0},sf::Vector2f{108,7}},
+        {sf::Vector2f{140,0},sf::Vector2f{69,13}},
+{sf::Vector2f{140,92},sf::Vector2f{43,32}},
+{sf::Vector2f{183,148},sf::Vector2f{44,65}},
+        {sf::Vector2f{209,0},sf::Vector2f{32,11}},
+        {sf::Vector2f{241,0},sf::Vector2f{6,9}},
+        {sf::Vector2f{247,0},sf::Vector2f{117,6}},
+        {sf::Vector2f{364,0},sf::Vector2f{158,6}},
+        {sf::Vector2f{361,6},sf::Vector2f{18,96}},
+        {sf::Vector2f{379,63},sf::Vector2f{48,40}}
     };
 }

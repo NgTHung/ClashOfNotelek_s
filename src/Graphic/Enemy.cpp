@@ -28,8 +28,8 @@ Slime::Slime(Character& Player, Engine &g_Engine):Enemy(Player,g_Engine)
 
     this->m_LastAttackID = -1;
     this->m_HP = 100;
-    m_Speed = 0;
-    m_PatrolRange = 500;
+    m_Speed = 60;
+    m_PatrolRange = 1000;
 }
 
 void Slime::UpdateState()
@@ -37,7 +37,7 @@ void Slime::UpdateState()
     sf::Vector2f PlayerPos = m_Player.GetPosition();
     float distance =  sqrt((PlayerPos.x - m_Shape.getPosition().x)*(PlayerPos.x - m_Shape.getPosition().x) + (PlayerPos.y - m_Shape.getPosition().y)*(PlayerPos.y - m_Shape.getPosition().y));
 
-    if (distance <= 100.0f)
+    if (distance <= 200.0f)
         m_State = EnemyState::Chase;
     else
         m_State = EnemyState::Patrol;
@@ -112,7 +112,10 @@ bool Slime::Update(const sf::Time &DT)
     {
         sf::Vector2f Pos = this->m_Shape.getPosition();
         m_KnockBackHandler.Update(Pos,DT.asSeconds());
-        Slime::SetPosition(Pos);
+        if (m_Engine.GetCollisionSystem().IsFree(Pos,*this,Enviroment::MapEntityCollisionLayer))
+            Slime::SetPosition(Pos);
+        else
+            this->m_KnockBackHandler.Stop();
         m_Index = -1;
         if (CanUpdateAnimation)
             UpdateAnimation();
@@ -159,7 +162,10 @@ bool Slime::Update(const sf::Time &DT)
             break;
         }
     }
-    Slime::SetPosition(Pos);
+    if (m_Engine.GetCollisionSystem().IsFree(Pos,*this,Enviroment::MapEntityCollisionLayer))
+        Slime::SetPosition(Pos);
+    else
+        m_MovingRight = !m_MovingRight;
     if (CanUpdateAnimation)
         UpdateAnimation();
     return true;
@@ -220,10 +226,6 @@ bool Slime::HandleEvent(std::shared_ptr<BaseEvent> Event)
                     this->Die();
             }
 
-        }
-        default: {
-            LOG_ERROR("Unhandled event type in Slime: {}", static_cast<int>(Event->GetEventType()));
-            return false;
         }
     }
     return false;

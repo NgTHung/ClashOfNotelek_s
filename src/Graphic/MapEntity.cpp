@@ -13,7 +13,7 @@
   this->m_Vertices.push_back(sf::Vector2f(22,25));
   this->m_Vertices.push_back(sf::Vector2f(22,30));
   this->m_Vertices.push_back(sf::Vector2f(8,30));
-  m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
+  m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::MapEntityCollisionLayer);
 }
 
 void Tree::SetPosition(const sf::Vector2f& position)
@@ -212,7 +212,7 @@ Box::Box(Engine& g_Engine,const sf::Vector2f& size):GraphicBase(size),m_Sprite(R
   this->m_Vertices.push_back(sf::Vector2f(31,24));
   this->m_Vertices.push_back(sf::Vector2f(31,31));
   this->m_Vertices.push_back(sf::Vector2f(17,31));
-  m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
+  m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::MapEntityCollisionLayer);
  }
 
 void Box::SetPosition(const sf::Vector2f& position)

@@ -8,11 +8,18 @@
 HomeScreen::HomeScreen(Engine &g_Engine)
     : Screen(g_Engine),m_Character(g_Engine),
       m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),
-      m_Slime(m_Character,g_Engine)
+      m_Slime(m_Character,g_Engine), m_Water(g_Engine)
 {
     //m_Walls.push_back(std::make_shared<Wall>(this->m_Engine,sf::Vector2f(0,0),sf::Vector2f(26,299)));
     m_MapTexture.setScale(sf::Vector2f(10,10));
     m_MapTexture.setPosition(sf::Vector2f(0, 0));
+
+    for (auto WaterWall : Enviroment::WaterWall)
+    {
+        sf::Vector2f Pos = sf::Vector2f(WaterWall.position.x * m_MapTexture.getScale().x,WaterWall.position.y * m_MapTexture.getScale().y);
+        sf::Vector2f Size = sf::Vector2f(WaterWall.size.x * m_MapTexture.getScale().x,WaterWall.size.y * m_MapTexture.getScale().y);
+        m_Water.AddWall(Pos,Size);
+    }
 
     for (auto box : Enviroment::BoxPositions)
     {
@@ -186,8 +193,11 @@ void HomeScreen::SpawnEnemy(){
         std::uniform_int_distribution<> distriby(0, Enviroment::ScreenResolution.y - 1);
         int y = distriby(gen);
         sf::Vector2f pos = {x, y};
-        fac_Enemy->SetPosition(pos);
-        fac_Enemy->SetStartPosition(pos);
-        m_Enemy.emplace_back(fac_Enemy);
+        if (m_Engine.GetCollisionSystem().IsFree(pos,*fac_Enemy,Enviroment::MapEntityCollisionLayer))
+        {
+            fac_Enemy->SetPosition(pos);
+            fac_Enemy->SetStartPosition(pos);
+            m_Enemy.emplace_back(fac_Enemy);
+        }
     }
 }

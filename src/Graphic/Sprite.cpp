@@ -48,7 +48,6 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_FootVertices[1] = sf::Vector2f{11,32};
 
     m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::PlayerCollisionLayer);
-    m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::FootCollisionLayer);
 
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
@@ -151,15 +150,6 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                 }
             }
             switch (CollidableB->GetCollisionEventType()) {
-                case GlobalEventType::MapEntityCollision:
-                    {
-                        if (m_Engine.GetCollisionSystem().CheckSATCollision(this->GetFootVertices(),CollidableB->GetTransformedPoints()))
-                        {
-                            LOG_DEBUG("Character Foot collided with MapEntity ID: {}", CollidableB->GetID());
-                            Character::SetPosition(m_OldPosition);
-                        }
-                        break;
-                    }
                 case GlobalEventType::WallCollision: {
                     LOG_DEBUG("Character collided with Wall ID: {}", CollidableB->GetID());
                     Character::SetPosition(m_OldPosition);
@@ -218,11 +208,10 @@ bool Character::FixLagUpdate(const sf::Time &DT) {
 }
 
 void Character::SetPosition(const sf::Vector2f &position) {
-    if (this->m_OldPosition != position)
-        this->m_OldPosition = Collidable::GetPosition();
-    //m_Shape.setPosition(position);
-    Collidable::SetPosition(position);
-    this->m_Weapon->SetPosition(position);
+    if (m_Engine.GetCollisionSystem().IsFree(position,*this,Enviroment::MapEntityCollisionLayer))
+    {
+        this->m_Weapon->SetPosition(position);
+    }
 }
 
 void Character::ChangeState(std::unique_ptr<BaseState<Character> > NewState) {

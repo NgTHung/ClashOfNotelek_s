@@ -54,7 +54,7 @@ public:
 
     bool FixLagUpdate(const sf::Time &DT) override;
 
-    void SetPosition(const sf::Vector2f &position) override;
+    void SetPosition(const sf::Vector2f &position) ;
 
     bool SetIntRect(const sf::IntRect &Rect);
 

@@ -5,11 +5,10 @@
 
 #include "Graphic/Enemy.hpp"
 #include "Graphic/Wall.hpp"
-
-#pragma once
 #include <random>
 #include "Graphic/MapEntity.hpp"
 #include "Graphic/ScreenShake.hpp"
+#include "Graphic/Water.hpp"
 enum EnemyType{
     slime,
     EnemyTypeCount
@@ -37,6 +36,7 @@ private:
     std::vector<std::shared_ptr<Grass>> m_Grasses;
     std::vector<std::shared_ptr<TinyGrass>> m_TinyGrasses;
     std::vector<std::shared_ptr<Box>> m_Boxes;
+    Water m_Water;
     std::vector<GraphicBase*> m_RenderQueue;
     sf::Sprite m_MapTexture;
     Slime m_Slime;
