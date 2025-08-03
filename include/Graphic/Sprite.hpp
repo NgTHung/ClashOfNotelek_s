@@ -3,9 +3,11 @@
 #include <SFML/Graphics.hpp>
 
 #include "Base.hpp"
+#include "SmokeVFX.hpp"
 #include "Graphic/Player.hpp"
 #include "Graphic/Weapon.hpp"
 #include "State/KnockbackHandler.hpp"
+#include "Graphic/SmokeVFX.hpp"
 #include "SFML/Audio/Listener.hpp"
 
 
@@ -101,6 +103,7 @@ enum EnemyState
     Chase,
     Dying,
     Dead,
+    CanDelete,
     None
 };
 
@@ -129,8 +132,11 @@ protected:
     Engine& m_Engine;
     float m_Radius;
     int m_LastAttackID;
+    HitSmokeVFX m_HitSmokeVFX;
+    DeadSmokeVFX m_DeadSmokeVFX;
 
     //magic number
+
     float m_DeathTimer = 0.f;
     float m_DeathDuration = .6f;
     float m_RotationSpeed = 1800.f;

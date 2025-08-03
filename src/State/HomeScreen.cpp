@@ -113,7 +113,7 @@ bool HomeScreen::Update(const sf::Time &DT)
     //delete dead enemy
     for (const auto& enemy : m_Enemy)
     {
-        if (enemy->GetState() == EnemyState::Dead)
+        if (enemy->GetState() == EnemyState::CanDelete)
         {
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::AttackableLayer);
         }
@@ -122,7 +122,7 @@ bool HomeScreen::Update(const sf::Time &DT)
     std::remove_if(m_Enemy.begin(), m_Enemy.end(),
         [](const std::shared_ptr<Enemy>& enemy)
         {
-            return enemy->GetState() == EnemyState::Dead;
+            return enemy->GetState() == EnemyState::CanDelete;
         }),
     m_Enemy.end());
 

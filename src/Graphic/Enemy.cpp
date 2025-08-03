@@ -27,7 +27,7 @@ Slime::Slime(Character& Player, Engine &g_Engine):Enemy(Player,g_Engine)
             GlobalEventType::SwordCollision, m_Listener);
 
     this->m_LastAttackID = -1;
-    this->m_HP = 100;
+    this->m_HP = 30;
     m_Speed = 60;
     m_PatrolRange = 1000;
 }
@@ -75,12 +75,16 @@ void Slime::BeHitProcess()
     sf::Vector2f Pos = this->m_Shape.getPosition();
     sf::Vector2f Dir = Pos - PlayerPos;
     m_KnockBackHandler.ApplyVelocity(Dir,Enviroment::KnockBackStrength);
+    sf::Vector2f SmokePos = sf::Vector2f{this->getPosition().x + 15*this->getScale().x,this->getPosition().y + 27*this->getScale().y};
+    m_HitSmokeVFX.Active(SmokePos,Dir);
 }
 
 
 
 bool Slime::Update(const sf::Time &DT)
 {
+    m_HitSmokeVFX.Update(DT);
+    m_DeadSmokeVFX.Update(DT);
     bool CanUpdateAnimation = false;
     m_MiliSecondUpdate += DT.asMilliseconds();
     if (m_MiliSecondUpdate >= 120)
@@ -102,12 +106,21 @@ bool Slime::Update(const sf::Time &DT)
         if (m_DeathTimer >= m_DeathDuration) {
             m_State = EnemyState::Dead;
             m_Engine.ShakeScreen();
+            m_DeadSmokeVFX.Active(this->getPosition());
             return true;
         }
         return false;
     }
 
-    if (m_State == EnemyState::Dead) return true;
+    if (m_State == EnemyState::Dead)
+    {
+        if (!m_DeadSmokeVFX.IsActive())
+        {
+            this->m_State = EnemyState::CanDelete;
+            return true;
+        }
+        return false;
+    }
     if (m_KnockBackHandler.IsActive())
     {
         sf::Vector2f Pos = this->m_Shape.getPosition();
@@ -272,9 +285,19 @@ void Slime::draw(sf::RenderTarget& Target, sf::RenderStates states) const
     HP.setCharacterSize(24);
     HP.setFillColor(sf::Color::Red);
     HP.setPosition(sf::Vector2f(this->GetPosition().x + 3, this->GetPosition().y + 4));
-    Target.draw(HP);
-    Target.draw(this->m_Shape);
-    DrawDebug(Target);
+    if (m_HitSmokeVFX.IsActive())
+        m_HitSmokeVFX.draw(Target, states);
+    if (m_DeadSmokeVFX.IsActive())
+    {
+        m_DeadSmokeVFX.draw(Target, states);
+
+    }
+    if (m_State != EnemyState::Dead && m_State != EnemyState::CanDelete)
+    {
+        Target.draw(HP);
+        Target.draw(this->m_Shape);
+        DrawDebug(Target);
+    }
 }
 
 GlobalEventType Slime::GetCollisionEventType() const
