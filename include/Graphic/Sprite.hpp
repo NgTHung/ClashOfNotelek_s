@@ -7,6 +7,7 @@
 #include "Graphic/Player.hpp"
 #include "Graphic/Weapon.hpp"
 #include "State/KnockbackHandler.hpp"
+#include "Graphic/HealthBar.hpp"
 #include "Graphic/SmokeVFX.hpp"
 #include "SFML/Audio/Listener.hpp"
 
@@ -42,6 +43,7 @@ private:
     sf::RectangleShape m_Shape;
     sf::Vector2f m_OldPosition;
     std::vector<sf::Vector2f> m_FootVertices;
+    HealthBar m_Healthbar;
 
 public:
     Character(Engine &g_Engine);
@@ -115,6 +117,10 @@ public:
     Enemy(Character& Player,Engine &g_Engine);
     void SetStartPosition(const sf::Vector2f& position);
     EnemyState GetState() const;
+    virtual  void OffAttack() = 0;
+    virtual  void OnAttack() = 0;
+    virtual  void Attack() = 0;
+    float GetDame() const;
     virtual void BeHitProcess() = 0;
     virtual void Flash() = 0;
     virtual void Die() = 0;
@@ -134,9 +140,12 @@ protected:
     int m_LastAttackID;
     HitSmokeVFX m_HitSmokeVFX;
     DeadSmokeVFX m_DeadSmokeVFX;
+    HealthBar m_HealthBar;
+    float m_Dame;
 
     //magic number
-
+    float m_AttackTimer = 0.f;
+    float m_AttackCooldown = 2.f;
     float m_DeathTimer = 0.f;
     float m_DeathDuration = .6f;
     float m_RotationSpeed = 1800.f;

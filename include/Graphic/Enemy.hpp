@@ -23,6 +23,9 @@ public:
         void SetScale(const sf::Vector2f& scale) override;
         void SetRotation(const float angle) override;
         void draw(sf::RenderTarget &Target, sf::RenderStates states) const override;
+        void OffAttack() override;
+        void OnAttack() override;
+        void Attack() override;
         GlobalEventType GetCollisionEventType() const override;
         float GetYAxisPoint() override;
         void UpdateAnimation();

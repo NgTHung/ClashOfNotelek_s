@@ -22,15 +22,30 @@ Slime::Slime(Character& Player, Engine &g_Engine):Enemy(Player,g_Engine)
     this->m_Vertices.push_back(sf::Vector2f(4,Enviroment::BaseSpriteSize));
 
     m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::AttackableLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
             GlobalEventType::SwordCollision, m_Listener);
 
     this->m_LastAttackID = -1;
     this->m_HP = 30;
+    this->m_Dame = 5;
+    m_HealthBar.SetMaxHealth(this->m_HP);
     m_Speed = 60;
     m_PatrolRange = 1000;
 }
+
+void Slime::OffAttack()
+{
+    this->m_Dame = 0;
+}
+
+void Slime::OnAttack()
+{
+    this->m_Dame = 5;
+}
+
+
 
 void Slime::UpdateState()
 {
@@ -79,14 +94,26 @@ void Slime::BeHitProcess()
     m_HitSmokeVFX.Active(SmokePos,Dir);
 }
 
+void Slime::Attack()
+{
+    m_AttackTimer = 0;
+    Slime::OffAttack();
+}
 
 
 bool Slime::Update(const sf::Time &DT)
 {
+    m_HealthBar.Update(this->m_HP,this->GetPosition());
     m_HitSmokeVFX.Update(DT);
     m_DeadSmokeVFX.Update(DT);
     bool CanUpdateAnimation = false;
     m_MiliSecondUpdate += DT.asMilliseconds();
+    m_AttackTimer += DT.asSeconds();
+    if (m_AttackTimer >= 1.5)
+    {
+        OnAttack();
+        m_AttackTimer -= 1.5;
+    }
     if (m_MiliSecondUpdate >= 120)
     {
         CanUpdateAnimation = true;
@@ -280,11 +307,11 @@ void Slime::SetRotation(const float angle)
 
 void Slime::draw(sf::RenderTarget& Target, sf::RenderStates states) const
 {
-    sf::Text HP(ResourcesManager::GetManager().GetFontHolder().GetFont("arial.ttf"));
-    HP.setString(std::to_string(this->m_HP));
-    HP.setCharacterSize(24);
-    HP.setFillColor(sf::Color::Red);
-    HP.setPosition(sf::Vector2f(this->GetPosition().x + 3, this->GetPosition().y + 4));
+    // sf::Text HP(ResourcesManager::GetManager().GetFontHolder().GetFont("arial.ttf"));
+    // HP.setString(std::to_string(this->m_HP));
+    // HP.setCharacterSize(24);
+    // HP.setFillColor(sf::Color::Red);
+    // HP.setPosition(sf::Vector2f(this->GetPosition().x + 3, this->GetPosition().y + 4));
     if (m_HitSmokeVFX.IsActive())
         m_HitSmokeVFX.draw(Target, states);
     if (m_DeadSmokeVFX.IsActive())
@@ -294,9 +321,10 @@ void Slime::draw(sf::RenderTarget& Target, sf::RenderStates states) const
     }
     if (m_State != EnemyState::Dead && m_State != EnemyState::CanDelete)
     {
-        Target.draw(HP);
+        //Target.draw(HP);
         Target.draw(this->m_Shape);
         DrawDebug(Target);
+        m_HealthBar.Draw(Target);
     }
 }
 

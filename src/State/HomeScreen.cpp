@@ -116,6 +116,7 @@ bool HomeScreen::Update(const sf::Time &DT)
         if (enemy->GetState() == EnemyState::CanDelete)
         {
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::AttackableLayer);
+            m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::PlayerCollisionLayer);
         }
     }
     m_Enemy.erase(

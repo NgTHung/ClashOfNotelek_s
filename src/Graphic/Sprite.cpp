@@ -26,7 +26,9 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_CharacterState = std::make_unique<CharacterStandingState>(m_Engine, *this);
 
     this->m_CharacterState->EnterState();
-    // this->m_HP = 100; // Default HP value
+
+     this->m_HP = 100;
+    m_Healthbar.SetMaxHealth(this->m_HP);
     // set Default Directions
     this->isSouth = true;
     this->isNorth = false;
@@ -74,6 +76,7 @@ void Character::SetScale(const sf::Vector2f &Factor) {
 
 bool Character::Update(const sf::Time &DT) {
     // m_Sword.RotateToMouse();
+    m_Healthbar.Update(this->m_HP,this->getPosition());
     m_Weapon->Update(DT);
     if (auto NewState = m_CharacterState->Update(DT)) {
         ChangeState(std::move(NewState));
@@ -113,15 +116,23 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                 LOG_ERROR("CollidableA or CollidableB is null in EnemyCollisionEvent");
                 return false;
             }
-            if (CollidableA->GetID() == this->m_Weapon->GetID()) {
+            if (CollidableA->GetID() == this->GetID()) {
                 std::swap(CollidableA, CollidableB);
             }
-            else if (CollidableB->GetID() != this->m_Weapon->GetID())
+            else if (CollidableB->GetID() != this->GetID())
             {
                 break;
             }
-            if (CollidableB->GetCollisionEventType() != GlobalEventType::SwordCollision)
+            if (CollidableB->GetCollisionEventType() != GlobalEventType::CharacterCollision)
                 break;
+            if (auto enemy = dynamic_cast<Enemy*>(CollidableA))
+                if (enemy->GetDame() > 0)
+                {
+                    this->m_HP -= enemy->GetDame();
+                    enemy->Attack();
+                    m_Engine.ShakeScreen();
+                }
+
            break;
         }
         case GlobalEventType::PlayerAttacked: {
@@ -246,6 +257,7 @@ void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const {
     if (m_Weapon) {
         Target.draw(*m_Weapon, States);
     }
+    m_Healthbar.Draw(Target);
 }
 
 GlobalEventType Character::GetCollisionEventType() const {
@@ -398,3 +410,10 @@ EnemyState Enemy::GetState() const
 {
     return this->m_State;
 }
+
+float Enemy::GetDame() const
+{
+    return this->m_Dame;
+}
+
+
