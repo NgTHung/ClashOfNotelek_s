@@ -7,17 +7,12 @@
 #include "Resources/ResourcesManager.hpp"
 #include "Utility/Enviroment.hpp"
 
-Enemy::Enemy(Engine &g_Engine): GraphicBase(sf::Vector2f(Enviroment::SpriteSize)), m_Engine(g_Engine)
-{
 
-}
 
-Slime::Slime(Engine &g_Engine):Enemy(g_Engine)
+Slime::Slime(Character& Player, Engine &g_Engine):Enemy(Player,g_Engine)
 {
     this->m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("Slime.png"));
     Slime::SetScale(Enviroment::SpriteScalingFactor);
-    this->m_Shape.setScale(Enviroment::SpriteScalingFactor);
-    this->m_Shape.setPosition(sf::Vector2f(0,0));
     Slime::SetPosition(sf::Vector2f(0,0));
     this->m_Shape.setTextureRect(Enviroment::DefaultIntRect);
     this->m_Shape.setSize(Slime::GetSize());
@@ -25,20 +20,207 @@ Slime::Slime(Engine &g_Engine):Enemy(g_Engine)
     this->m_Vertices.push_back(sf::Vector2f(Enviroment::BaseSpriteSize - 6,15));
     this->m_Vertices.push_back(sf::Vector2f(Enviroment::BaseSpriteSize - 6,Enviroment::BaseSpriteSize));
     this->m_Vertices.push_back(sf::Vector2f(4,Enviroment::BaseSpriteSize));
+
     m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::AttackableLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
             GlobalEventType::SwordCollision, m_Listener);
+
     this->m_LastAttackID = -1;
+    this->m_HP = 30;
+    this->m_Dame = 5;
+    m_HealthBar.SetMaxHealth(this->m_HP);
+    m_Speed = 60;
+    m_PatrolRange = 1000;
 }
+
+void Slime::OffAttack()
+{
+    this->m_Dame = 0;
+}
+
+void Slime::OnAttack()
+{
+    this->m_Dame = 5;
+}
+
+
+
+void Slime::UpdateState()
+{
+    sf::Vector2f PlayerPos = m_Player.GetPosition();
+    float distance =  sqrt((PlayerPos.x - m_Shape.getPosition().x)*(PlayerPos.x - m_Shape.getPosition().x) + (PlayerPos.y - m_Shape.getPosition().y)*(PlayerPos.y - m_Shape.getPosition().y));
+
+    if (distance <= 200.0f)
+        m_State = EnemyState::Chase;
+    else
+        m_State = EnemyState::Patrol;
+}
+
+void Slime::UpdateAnimation()
+{
+    sf::IntRect TextureRect = this->m_Shape.getTextureRect();
+    if (m_MovingRight)
+        TextureRect.position.y = 3*Enviroment::BaseSpriteSize;
+    else
+        TextureRect.position.y = 2*Enviroment::BaseSpriteSize;
+    m_Index = (m_Index + 1) % 7;
+    TextureRect.position.x = m_Index*Enviroment::BaseSpriteSize;
+    m_Shape.setTextureRect(TextureRect);
+}
+
+void Slime::Flash()
+{
+    m_Index = 0;
+    sf::IntRect TextureRect = m_Shape.getTextureRect();
+    TextureRect.position.x = m_Index*Enviroment::BaseSpriteSize;
+    if (m_MovingRight)
+        TextureRect.position.y = 5*Enviroment::BaseSpriteSize;
+    else
+        TextureRect.position.y = 4*Enviroment::BaseSpriteSize;
+    m_Shape.setTextureRect(TextureRect);
+}
+
+
+void Slime::BeHitProcess()
+{
+    Flash();
+    sf::Vector2f PlayerPos = m_Player.GetPosition();
+    sf::Vector2f Pos = this->m_Shape.getPosition();
+    sf::Vector2f Dir = Pos - PlayerPos;
+    m_KnockBackHandler.ApplyVelocity(Dir,Enviroment::KnockBackStrength);
+    sf::Vector2f SmokePos = sf::Vector2f{this->getPosition().x + 15*this->getScale().x,this->getPosition().y + 27*this->getScale().y};
+    m_HitSmokeVFX.Active(SmokePos,Dir);
+}
+
+void Slime::Attack()
+{
+    m_AttackTimer = 0;
+    Slime::OffAttack();
+}
+
 
 bool Slime::Update(const sf::Time &DT)
 {
+    m_HealthBar.Update(this->m_HP,this->GetPosition());
+    m_HitSmokeVFX.Update(DT);
+    m_DeadSmokeVFX.Update(DT);
+    bool CanUpdateAnimation = false;
+    m_MiliSecondUpdate += DT.asMilliseconds();
+    m_AttackTimer += DT.asSeconds();
+    if (m_AttackTimer >= 1.5)
+    {
+        OnAttack();
+        m_AttackTimer -= 1.5;
+    }
+    if (m_MiliSecondUpdate >= 120)
+    {
+        CanUpdateAnimation = true;
+        m_MiliSecondUpdate -= 120;
+    }
+    if (m_State == EnemyState::Dying) {
+        float dt = DT.asSeconds();
+        m_DeathTimer += dt;
+        sf::Angle RotationAngle = Transformable::getRotation() + sf::degrees(m_RotationSpeed*dt);
+        Slime::SetRotation(RotationAngle.asDegrees());
+        Slime::Move(m_KnockBackDirection * m_KnockbackSpeed * dt);
+
+       // Slime::SetPosition(Pos);
+        m_Index = -1;
+        if (CanUpdateAnimation)
+            UpdateAnimation();
+        if (m_DeathTimer >= m_DeathDuration) {
+            m_State = EnemyState::Dead;
+            m_Engine.ShakeScreen();
+            m_DeadSmokeVFX.Active(this->getPosition());
+            return true;
+        }
+        return false;
+    }
+
+    if (m_State == EnemyState::Dead)
+    {
+        if (!m_DeadSmokeVFX.IsActive())
+        {
+            this->m_State = EnemyState::CanDelete;
+            return true;
+        }
+        return false;
+    }
+    if (m_KnockBackHandler.IsActive())
+    {
+        sf::Vector2f Pos = this->m_Shape.getPosition();
+        m_KnockBackHandler.Update(Pos,DT.asSeconds());
+        if (m_Engine.GetCollisionSystem().IsFree(Pos,*this,Enviroment::MapEntityCollisionLayer))
+            Slime::SetPosition(Pos);
+        else
+            this->m_KnockBackHandler.Stop();
+        m_Index = -1;
+        if (CanUpdateAnimation)
+            UpdateAnimation();
+        return false;
+    }
+    this->UpdateState();
+    float dt = DT.asSeconds();
+    sf::Vector2f PlayerPos = m_Player.GetPosition();
+    sf::Vector2f Pos = m_Shape.getPosition();
+    switch (m_State)
+    {
+    case EnemyState::Patrol:
+        {
+            if (m_MovingRight)
+            {
+                Pos.x += m_Speed * dt;
+                if (Pos.x > m_StartPosition.x + m_PatrolRange)
+                    m_MovingRight = false;
+            }
+            else
+            {
+                Pos.x -= m_Speed * dt;
+                if (Pos.x < m_StartPosition.x - m_PatrolRange)
+                    m_MovingRight = true;
+            }
+            break;
+        }
+    case::EnemyState::Chase:
+        {
+            if (PlayerPos.x > Pos.x)
+            {
+                Pos.x += m_Speed * dt;
+                m_MovingRight = true;
+            }
+            else
+            {
+                Pos.x -= m_Speed * dt;
+                m_MovingRight = false;
+            }
+            if (PlayerPos.y > Pos.y)
+                Pos.y += m_Speed * dt;
+            else
+                Pos.y -= m_Speed * dt;
+            break;
+        }
+    }
+    if (m_Engine.GetCollisionSystem().IsFree(Pos,*this,Enviroment::MapEntityCollisionLayer))
+        Slime::SetPosition(Pos);
+    else
+        m_MovingRight = !m_MovingRight;
+    if (CanUpdateAnimation)
+        UpdateAnimation();
     return true;
 }
 
+void Slime::Move(const sf::Vector2f& direction)
+{
+    Transformable::move(direction);
+    m_Shape.move(direction);
+}
+
+
 bool Slime::HandleEvent(std::shared_ptr<BaseEvent> Event)
 {
+    if (m_KnockBackHandler.IsActive()) return false;
     switch (Event.get()->GetEventType())
     {
     case GlobalEventType::Generic: {
@@ -78,12 +260,12 @@ bool Slime::HandleEvent(std::shared_ptr<BaseEvent> Event)
             {
                 this->m_LastAttackID = PlayerSword->GetAttackID();
                 this->m_HP -= PlayerSword->GetDamage();
+                this->BeHitProcess();
+                m_Engine.ShakeScreen();
+                if (this->m_HP <= 0)
+                    this->Die();
             }
 
-        }
-        default: {
-            LOG_ERROR("Unhandled event type in Slime: {}", static_cast<int>(Event->GetEventType()));
-            return false;
         }
     }
     return false;
@@ -102,6 +284,7 @@ bool Slime::FixLagUpdate(const sf::Time& DT)
 void Slime::SetPosition(const sf::Vector2f& position)
 {
     GraphicBase::SetPosition(position);
+    m_Shape.setPosition(position);
 }
 
 bool Slime::SetIntRect(const sf::IntRect& rect)
@@ -112,18 +295,37 @@ bool Slime::SetIntRect(const sf::IntRect& rect)
 void Slime::SetScale(const sf::Vector2f& scale)
 {
     GraphicBase::SetScale(scale);
+    m_Shape.setScale(scale);
 }
+
+void Slime::SetRotation(const float angle)
+{
+    GraphicBase::SetRotation(angle);
+    m_Shape.setRotation(sf::degrees(angle));
+}
+
 
 void Slime::draw(sf::RenderTarget& Target, sf::RenderStates states) const
 {
-    sf::Text HP(ResourcesManager::GetManager().GetFontHolder().GetFont("arial.ttf"));
-    HP.setString(std::to_string(this->m_HP));
-    HP.setCharacterSize(24);
-    HP.setFillColor(sf::Color::Red);
-    HP.setPosition(sf::Vector2f(this->GetPosition().x + 3, this->GetPosition().y + 4));
-    Target.draw(HP);
-    Target.draw(this->m_Shape, states);
-    DrawDebug(Target);
+    // sf::Text HP(ResourcesManager::GetManager().GetFontHolder().GetFont("arial.ttf"));
+    // HP.setString(std::to_string(this->m_HP));
+    // HP.setCharacterSize(24);
+    // HP.setFillColor(sf::Color::Red);
+    // HP.setPosition(sf::Vector2f(this->GetPosition().x + 3, this->GetPosition().y + 4));
+    if (m_HitSmokeVFX.IsActive())
+        m_HitSmokeVFX.draw(Target, states);
+    if (m_DeadSmokeVFX.IsActive())
+    {
+        m_DeadSmokeVFX.draw(Target, states);
+
+    }
+    if (m_State != EnemyState::Dead && m_State != EnemyState::CanDelete)
+    {
+        //Target.draw(HP);
+        Target.draw(this->m_Shape);
+        DrawDebug(Target);
+        m_HealthBar.Draw(Target);
+    }
 }
 
 GlobalEventType Slime::GetCollisionEventType() const
@@ -136,6 +338,18 @@ float Slime::GetYAxisPoint()
     sf::Transform tf = Collidable::GetTransform();
     sf::Vector2f tmp = tf.transformPoint(this->m_Vertices[3]);
     return tmp.y;
+}
+
+void Slime::Die()
+{
+    m_State = EnemyState::Dying;
+
+    m_KnockBackDirection =  this->GetPosition() - m_Player.GetPosition();
+    float Len = std::sqrt(m_KnockBackDirection.x*m_KnockBackDirection.x + m_KnockBackDirection.y*m_KnockBackDirection.y);
+    m_KnockBackDirection /= Len;
+    Transformable::setOrigin(sf::Vector2f(15,27));
+    m_Shape.setOrigin(sf::Vector2f(15,27));
+    Slime::SetPosition(sf::Vector2f(this->GetPosition().x + 15, this->GetPosition().y + 24));
 }
 
 

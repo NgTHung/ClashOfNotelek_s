@@ -5,9 +5,10 @@
 
 #include "Graphic/Enemy.hpp"
 #include "Graphic/Wall.hpp"
-
 #include <random>
 #include "Graphic/MapEntity.hpp"
+#include "Graphic/ScreenShake.hpp"
+#include "Graphic/Water.hpp"
 enum EnemyType{
     slime,
     EnemyTypeCount
@@ -26,14 +27,16 @@ public:
     void CameraProcess();
     // Player function
     // Enemy function
-    void SpawnEnemy(Engine &g_Engine);
+    void SpawnEnemy();
 private:
+
     Character m_Character;
     std::vector<std::shared_ptr<Wall>> m_Walls;
     std::vector<std::shared_ptr<Tree>> m_Trees;
     std::vector<std::shared_ptr<Grass>> m_Grasses;
     std::vector<std::shared_ptr<TinyGrass>> m_TinyGrasses;
     std::vector<std::shared_ptr<Box>> m_Boxes;
+    Water m_Water;
     std::vector<GraphicBase*> m_RenderQueue;
     sf::Sprite m_MapTexture;
     Slime m_Slime;

@@ -14,36 +14,38 @@ CharacterState::CharacterState(Engine &g_Engine, Character &CharacterInstance) :
 std::unique_ptr<BaseState<Character> > CharacterState::HandleInput(std::optional<sf::Event> Event) {
     std::shared_ptr<BaseCommand> currentCommand = nullptr;
     if (const auto *KeyPressed = Event->getIf<sf::Event::KeyPressed>()) {
-        switch (KeyPressed->scancode) {
-            // case sf::Keyboard::Scancode::Space:
-            // {
-            //     currentCommand = this->m_SpacePressedCommand;
-            //     break;
-            // }
-            case sf::Keyboard::Scancode::W: {
-                currentCommand = this->m_WPressedCommand;
-                break;
-            }
-            case sf::Keyboard::Scancode::A: {
-                currentCommand = this->m_APressedCommand;
-                break;
-            }
-            case sf::Keyboard::Scancode::S: {
-                currentCommand = this->m_SPressedCommand;
-                break;
-            }
-            case sf::Keyboard::Scancode::D: {
-                currentCommand = this->m_DPressedCommand;
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-    }
+           switch (KeyPressed->scancode) {
+               // case sf::Keyboard::Scancode::Space:
+               // {
+               //     currentCommand = this->m_SpacePressedCommand;
+               //     break;
+               // }
+           case sf::Keyboard::Scancode::W: {
+                   currentCommand = this->m_WPressedCommand;
+                   break;
+           }
+           case sf::Keyboard::Scancode::A: {
+                   currentCommand = this->m_APressedCommand;
+                   break;
+           }
+           case sf::Keyboard::Scancode::S: {
+                   currentCommand = this->m_SPressedCommand;
+                   break;
+           }
+           case sf::Keyboard::Scancode::D: {
+                   currentCommand = this->m_DPressedCommand;
+                   break;
+           }
+           default: {
+                   break;
+           }
+           }
+       }
+
     if (const auto *KeyPressed = Event->getIf<sf::Event::MouseButtonPressed>()) {
-        if (KeyPressed->button == sf::Mouse::Button::Left)
-            currentCommand = this->m_LeftClickCommand;
+            if (KeyPressed->button == sf::Mouse::Button::Left)
+                currentCommand = this->m_LeftClickCommand;
+
     }
     if (const auto *KeyReleased = Event->getIf<sf::Event::KeyReleased>()) {
         switch (KeyReleased->scancode) {
@@ -112,7 +114,6 @@ bool CharacterStandingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
         LOG_ERROR("Received null event in CharacterStandingState");
         return false;
     }
-
     switch (Event->GetEventType()) {
         case GlobalEventType::CharacterMoved: {
             this->m_Instance.ChangeState(std::make_unique<CharacterMovingState>(m_Engine, this->m_Instance));
@@ -212,6 +213,11 @@ bool CharacterMovingState::HandleEvent(const std::shared_ptr<BaseEvent> Event) {
         LOG_ERROR("Received null event in CharacterStandingState");
         return false;
     }
+    // if (m_Instance.IsKnockback())
+    // {
+    //     this->m_Instance.ChangeState(std::make_unique<CharacterStandingState>(m_Engine, this->m_Instance));
+    //     return true;
+    // }
 
     switch (Event->GetEventType()) {
         case GlobalEventType::CharacterStopMoved: {
@@ -254,6 +260,13 @@ bool CharacterAttackState::HandleEvent(std::shared_ptr<BaseEvent> Event) {
         LOG_ERROR("Received null event in CharacterAttackState");
         return false;
     }
+
+    // if (m_Instance.IsKnockback())
+    // {
+    //     this->m_Instance.ChangeState(std::make_unique<CharacterStandingState>(m_Engine, this->m_Instance));
+    //     return true;
+    // }
+
     switch (Event->GetEventType()) {
         case GlobalEventType::CharacterStopMoved: {
             if (this->m_Instance.GetDirection().empty()) {

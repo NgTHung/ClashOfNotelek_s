@@ -9,7 +9,7 @@ Wall::Wall(Engine &g_engine, const sf::Vector2f &position, const sf::Vector2f &s
                                                                                       m_Engine(g_engine) {
         
     m_Size = size;
-    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::MapEntityCollisionLayer);
     m_Shape.setSize(size);
     m_Shape.setPosition(position);
     Collidable::SetPosition(position);
@@ -23,7 +23,7 @@ Wall::Wall(Engine &g_engine, const sf::Vector2f &position, const sf::Vector2f &s
 }
 
 GlobalEventType Wall::GetCollisionEventType() const {
-    return GlobalEventType::WallCollision;
+    return GlobalEventType::MapEntityCollision;
 }
 
 sf::Vector2f Wall::GetSize() const {

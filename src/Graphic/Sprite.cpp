@@ -26,7 +26,9 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_CharacterState = std::make_unique<CharacterStandingState>(m_Engine, *this);
 
     this->m_CharacterState->EnterState();
-    // this->m_HP = 100; // Default HP value
+
+     this->m_HP = 100;
+    m_Healthbar.SetMaxHealth(this->m_HP);
     // set Default Directions
     this->isSouth = true;
     this->isNorth = false;
@@ -48,11 +50,13 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_FootVertices[1] = sf::Vector2f{11,32};
 
     m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::PlayerCollisionLayer);
-    m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::FootCollisionLayer);
 
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
             GlobalEventType::CharacterCollision, m_Listener);
+    EventDispatcher::GetInstance().RegisterListener(
+            GlobalEventType::EnemyCollision,m_Listener);
+
 }
 
 Weapon &Character::GetWeapon() const {
@@ -72,14 +76,17 @@ void Character::SetScale(const sf::Vector2f &Factor) {
 
 bool Character::Update(const sf::Time &DT) {
     // m_Sword.RotateToMouse();
+    m_Healthbar.Update(this->m_HP,this->getPosition());
     m_Weapon->Update(DT);
     if (auto NewState = m_CharacterState->Update(DT)) {
         ChangeState(std::move(NewState));
     }
+
     return true;
 }
 
 bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
+
     switch (Event.get()->GetEventType()) {
         case GlobalEventType::Generic: {
             LOG_ERROR("Incorrect populated Event");
@@ -93,6 +100,41 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             throw "Incorrect populated Event";
         }
         case GlobalEventType::CharacterMoved:
+            break;
+        case GlobalEventType::EnemyCollision:
+        {
+
+            auto CollisionEvent = std::dynamic_pointer_cast<EnemyCollisionEvent>(Event);
+            if (!CollisionEvent)
+            {
+                LOG_ERROR("Failed to cast Event to EnemyCollisionEvent");
+                return false;
+            }
+            Collidable *CollidableA = CollisionEvent->GetCollidableA();
+            Collidable *CollidableB = CollisionEvent->GetCollidableB();
+            if (!CollidableA || !CollidableB) {
+                LOG_ERROR("CollidableA or CollidableB is null in EnemyCollisionEvent");
+                return false;
+            }
+            if (CollidableA->GetID() == this->GetID()) {
+                std::swap(CollidableA, CollidableB);
+            }
+            else if (CollidableB->GetID() != this->GetID())
+            {
+                break;
+            }
+            if (CollidableB->GetCollisionEventType() != GlobalEventType::CharacterCollision)
+                break;
+            if (auto enemy = dynamic_cast<Enemy*>(CollidableA))
+                if (enemy->GetDame() > 0)
+                {
+                    this->m_HP -= enemy->GetDame();
+                    enemy->Attack();
+                    m_Engine.ShakeScreen();
+                }
+
+           break;
+        }
         case GlobalEventType::PlayerAttacked: {
             // this->m_PlayerState->AddEvent(Event.value());
             Event.reset();
@@ -119,15 +161,6 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                 }
             }
             switch (CollidableB->GetCollisionEventType()) {
-                case GlobalEventType::MapEntityCollision:
-                    {
-                        if (m_Engine.GetCollisionSystem().CheckSATCollision(this->GetFootVertices(),CollidableB->GetTransformedPoints()))
-                        {
-                            LOG_DEBUG("Character Foot collided with MapEntity ID: {}", CollidableB->GetID());
-                            Character::SetPosition(m_OldPosition);
-                        }
-                        break;
-                    }
                 case GlobalEventType::WallCollision: {
                     LOG_DEBUG("Character collided with Wall ID: {}", CollidableB->GetID());
                     Character::SetPosition(m_OldPosition);
@@ -162,6 +195,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             throw "Incorrect populated Event";
         }
     }
+
     // if (auto NewState = m_PlayerState->HandleEvent(*this))
     // {
     //     ChangeState(std::move(NewState));
@@ -170,6 +204,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
 }
 
 bool Character::HandleInput(const sf::Event &Event) {
+
     if (auto NewState = m_CharacterState->HandleInput(Event)) {
         ChangeState(std::move(NewState));
     }
@@ -184,11 +219,10 @@ bool Character::FixLagUpdate(const sf::Time &DT) {
 }
 
 void Character::SetPosition(const sf::Vector2f &position) {
-    if (this->m_OldPosition != position)
-        this->m_OldPosition = Collidable::GetPosition();
-    //m_Shape.setPosition(position);
-    Collidable::SetPosition(position);
-    this->m_Weapon->SetPosition(position);
+    if (m_Engine.GetCollisionSystem().IsFree(position,*this,Enviroment::MapEntityCollisionLayer))
+    {
+        this->m_Weapon->SetPosition(position);
+    }
 }
 
 void Character::ChangeState(std::unique_ptr<BaseState<Character> > NewState) {
@@ -223,6 +257,7 @@ void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const {
     if (m_Weapon) {
         Target.draw(*m_Weapon, States);
     }
+    m_Healthbar.Draw(Target);
 }
 
 GlobalEventType Character::GetCollisionEventType() const {
@@ -360,3 +395,25 @@ std::vector<sf::Vector2f> Character::GetFootVertices() const
         tmp.push_back(tf.transformPoint(vertices));
     return tmp;
 }
+
+Enemy::Enemy(Character& Player, Engine &g_Engine): GraphicBase(sf::Vector2f(Enviroment::SpriteSize)), m_Engine(g_Engine),m_Player(Player)
+{
+    m_State = Patrol;
+}
+
+void Enemy::SetStartPosition(const sf::Vector2f& position)
+{
+    this->m_StartPosition = position;
+}
+
+EnemyState Enemy::GetState() const
+{
+    return this->m_State;
+}
+
+float Enemy::GetDame() const
+{
+    return this->m_Dame;
+}
+
+
