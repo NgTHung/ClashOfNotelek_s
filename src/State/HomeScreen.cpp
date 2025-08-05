@@ -54,6 +54,8 @@ HomeScreen::HomeScreen(Engine &g_Engine)
     for (auto wall : m_Walls)
         wall->SetScale(sf::Vector2f(10,10));
     m_Enemy.clear();
+    m_vDT.reserve(Enviroment::FrameLimit + 1);
+    m_FPS.setFillColor(sf::Color::Black);
 }
 
 bool HomeScreen::Render(sf::RenderTarget &Renderer)
@@ -80,7 +82,7 @@ bool HomeScreen::Render(sf::RenderTarget &Renderer)
 
     for (auto renderthing : m_RenderQueue)
         Renderer.draw(*renderthing);
-
+    Renderer.draw(m_FPS);
     return true;
 }
 
@@ -102,14 +104,21 @@ bool HomeScreen::FixLagUpdate(const sf::Time &DT)
 
 bool HomeScreen::Update(const sf::Time &DT)
 {
-
     for (auto tinygrass: m_TinyGrasses)
         tinygrass->Update(DT);
     for (auto grass : m_Grasses)
         grass->Update(DT);
     for (auto enemy : m_Enemy)
         enemy->Update(DT);
-
+    fps += DT.asSeconds()/ Enviroment::FrameLimit;
+    m_vDT.push_back(DT.asSeconds());
+    if (m_vDT.size() > Enviroment::FrameLimit)
+    {
+        fps -= m_vDT.front() / Enviroment::FrameLimit;
+        m_vDT.erase(m_vDT.begin());
+    }
+    m_FPS.setString(std::format("FPS: {:.2f}", 1.f / fps));
+    m_FPS.setPosition(m_Character.GetPosition());
     //delete dead enemy
     for (const auto& enemy : m_Enemy)
     {

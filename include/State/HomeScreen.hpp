@@ -41,4 +41,7 @@ private:
     sf::Sprite m_MapTexture;
     Slime m_Slime;
     std::vector<std::shared_ptr<Enemy>> m_Enemy;
+    std::vector<float> m_vDT;
+    float fps = 0;
+    ArielText m_FPS;
 };
