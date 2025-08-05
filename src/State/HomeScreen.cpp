@@ -117,6 +117,7 @@ bool HomeScreen::Update(const sf::Time &DT)
         {
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::AttackableLayer);
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::PlayerCollisionLayer);
+            m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::EnemyAttackLayer);
         }
     }
     m_Enemy.erase(
