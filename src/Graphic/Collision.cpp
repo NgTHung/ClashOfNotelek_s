@@ -136,7 +136,7 @@ CollisionSystem::~CollisionSystem()
 void CollisionSystem::HandleCollisions() const
 {
     for (int k = 0 ; k < m_CollisionLayers.size(); k++)
-        if (k != Enviroment::MapEntityCollisionLayer)
+        if (k != Enviroment::MapEntityCollisionLayer && k!= Enviroment::EnemyAttackLayer)
     {
         const std::vector<Collidable *>& Layer = m_CollisionLayers[k];
         for (size_t i = 0; i < Layer.size(); ++i)
@@ -153,6 +153,25 @@ void CollisionSystem::HandleCollisions() const
             }
         }
     }
+    HandleEnemyAttackLayer();
+}
+
+void CollisionSystem::HandleEnemyAttackLayer() const
+{
+    const std::vector<Collidable *>& Layer = m_CollisionLayers[Enviroment::EnemyAttackLayer];
+    Character* Player = nullptr;
+    for (auto i : Layer)
+        if (auto it = dynamic_cast<Character*>(i))
+            Player = it;
+    for (auto i : Layer)
+        if (i != Player)
+        {
+            if (CheckSATCollision(Player->GetTransformedPoints(),i->GetTransformedPoints()))
+            {
+                m_Engine.PostEvent(CollisionEventFactory(Player, i));
+                m_Engine.PostEvent(CollisionEventFactory(i, Player));
+            }
+        }
 }
 
 

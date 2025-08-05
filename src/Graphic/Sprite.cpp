@@ -50,12 +50,12 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_FootVertices[1] = sf::Vector2f{11,32};
 
     m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::PlayerCollisionLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::EnemyAttackLayer);
 
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
+
     EventDispatcher::GetInstance().RegisterListener(
             GlobalEventType::CharacterCollision, m_Listener);
-    EventDispatcher::GetInstance().RegisterListener(
-            GlobalEventType::EnemyCollision,m_Listener);
 
 }
 
@@ -103,36 +103,6 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             break;
         case GlobalEventType::EnemyCollision:
         {
-
-            auto CollisionEvent = std::dynamic_pointer_cast<EnemyCollisionEvent>(Event);
-            if (!CollisionEvent)
-            {
-                LOG_ERROR("Failed to cast Event to EnemyCollisionEvent");
-                return false;
-            }
-            Collidable *CollidableA = CollisionEvent->GetCollidableA();
-            Collidable *CollidableB = CollisionEvent->GetCollidableB();
-            if (!CollidableA || !CollidableB) {
-                LOG_ERROR("CollidableA or CollidableB is null in EnemyCollisionEvent");
-                return false;
-            }
-            if (CollidableA->GetID() == this->GetID()) {
-                std::swap(CollidableA, CollidableB);
-            }
-            else if (CollidableB->GetID() != this->GetID())
-            {
-                break;
-            }
-            if (CollidableB->GetCollisionEventType() != GlobalEventType::CharacterCollision)
-                break;
-            if (auto enemy = dynamic_cast<Enemy*>(CollidableA))
-                if (enemy->GetDame() > 0)
-                {
-                    this->m_HP -= enemy->GetDame();
-                    enemy->Attack();
-                    m_Engine.ShakeScreen();
-                }
-
            break;
         }
         case GlobalEventType::PlayerAttacked: {
@@ -168,7 +138,13 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                 }
                 case GlobalEventType::EnemyCollision: {
                     LOG_DEBUG("Character collided with Enemy ID: {}", CollidableB->GetID());
-                    // Handle enemy collision logic here
+                    if (auto enemy = dynamic_cast<Enemy*>(CollidableB))
+                        if (enemy->GetDame() > 0)
+                        {
+                            this->m_HP -= enemy->GetDame();
+                            enemy->Attack();
+                            m_Engine.ShakeScreen();
+                        }
                     break;
                 }
                 case GlobalEventType::CharacterCollision: {

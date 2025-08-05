@@ -22,7 +22,8 @@ Slime::Slime(Character& Player, Engine &g_Engine):Enemy(Player,g_Engine)
     this->m_Vertices.push_back(sf::Vector2f(4,Enviroment::BaseSpriteSize));
 
     m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::AttackableLayer);
-    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::PlayerCollisionLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::EnemyAttackLayer);
+
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
             GlobalEventType::SwordCollision, m_Listener);
@@ -42,7 +43,7 @@ void Slime::OffAttack()
 
 void Slime::OnAttack()
 {
-    this->m_Dame = 5;
+    this->m_Dame = 10;
 }
 
 

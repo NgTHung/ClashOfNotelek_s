@@ -67,6 +67,8 @@ public:
 
     void HandleCollisions() const;
 
+    void HandleEnemyAttackLayer() const;
+
     void HandleMapEnityCollisions() const;
 
     void AddCollidable(Collidable *collidable, int layer);
