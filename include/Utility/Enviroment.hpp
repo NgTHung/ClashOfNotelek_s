@@ -43,6 +43,7 @@ namespace Enviroment
     const float DefaultAttackingDamage = 50.0f;
     const sf::IntRect DefaultIntRect = {BaseLocation, SpriteSize};
     const int PlayerCollisionLayer = 1;
+    const int EnemyAttackLayer = 4;
     const int MapEntityCollisionLayer = 3;
     const int AttackableLayer = 2;
 
