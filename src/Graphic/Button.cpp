@@ -5,9 +5,9 @@
 
 Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_Engine(g_Engine), GraphicBase(m_Button.getSize())
 {
-    this->m_Button.setOutlineThickness(1);
-    this->m_Button.setOutlineColor(sf::Color::White);
-    this->m_Button.setFillColor(sf::Color::Black);
+    //this->m_Button.setOutlineThickness(1);
+    //this->m_Button.setOutlineColor(sf::Color::White);
+   // this->m_Button.setFillColor(sf::Color::Black);
     this->m_Button.setPosition(this->m_Position);
     this->m_Text.setPosition(this->m_Position);
 }
@@ -74,6 +74,11 @@ void Button::SetText(const std::string &value)
     this->FixtateButtonSize();
 }
 
+void Button::SetScale(const sf::Vector2f &ScalingFactor)
+{
+    this->m_Button.setScale(ScalingFactor);
+}
+
 void Button::SetTexture(const sf::Texture &texture)
 {
     this->m_Button.setTexture(&texture);
@@ -96,3 +101,61 @@ void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(m_Button, states);
     target.draw(m_Text, states);
 }
+
+PlayButton::PlayButton(Engine& g_Engine, const sf::Vector2f& Pos, const sf::Texture& Texture): Button(g_Engine,Pos, Texture),m_Sprite(Texture)
+{
+    m_Button.setScale(Enviroment::SpriteScalingFactor);
+    m_Button.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(90,27)));
+    m_Button.setSize(sf::Vector2f(90,27));
+    m_Button.setOrigin(sf::Vector2f(m_Button.getSize().x / 2,m_Button.getSize().y / 2));
+}
+
+bool PlayButton::HandleInput(const sf::Event& event)
+{
+    if (event.is<sf::Event::MouseButtonPressed>())
+    {
+        sf::Vector2f mPos(sf::Mouse::getPosition(this->m_Engine.GetWindow()));
+        if (this->m_Button.getGlobalBounds().contains(mPos))
+        {
+            m_HasClicked = true;
+            LOG_DEBUG("Clicked {} {}\n", mPos.x, mPos.y);
+        }
+    }
+    return true;
+}
+
+bool PlayButton::Update(const sf::Time& Time)
+{
+
+
+    if (m_Index == 2)
+    {
+        m_HasClicked = false;
+        m_OnClick();
+    }
+    if (m_HasClicked)
+    {
+        m_MilliSecondsCount += Time.asMilliseconds();
+        if (m_Index == 0)
+            m_Index = m_Index + 1;
+        if (m_MilliSecondsCount >= 200)
+        {
+            m_Index = m_Index + 1;
+            m_MilliSecondsCount -= 200;
+        }
+    }
+
+    m_Button.setTextureRect(sf::IntRect(sf::Vector2i((m_Index% 2)*90,0),sf::Vector2i(90,27)));
+    return true;
+}
+
+void PlayButton::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    sf::Transform transform;
+    target.draw(m_Button, transform);
+
+}
+
+
+
+

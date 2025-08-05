@@ -145,6 +145,10 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                             enemy->Attack();
                             m_Engine.ShakeScreen();
                         }
+                    if (this->m_HP <= 0)
+                    {
+
+                    }
                     break;
                 }
                 case GlobalEventType::CharacterCollision: {

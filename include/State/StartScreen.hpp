@@ -18,4 +18,5 @@ public:
     // Player function
 private:
     Button m_StartButton;
+    PlayButton m_PlayButton;
 };
