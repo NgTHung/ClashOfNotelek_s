@@ -39,7 +39,6 @@ private:
     Water m_Water;
     std::vector<GraphicBase*> m_RenderQueue;
     sf::Sprite m_MapTexture;
-    Slime m_Slime;
     std::vector<std::shared_ptr<Enemy>> m_Enemy;
     std::vector<float> m_vDT;
     float fps = 0;

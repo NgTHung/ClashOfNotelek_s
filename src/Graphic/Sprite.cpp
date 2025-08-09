@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+#include "State/DeadScreen.hpp"
+
 Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize)),
                                          m_Engine(g_Engine)
                                            {
@@ -27,7 +29,7 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
 
     this->m_CharacterState->EnterState();
 
-     this->m_HP = 100;
+     this->m_HP = 5;
     m_Healthbar.SetMaxHealth(this->m_HP);
     // set Default Directions
     this->isSouth = true;
@@ -147,7 +149,8 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                         }
                     if (this->m_HP <= 0)
                     {
-
+                        m_Engine.PushState<DeadScreen>(this->m_Engine);
+                        return true;
                     }
                     break;
                 }

@@ -13,7 +13,7 @@ namespace Enviroment
     const std::string GameName = "Clash of Notelek\'s";
     const sf::View DefaultView(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(Enviroment::ScreenResolution.x,Enviroment::ScreenResolution.y)));
 
-    const int FrameLimit = 60;
+    const int FrameLimit = 120;
     const int TickPerSecond = 30;
     const sf::Time TimePerUpdate = sf::seconds(1.f / TickPerSecond);
 

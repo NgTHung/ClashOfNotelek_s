@@ -145,7 +145,7 @@ void CollisionSystem::HandleCollisions() const
             {
                 const auto &A = Layer[i];
                 const auto &B = Layer[j];
-                if (CheckSATCollision(A->GetTransformedPoints(), B->GetTransformedPoints()))
+                if (A->GetCollisionEventType() != B->GetCollisionEventType() && CheckSATCollision(A->GetTransformedPoints(), B->GetTransformedPoints()))
                 {
                     m_Engine.PostEvent(CollisionEventFactory(A, B));
                     m_Engine.PostEvent(CollisionEventFactory(B, A));

@@ -44,17 +44,17 @@ protected:
     Engine &m_Engine;
 };
 
-class PlayButton: public Button
+class GraphicButton: public Button
 {
 protected:
     int m_Index = 0;
     bool m_HasClicked = false;
     int m_MilliSecondsCount = 0;
     int m_FramePerSecond = 150;
-    sf::Sprite m_Sprite;
+
 public:
-    PlayButton(Engine &g_Engine, const sf::Vector2f &, const sf::Texture &);
-    ~PlayButton() override = default;
+    GraphicButton(Engine &g_Engine, const sf::Vector2f &, const sf::Texture &);
+    ~GraphicButton() override = default;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool HandleInput(const sf::Event &event) override;

@@ -9,7 +9,7 @@ protected:
     Engine &m_Engine;
 
 public:
-    Screen(Engine &g_Engine) : m_Engine(g_Engine) {};
+    Screen(Engine &g_Engine) ;
     virtual ~Screen() = default;
     virtual bool Render(sf::RenderTarget &Renderer) = 0;
     virtual bool Update(const sf::Time &DT) = 0;

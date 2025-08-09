@@ -17,6 +17,6 @@ public:
     bool HandleEvent(std::shared_ptr<BaseEvent> Event) override;
     // Player function
 private:
-    Button m_StartButton;
-    PlayButton m_PlayButton;
+    GraphicButton m_PlayButton;
+    GraphicButton m_ExitButton;
 };

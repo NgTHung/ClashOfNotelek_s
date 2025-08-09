@@ -8,7 +8,7 @@
 HomeScreen::HomeScreen(Engine &g_Engine)
     : Screen(g_Engine),m_Character(g_Engine),
       m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),
-      m_Slime(m_Character,g_Engine), m_Water(g_Engine)
+       m_Water(g_Engine)
 {
     //m_Walls.push_back(std::make_shared<Wall>(this->m_Engine,sf::Vector2f(0,0),sf::Vector2f(26,299)));
     m_MapTexture.setScale(sf::Vector2f(10,10));
@@ -125,7 +125,6 @@ bool HomeScreen::Update(const sf::Time &DT)
         if (enemy->GetState() == EnemyState::CanDelete)
         {
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::AttackableLayer);
-            m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::PlayerCollisionLayer);
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::EnemyAttackLayer);
         }
     }
@@ -144,8 +143,6 @@ bool HomeScreen::Update(const sf::Time &DT)
 
     return m_Character.Update(DT);
 }
-
-
 
 
 void HomeScreen::CameraProcess()
