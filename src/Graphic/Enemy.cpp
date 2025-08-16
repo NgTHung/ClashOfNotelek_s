@@ -36,6 +36,12 @@ Slime::Slime(Character& Player, Engine &g_Engine):Enemy(Player,g_Engine)
     m_PatrolRange = 1000;
 }
 
+EnemyType Slime::GetType() const
+{
+    return EnemyType::slime;
+}
+
+
 void Slime::OffAttack()
 {
     this->m_Dame = 0;

@@ -6,13 +6,12 @@
 #include "Graphic/Enemy.hpp"
 #include "Graphic/Wall.hpp"
 #include <random>
+
+#include "Graphic/Board.hpp"
 #include "Graphic/MapEntity.hpp"
 #include "Graphic/ScreenShake.hpp"
 #include "Graphic/Water.hpp"
-enum EnemyType{
-    slime,
-    EnemyTypeCount
-};
+
 
 class HomeScreen : public Screen
 {
@@ -24,6 +23,8 @@ public:
     bool HandleInput(std::optional<sf::Event> Event) override;
     bool FixLagUpdate(const sf::Time &DT) override;
     bool HandleEvent(std::shared_ptr<BaseEvent> Event) override;
+    bool IsWinGame();
+    void PauseGame();
     void CameraProcess();
     // Player function
     // Enemy function
@@ -39,9 +40,11 @@ private:
     Water m_Water;
     std::vector<GraphicBase*> m_RenderQueue;
     sf::Sprite m_MapTexture;
-    Slime m_Slime;
     std::vector<std::shared_ptr<Enemy>> m_Enemy;
     std::vector<float> m_vDT;
+    bool isPause = false;
+    sf::RectangleShape m_Overlay;
+    Board m_Menu;
     float fps = 0;
     ArielText m_FPS;
 };

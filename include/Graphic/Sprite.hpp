@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Base.hpp"
+#include "PlayerHealthbar.hpp"
 #include "SmokeVFX.hpp"
 #include "Graphic/Player.hpp"
 #include "Graphic/Weapon.hpp"
@@ -10,7 +11,12 @@
 #include "Graphic/HealthBar.hpp"
 #include "Graphic/SmokeVFX.hpp"
 #include "SFML/Audio/Listener.hpp"
+#include "Graphic/PlayerHealthbar.hpp"
 
+enum class EnemyType{
+    slime,
+    EnemyTypeCount
+};
 
 
 enum class AnimationTag {
@@ -32,7 +38,7 @@ private:
     std::unique_ptr<BaseState<Character> > m_CharacterState;
     sf::IntRect m_IntRect;
     int m_Index;
-    int m_HP;
+    float m_HP;
     std::set<Direction> s;
     bool isNorth;
     bool isSouth;
@@ -43,12 +49,23 @@ private:
     sf::RectangleShape m_Shape;
     sf::Vector2f m_OldPosition;
     std::vector<sf::Vector2f> m_FootVertices;
-    HealthBar m_Healthbar;
+    PlayerHealthBar m_PlayerHealthBar;
+    int m_SlimeHasKilled = 0;
 
 public:
+
     Character(Engine &g_Engine);
 
     ~Character() = default;
+
+
+    PlayerHealthBar& GetPlayerHealthBar();
+
+    float GetHP() const;
+
+    int GetNumberofSlimeHasKilled() const;
+
+    void HasKilledaSlime();
 
     bool Update(const sf::Time &DT) override;
 
@@ -124,6 +141,7 @@ public:
     virtual void BeHitProcess() = 0;
     virtual void Flash() = 0;
     virtual void Die() = 0;
+    virtual EnemyType GetType() const = 0;
 protected:
     sf::Vector2f m_StartPosition;
     bool m_MovingRight;

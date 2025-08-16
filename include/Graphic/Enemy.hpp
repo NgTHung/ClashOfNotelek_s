@@ -26,6 +26,7 @@ public:
         void OffAttack() override;
         void OnAttack() override;
         void Attack() override;
+        EnemyType GetType() const override;
         GlobalEventType GetCollisionEventType() const override;
         float GetYAxisPoint() override;
         void UpdateAnimation();
