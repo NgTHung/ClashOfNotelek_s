@@ -11,7 +11,7 @@ StartScreen::StartScreen(Engine& g_Engine) : Screen(g_Engine),
                                                  g_Engine,
                                                  static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()),
                                                  ResourcesManager::GetManager().GetTextureHolder().
-                                                 GetTexture("play_button.png")),
+                                                 GetTexture("Exit_button.png")),
                                              m_PlayButton(
                                                  g_Engine,
                                                  static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()),

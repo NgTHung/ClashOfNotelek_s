@@ -158,6 +158,8 @@ bool GraphicButton::Update(const sf::Time& Time)
     return true;
 }
 
+
+
 void GraphicButton::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::Transform transform;

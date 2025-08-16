@@ -3,6 +3,8 @@
 #include <exception>
 #include <Engine/Engine.hpp>
 #include"Graphic/Weapon.hpp"
+#include "Utility/Logger.hpp"
+
 int main()
 {
     try

@@ -29,8 +29,8 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
 
     this->m_CharacterState->EnterState();
 
-     this->m_HP = 5;
-    m_Healthbar.SetMaxHealth(this->m_HP);
+     this->m_HP = 100;
+    m_PlayerHealthBar.SetMaxHealth(m_HP);
     // set Default Directions
     this->isSouth = true;
     this->isNorth = false;
@@ -61,6 +61,17 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
 
 }
 
+int Character::GetNumberofSlimeHasKilled() const
+{
+    return this->m_SlimeHasKilled;
+}
+
+void Character::HasKilledaSlime()
+{
+    m_SlimeHasKilled++;
+    LOG_DEBUG("Character has killed a slime");
+}
+
 Weapon &Character::GetWeapon() const {
     return *m_Weapon;
 }
@@ -78,13 +89,25 @@ void Character::SetScale(const sf::Vector2f &Factor) {
 
 bool Character::Update(const sf::Time &DT) {
     // m_Sword.RotateToMouse();
-    m_Healthbar.Update(this->m_HP,this->getPosition());
+    m_PlayerHealthBar.SetPosition(m_Engine.GetWindow().getView().getCenter()  - m_Engine.GetWindow().getView().getSize()/2.f + sf::Vector2f(10,5));
+    m_PlayerHealthBar.Update(DT);
+    m_PlayerHealthBar.SetCurrentHealth(m_HP);
     m_Weapon->Update(DT);
     if (auto NewState = m_CharacterState->Update(DT)) {
         ChangeState(std::move(NewState));
     }
 
     return true;
+}
+
+PlayerHealthBar& Character::GetPlayerHealthBar()
+{
+    return m_PlayerHealthBar;
+}
+
+float Character::GetHP() const
+{
+    return m_HP;
 }
 
 bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
@@ -146,6 +169,8 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                             this->m_HP -= enemy->GetDame();
                             enemy->Attack();
                             m_Engine.ShakeScreen();
+                            m_PlayerHealthBar.BeAttack();
+
                         }
                     if (this->m_HP <= 0)
                     {
@@ -240,7 +265,6 @@ void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const {
     if (m_Weapon) {
         Target.draw(*m_Weapon, States);
     }
-    m_Healthbar.Draw(Target);
 }
 
 GlobalEventType Character::GetCollisionEventType() const {

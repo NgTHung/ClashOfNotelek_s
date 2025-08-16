@@ -41,6 +41,7 @@ private:
     bool HandleInput();
     bool TryPop();
 
+    std::unique_ptr<CollisionSystem> m_CollisionSystem;
     ScreenShake m_ScreenShake;
     sf::RenderWindow m_Window;
     sf::View m_View;
@@ -50,7 +51,6 @@ private:
     bool m_ShouldChangeState;
     std::unique_ptr<Screen> m_ChangedState;
     std::unique_ptr<EventQueue> m_EventQueue;
-    std::unique_ptr<CollisionSystem> m_CollisionSystem;
     bool m_reset = false;
 };
 

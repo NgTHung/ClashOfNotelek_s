@@ -52,6 +52,9 @@ namespace Enviroment
     const int SwordDame = 10;
     const float KnockBackStrength = 250.0f;
 
+    //win game conditions
+    const int NumberSlimeToKilled = 1;
+
     const std::vector<sf::Vector2f> TreePositions = {
         sf::Vector2f{40,35},
         sf::Vector2f{141,223},

@@ -1,9 +1,9 @@
-#include "State/DeadScreen.hpp"
+#include "State/WinScreen.hpp"
 
 #include "Resources/ResourcesManager.hpp"
 #include "State/HomeScreen.hpp"
 
-DeadScreen::DeadScreen(Engine& g_Engine): Screen(g_Engine), m_ExitButton(
+WinScreen::WinScreen(Engine& g_Engine): Screen(g_Engine), m_ExitButton(
                                               g_Engine,
                                               static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()),
                                               ResourcesManager::GetManager().GetTextureHolder().
@@ -30,7 +30,7 @@ DeadScreen::DeadScreen(Engine& g_Engine): Screen(g_Engine), m_ExitButton(
     m_ExitButton.SetPosition(sf::Vector2f(g_Engine.GetWindow().getSize().x/2.f ,g_Engine.GetWindow().getSize().y *2.f/ 3.f ));
 }
 
-bool DeadScreen::Render(sf::RenderTarget& Renderer)
+bool WinScreen::Render(sf::RenderTarget& Renderer)
 {
     Renderer.draw(m_Sprite);
     Renderer.draw(m_ReplayButton);
@@ -38,7 +38,7 @@ bool DeadScreen::Render(sf::RenderTarget& Renderer)
     return true;
 }
 
-bool DeadScreen::Update(const sf::Time& DT)
+bool WinScreen::Update(const sf::Time& DT)
 {
     m_Engine.ResetView();
     m_ReplayButton.Update(DT);
@@ -46,19 +46,19 @@ bool DeadScreen::Update(const sf::Time& DT)
     return true;
 }
 
-bool DeadScreen::HandleEvent(std::shared_ptr<BaseEvent> Event)
+bool WinScreen::HandleEvent(std::shared_ptr<BaseEvent> Event)
 {
     return false;
 }
 
-bool DeadScreen::HandleInput(const std::optional<sf::Event> Event)
+bool WinScreen::HandleInput(const std::optional<sf::Event> Event)
 {
     m_ReplayButton.HandleInput(Event.value());
     m_ExitButton.HandleInput(Event.value());
     return true;
 }
 
-bool DeadScreen::FixLagUpdate(const sf::Time &DT)
+bool WinScreen::FixLagUpdate(const sf::Time &DT)
 {
     m_ReplayButton.FixLagUpdate(DT);
     m_ExitButton.FixLagUpdate(DT);

@@ -55,7 +55,6 @@ protected:
 public:
     GraphicButton(Engine &g_Engine, const sf::Vector2f &, const sf::Texture &);
     ~GraphicButton() override = default;
-
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool HandleInput(const sf::Event &event) override;
     bool Update(const sf::Time &time) override;

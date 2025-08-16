@@ -4,8 +4,8 @@
     #include "State/HomeScreen.hpp"
     #include "Utility/Enviroment.hpp"
 
-    Engine::Engine() : m_Window(sf::VideoMode(Enviroment::ScreenResolution), Enviroment::GameName), m_ShouldPop(false), m_ShouldExit(false),
-                       m_ShouldChangeState(false), m_CollisionSystem(std::make_unique<CollisionSystem>(*this)),m_View(Enviroment::DefaultView), m_EventQueue(std::make_unique<EventQueue>())
+    Engine::Engine() : m_CollisionSystem(std::make_unique<CollisionSystem>(*this)), m_Window(sf::VideoMode(Enviroment::ScreenResolution), Enviroment::GameName), m_View(Enviroment::DefaultView),
+                       m_ShouldPop(false), m_ShouldExit(false),m_ShouldChangeState(false), m_EventQueue(std::make_unique<EventQueue>())
     {
         m_Window.setFramerateLimit(Enviroment::FrameLimit);
 
@@ -172,7 +172,6 @@
                 Lag -= Enviroment::TimePerUpdate;
                 State.FixLagUpdate(Elapsed);
             }
-
             m_Window.clear();
             State.Render(m_Window);
             m_Window.display();

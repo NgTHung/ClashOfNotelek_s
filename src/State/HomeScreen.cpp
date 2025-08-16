@@ -2,13 +2,14 @@
 
 #include "Resources/ResourcesHolder.hpp"
 #include "Resources/ResourcesManager.hpp"
+#include "State/WinScreen.hpp"
 #include "Utility/Logger.hpp"
 // Define start State
 
 HomeScreen::HomeScreen(Engine &g_Engine)
     : Screen(g_Engine),m_Character(g_Engine),
       m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),
-       m_Water(g_Engine)
+       m_Water(g_Engine),m_Menu(g_Engine,*this)
 {
     //m_Walls.push_back(std::make_shared<Wall>(this->m_Engine,sf::Vector2f(0,0),sf::Vector2f(26,299)));
     m_MapTexture.setScale(sf::Vector2f(10,10));
@@ -50,12 +51,19 @@ HomeScreen::HomeScreen(Engine &g_Engine)
     }
 
 
-
     for (auto wall : m_Walls)
         wall->SetScale(sf::Vector2f(10,10));
     m_Enemy.clear();
     m_vDT.reserve(Enviroment::FrameLimit + 1);
     m_FPS.setFillColor(sf::Color::Black);
+    m_Overlay.setFillColor(sf::Color(0,0,0,150));
+    m_Overlay.setSize(sf::Vector2f(Enviroment::ScreenResolution));
+    m_Menu.SetOrigin(sf::Vector2f(150,125));
+}
+
+void HomeScreen::PauseGame()
+{
+    isPause = !isPause;
 }
 
 bool HomeScreen::Render(sf::RenderTarget &Renderer)
@@ -64,6 +72,7 @@ bool HomeScreen::Render(sf::RenderTarget &Renderer)
 
     m_RenderQueue.clear();
     m_RenderQueue.push_back(&m_Character);
+
     for (auto box : this->m_Boxes)
         m_RenderQueue.push_back(box.get());
     for (auto tinygrass: m_TinyGrasses)
@@ -83,12 +92,35 @@ bool HomeScreen::Render(sf::RenderTarget &Renderer)
     for (auto renderthing : m_RenderQueue)
         Renderer.draw(*renderthing);
     Renderer.draw(m_FPS);
+    Renderer.draw(m_Character.GetPlayerHealthBar());
+    if (isPause)
+    {
+        Renderer.draw(m_Overlay);
+        Renderer.draw(m_Menu);
+    }
+
     return true;
 }
 
 bool HomeScreen::HandleInput(const std::optional<sf::Event> Event)
 {
-    return m_Character.HandleInput(Event.value());
+    if (!Event.has_value()) return true;
+
+    if (const auto *KeyPressed = Event->getIf<sf::Event::KeyPressed>())
+    {
+        if ( KeyPressed->scancode == sf::Keyboard::Scancode::Escape)
+        {
+            PauseGame();
+        }
+    }
+    if (!isPause)
+        return m_Character.HandleInput(Event.value());
+    else
+    {
+        m_Menu.HandleInput(Event.value());
+        return true;
+    }
+
 }
 
 bool HomeScreen::HandleEvent(std::shared_ptr<BaseEvent> Event)
@@ -104,6 +136,19 @@ bool HomeScreen::FixLagUpdate(const sf::Time &DT)
 
 bool HomeScreen::Update(const sf::Time &DT)
 {
+
+    if (isPause)
+    {
+        m_Overlay.setPosition(m_Engine.GetWindow().getView().getCenter() - m_Engine.GetWindow().getView().getSize()/2.f);
+        m_Menu.SetPosition(m_Engine.GetWindow().getView().getCenter());
+        m_Menu.Update(DT);
+        return false;
+    }
+    if (IsWinGame())
+    {
+        m_Engine.PushState(std::make_unique<WinScreen>(m_Engine));
+    }
+
     for (auto tinygrass: m_TinyGrasses)
         tinygrass->Update(DT);
     for (auto grass : m_Grasses)
@@ -124,6 +169,8 @@ bool HomeScreen::Update(const sf::Time &DT)
     {
         if (enemy->GetState() == EnemyState::CanDelete)
         {
+            if (enemy->GetType() == EnemyType::slime)
+                m_Character.HasKilledaSlime();
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::AttackableLayer);
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::EnemyAttackLayer);
         }
@@ -140,6 +187,8 @@ bool HomeScreen::Update(const sf::Time &DT)
     m_Engine.SetView(m_Engine.GetScreenShake().GetShakeViewUpdate(DT,m_Engine.GetWindow().getView()));
     if (this->m_Enemy.size() < 2)
         this->SpawnEnemy();
+
+
 
     return m_Character.Update(DT);
 }
@@ -169,6 +218,12 @@ void HomeScreen::CameraProcess()
 }
 
 
+bool HomeScreen::IsWinGame()
+{
+    if (m_Character.GetNumberofSlimeHasKilled() >= Enviroment::NumberSlimeToKilled)
+        return true;
+    return false;
+}
 
 //Enemy function
 void HomeScreen::SpawnEnemy(){
@@ -179,7 +234,7 @@ void HomeScreen::SpawnEnemy(){
     int num = 2;
     Enemy * fac_Enemy;
     for (int i = 0; i < num; i ++){
-        std::uniform_int_distribution<> count(0, EnemyTypeCount - 1);
+        std::uniform_int_distribution<> count(0, static_cast<int>(EnemyType::EnemyTypeCount) - 1);
         EnemyType type = static_cast<EnemyType>(count(gen));
 
         switch (type)
