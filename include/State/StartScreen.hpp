@@ -5,6 +5,9 @@
 #include "Graphic/Button.hpp"
 #include <SFML/Graphics.hpp>
 
+#include "Graphic/LeafFalling.hpp"
+#include "Graphic/MapEntity.hpp"
+
 class StartScreen : public Screen
 {
 public:
@@ -17,6 +20,12 @@ public:
     bool HandleEvent(std::shared_ptr<BaseEvent> Event) override;
     // Player function
 private:
+    int m_TimeperFrame = 150;
+    int m_LastUpdate = 0;
+    int m_index = 0;
+    sf::Sprite m_Sprite;
+    Grass m_Grass;
     GraphicButton m_PlayButton;
     GraphicButton m_ExitButton;
+    LeafFalling m_LeafFalling;
 };

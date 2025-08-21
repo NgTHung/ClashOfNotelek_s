@@ -10,7 +10,6 @@ Board::Board(Engine& g_Engine,HomeScreen& homeScreen):GraphicBase(sf::Vector2f(0
 {
     m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(300,250)));
     m_Sprite.setScale(sf::Vector2f(2.f,2.f));
-
     m_ExitButton.SetOnClick([this]()
     {
        this->m_Engine.CloseWindow();

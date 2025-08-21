@@ -47,13 +47,13 @@ namespace Enviroment
     const int MapEntityCollisionLayer = 3;
     const int AttackableLayer = 2;
 
-
+    
     const float SwordAttackCooldown = 1.0f;
     const int SwordDame = 10;
     const float KnockBackStrength = 250.0f;
 
     //win game conditions
-    const int NumberSlimeToKilled = 1;
+    const int NumberSlimeToKilled = 10;
 
     const std::vector<sf::Vector2f> TreePositions = {
         sf::Vector2f{40,35},
