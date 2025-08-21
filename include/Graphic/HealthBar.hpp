@@ -13,7 +13,7 @@ private:
 public:
     HealthBar();
 
-    void SetMaxHealth(const float& Maxhealth);
+    void SetMaxHealth(const float& MaxHHealth);
 
     void Update(const float& CurrentHealth,const sf::Vector2f& Pos);
 

@@ -33,7 +33,6 @@ sf::View ScreenShake::GetShakeViewUpdate(const sf::Time& DT,sf::View CurrentView
     return shakenView;
 }
 
-bool ScreenShake::IsActive()
-{
+bool ScreenShake::IsActive() const {
     return m_Active;
 }

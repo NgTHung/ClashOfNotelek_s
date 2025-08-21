@@ -10,7 +10,7 @@ public:
     virtual void LoadDirectory() = 0;
     virtual bool LoadFile(const std::string &FilePath) = 0;
     void LoadDirectory(const std::string &DirectoryPath);
-    const std::vector<std::string> LoadFiles(const std::vector<std::string> FileTable);
+    std::vector<std::string> LoadFiles(const std::vector<std::string> &FileTable);
     void AddDirectory(const std::string &DirectoryPath, bool isSelected = false);
     void SelectDirectory(const std::string &DirectoryPath);
     void ReloadDirectory(const std::string &DirectoryPath);

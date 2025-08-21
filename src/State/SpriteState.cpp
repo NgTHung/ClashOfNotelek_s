@@ -4,7 +4,7 @@
 #include "Utility/Logger.hpp"
 #include "Graphic/Sprite.hpp"
 #include "State/HomeScreen.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
 CharacterState::CharacterState(Engine &g_Engine, Character &CharacterInstance) : BaseState(CharacterInstance),
     m_Engine(g_Engine) {
@@ -70,7 +70,7 @@ std::unique_ptr<BaseState<Character> > CharacterState::HandleInput(std::optional
             }
         }
     }
-    if (currentCommand.get() != nullptr) {
+    if (currentCommand != nullptr) {
         currentCommand->execute();
     }
     return nullptr;
@@ -100,12 +100,9 @@ std::unique_ptr<BaseState<Character> > CharacterStandingState::HandleInput(std::
     return CharacterState::HandleInput(Event);
 }
 
-std::unique_ptr<BaseState<Character> > CharacterStandingState::FixLagUpdate(const sf::Time &DT) {
-    return nullptr;
-}
 
 std::unique_ptr<BaseState<Character> > CharacterStandingState::Update(const sf::Time &DT) {
-    this->m_Instance.NextFrame(Enviroment::CharacterStandingFrameCount,DT);
+    this->m_Instance.NextFrame(Environment::CharacterStandingFrameCount,DT);
     return nullptr;
 }
 
@@ -161,13 +158,10 @@ std::unique_ptr<BaseState<Character> > CharacterMovingState::HandleInput(std::op
     return CharacterState::HandleInput(Event);
 }
 
-std::unique_ptr<BaseState<Character> > CharacterMovingState::FixLagUpdate(const sf::Time &DT) {
-    return nullptr;
-}
 
 std::unique_ptr<BaseState<Character> > CharacterMovingState::Update(const sf::Time &DT) {
     this->m_Instance.UpdateAnimationTagWALK();
-    sf::Vector2f NewPosition = sf::Vector2f(Enviroment::BaseLocation);
+    auto NewPosition = sf::Vector2f(Environment::BaseLocation);
     for (const auto it: this->m_Instance.GetDirection()) {
         switch (it) {
             case Direction::NONE: {
@@ -175,19 +169,19 @@ std::unique_ptr<BaseState<Character> > CharacterMovingState::Update(const sf::Ti
                 break;
             }
             case Direction::WEST: {
-                NewPosition.x -= Enviroment::Velocity;
+                NewPosition.x -= Environment::Velocity;
                 break;
             }
             case Direction::EAST: {
-                NewPosition.x += Enviroment::Velocity;
+                NewPosition.x += Environment::Velocity;
                 break;
             }
             case Direction::NORTH: {
-                NewPosition.y -= Enviroment::Velocity;
+                NewPosition.y -= Environment::Velocity;
                 break;
             }
             case Direction::SOUTH: {
-                NewPosition.y += Enviroment::Velocity;
+                NewPosition.y += Environment::Velocity;
             }
         }
         this->m_Instance.SetDirection(it);
@@ -196,7 +190,7 @@ std::unique_ptr<BaseState<Character> > CharacterMovingState::Update(const sf::Ti
     NewPosition *= DT.asSeconds();
 
     if (this->m_Instance.GetDirection().size() == 2) {
-        NewPosition *= Enviroment::VelocityNormalizationValue;
+        NewPosition *= Environment::VelocityNormalizationValue;
     }
     this->m_Instance.SetPosition(NewPosition + this->m_Instance.GetPosition());
     // if (m_Engine.GetCollisionSystem().IsFree(this->m_Instance.GetPosition() + NewPosition, m_Instance, Enviroment::PlayerCollisionLayer)) {
@@ -204,7 +198,7 @@ std::unique_ptr<BaseState<Character> > CharacterMovingState::Update(const sf::Ti
     // } else {
     //     LOG_DEBUG("Character Moving State: Collision Detected, not moving");
     // }
-    this->m_Instance.NextFrame(Enviroment::CharacterMovingFrameCount,DT);
+    this->m_Instance.NextFrame(Environment::CharacterMovingFrameCount,DT);
     return nullptr;
 }
 
@@ -252,7 +246,6 @@ void CharacterAttackState::EnterState() {
 }
 
 void CharacterAttackState::ExitState() {
-    return;
 }
 
 bool CharacterAttackState::HandleEvent(std::shared_ptr<BaseEvent> Event) {
@@ -290,9 +283,6 @@ std::unique_ptr<BaseState<Character> > CharacterAttackState::HandleInput(std::op
     return CharacterState::HandleInput(Event);
 }
 
-std::unique_ptr<BaseState<Character> > CharacterAttackState::FixLagUpdate(const sf::Time &DT) {
-    return nullptr;
-}
 
 std::unique_ptr<BaseState<Character> > CharacterAttackState::Update(const sf::Time &DT) {
     return nullptr;

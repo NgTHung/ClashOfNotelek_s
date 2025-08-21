@@ -1,5 +1,5 @@
 #include "Resources/ResourcesManager.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
 const FontHolder &ResourcesManager::GetFontHolder() const
 {
@@ -21,26 +21,25 @@ ResourcesManager::ResourcesManager()
 {
     // Load Font
     m_FontHolder = std::make_unique<FontHolder>();
-    m_FontHolder->AddDirectory(Enviroment::FontDirectory, true);
+    m_FontHolder->AddDirectory(Environment::FontDirectory, true);
     m_FontHolder->LoadDirectory();
 
     // Load Texture
     m_TextureHolder = std::make_unique<TextureHolder>();
-    m_TextureHolder->AddDirectory(Enviroment::TextureDirectory, true);
+    m_TextureHolder->AddDirectory(Environment::TextureDirectory, true);
     m_TextureHolder->LoadDirectory();
 }
 
-bool ResourcesManager::LoadFile(ResourcesType Type, const std::string &File)
-{
+bool ResourcesManager::LoadFile(const ResourcesType Type, const std::string &Path) const {
     switch (Type)
     {
     case ResourcesType::Font:
     {
-        return m_FontHolder->LoadFile(File);
+        return m_FontHolder->LoadFile(Path);
     }
     case ResourcesType::Texture:
     {
-        return m_TextureHolder->LoadFile(File);
+        return m_TextureHolder->LoadFile(Path);
     }
     default:
         break;
@@ -48,8 +47,7 @@ bool ResourcesManager::LoadFile(ResourcesType Type, const std::string &File)
     return false;
 }
 
-const std::vector<std::string> ResourcesManager::LoadFiles(ResourcesType Type, const std::vector<std::string> FileTable)
-{
+std::vector<std::string> ResourcesManager::LoadFiles(ResourcesType Type, const std::vector<std::string>& FileTable) const {
     switch (Type)
     {
     case ResourcesType::Font:
@@ -59,5 +57,18 @@ const std::vector<std::string> ResourcesManager::LoadFiles(ResourcesType Type, c
     default:
         break;
     }
-    return std::vector<std::string>();
+    return {};
+}
+
+void ResourcesManager::LoadDirectory(const std::string &DirectoryPath) {
+    if (m_TextureHolder)
+    {
+        m_TextureHolder->AddDirectory(DirectoryPath, true);
+        m_TextureHolder->LoadDirectory();
+    }
+    if (m_FontHolder)
+    {
+        m_FontHolder->AddDirectory(DirectoryPath, true);
+        m_FontHolder->LoadDirectory();
+    }
 }

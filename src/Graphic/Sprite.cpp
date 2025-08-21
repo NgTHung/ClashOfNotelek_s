@@ -5,20 +5,18 @@
 #include "Event/CollisionEvent.hpp"
 #include "Utility/Logger.hpp"
 #include "Resources/ResourcesManager.hpp"
-#include "Utility/Enviroment.hpp"
-
-#include <iostream>
+#include "Utility/Environment.hpp"
 
 #include "State/DeadScreen.hpp"
 
-Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize)),
+Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(Environment::SpriteSize)),
                                          m_Engine(g_Engine)
                                            {
     const sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
-    const sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
+    const sf::IntRect IntRect = {Environment::BaseLocation, Environment::SpriteSize};
     this->m_Weapon = std::make_shared<Sword>(g_Engine);
-    this->m_Weapon->SetScale(Enviroment::SpriteScalingFactor);
-    this->Character::SetScale(Enviroment::SpriteScalingFactor);
+    this->m_Weapon->SetScale(Environment::SpriteScalingFactor);
+    this->Character::SetScale(Environment::SpriteScalingFactor);
     this->Character::SetPosition(Position);
     m_OldPosition = {0,0};
     this->SetIntRect(IntRect);
@@ -51,8 +49,8 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_FootVertices[3] = sf::Vector2f{22,32};
     this->m_FootVertices[1] = sf::Vector2f{11,32};
 
-    m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::PlayerCollisionLayer);
-    m_Engine.GetCollisionSystem().AddCollidable(this,Enviroment::EnemyAttackLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this,Environment::PlayerCollisionLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this,Environment::EnemyAttackLayer);
 
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
 
@@ -219,15 +217,8 @@ bool Character::HandleInput(const sf::Event &Event) {
     return true;
 }
 
-bool Character::FixLagUpdate(const sf::Time &DT) {
-    if (auto NewState = m_CharacterState->FixLagUpdate(DT)) {
-        ChangeState(std::move(NewState));
-    }
-    return true;
-}
-
 void Character::SetPosition(const sf::Vector2f &position) {
-    if (m_Engine.GetCollisionSystem().IsFree(position,*this,Enviroment::MapEntityCollisionLayer))
+    if (m_Engine.GetCollisionSystem().IsFree(position,*this,Environment::MapEntityCollisionLayer))
     {
         this->m_Weapon->SetPosition(position);
     }
@@ -364,7 +355,7 @@ bool Character::NextFrame(int maxframe,const sf::Time &DT) {
         this->m_MiliSecondUpdate -= 150;
         m_Index = (m_Index + 1) % maxframe;
     }
-    sf::IntRect Rect(Enviroment::BaseSpriteSize * sf::Vector2i{m_Index, TagNum}, Enviroment::SpriteSize);
+    sf::IntRect Rect(Environment::BaseSpriteSize * sf::Vector2i{m_Index, TagNum}, Environment::SpriteSize);
     this->SetIntRect(Rect);
     return true;
 }
@@ -403,8 +394,11 @@ std::vector<sf::Vector2f> Character::GetFootVertices() const
     return tmp;
 }
 
-Enemy::Enemy(Character& Player, Engine &g_Engine): GraphicBase(sf::Vector2f(Enviroment::SpriteSize)), m_Engine(g_Engine),m_Player(Player)
-{
+Enemy::Enemy(Character& Player, Engine &g_Engine): GraphicBase(sf::Vector2f(Environment::SpriteSize)),
+                                                   m_MovingRight(false), m_PatrolRange(0),
+                                                   m_Speed(0),
+                                                   m_Engine(g_Engine), m_Radius(0), m_LastAttackID(0), m_Dame(0),
+                                                   m_Player(Player), m_Index(0), m_HP(0) {
     m_State = Patrol;
 }
 

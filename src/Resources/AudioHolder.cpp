@@ -1,6 +1,6 @@
 #include <Resources/AudioHolder.hpp>
 #include "Utility/Logger.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
 AudioHolder::AudioHolder(){}
 AudioHolder::~AudioHolder(){}
@@ -22,7 +22,7 @@ void AudioHolder::LoadDirectory()
     for (auto File : std::filesystem::directory_iterator(Path))
     {
         std::string FilePath = File.path().extension().string();
-        if (FilePath == Enviroment::AudioExtention)
+        if (FilePath == Environment::AudioExtention)
         {
             LOG_DEBUG("Loading Sound file: {}", File.path().string());
             LoadFile(File.path().string());

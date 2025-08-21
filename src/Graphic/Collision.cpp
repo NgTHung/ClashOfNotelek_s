@@ -6,7 +6,7 @@
 #include <cmath>
 
 #include "Graphic/Sprite.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
 Collidable::Collidable(const sf::Vector2f &size) : m_Size(size)
 {
@@ -136,7 +136,7 @@ CollisionSystem::~CollisionSystem()
 void CollisionSystem::HandleCollisions() const
 {
     for (int k = 0 ; k < m_CollisionLayers.size(); k++)
-        if (k != Enviroment::MapEntityCollisionLayer && k!= Enviroment::EnemyAttackLayer)
+        if (k != Environment::MapEntityCollisionLayer && k!= Environment::EnemyAttackLayer)
     {
         const std::vector<Collidable *>& Layer = m_CollisionLayers[k];
         for (size_t i = 0; i < Layer.size(); ++i)
@@ -158,7 +158,7 @@ void CollisionSystem::HandleCollisions() const
 
 void CollisionSystem::HandleEnemyAttackLayer() const
 {
-    const std::vector<Collidable *>& Layer = m_CollisionLayers[Enviroment::EnemyAttackLayer];
+    const std::vector<Collidable *>& Layer = m_CollisionLayers[Environment::EnemyAttackLayer];
     Character* Player = nullptr;
     for (auto i : Layer)
         if (auto it = dynamic_cast<Character*>(i))

@@ -6,13 +6,11 @@ class PlayerHealthBarFace: public GraphicBase
 {
 public:
     PlayerHealthBarFace();
-    ~PlayerHealthBarFace() = default;
+    ~PlayerHealthBarFace() override = default;
     GlobalEventType GetCollisionEventType() const override;
     bool Update(const sf::Time&) override;
-    void SetPosition(const sf::Vector2f& Pos);
-    sf::Vector2f GetPosition() const;
-    bool FixLagUpdate(const sf::Time&) override;
-    void SetMaxHealth(const int& MaxHealth);
+    void SetPosition(const sf::Vector2f& Pos) override;
+    sf::Vector2f GetPosition() const override;
     void BeAttack();
     bool HandleInput(const sf::Event&) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -20,8 +18,8 @@ public:
 private:
     bool m_Flash = false;
     int m_Index = 0;
-    int m_Millisecondsperframe = 150;
-    int m_Lastupdate = 0;
+    int m_MillisecondsPerFrame = 150;
+    int m_LastUpdate = 0;
     sf::Sprite m_sprite;
 
 };
@@ -39,12 +37,11 @@ public:
     PlayerHealthBar();
     void SetMaxHealth(const float& MaxHealth);
     void SetCurrentHealth(const float& CurrentHealth);
-    void SetPosition(const sf::Vector2f& Pos);
+    void SetPosition(const sf::Vector2f& Pos) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     GlobalEventType GetCollisionEventType() const override;
     bool Update(const sf::Time&) override;
     void BeAttack();
-    bool FixLagUpdate(const sf::Time&) override;
     bool HandleInput(const sf::Event&) override;
     float GetYAxisPoint() override;
 };

@@ -52,11 +52,6 @@ bool Board::Update(const sf::Time& DT)
     return true;
 }
 
-bool Board::FixLagUpdate(const sf::Time&)
-{
-    return true;
-}
-
 bool Board::HandleInput(const sf::Event& Event)
 {
     m_ExitButton.HandleInput(Event);
