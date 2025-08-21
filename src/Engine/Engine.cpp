@@ -1,13 +1,15 @@
-    #include "Engine/Engine.hpp"
+    #include <memory>
+
+#include "Engine/Engine.hpp"
     #include "State/StartScreen.hpp"
     #include "Utility/Logger.hpp"
     #include "State/HomeScreen.hpp"
-    #include "Utility/Enviroment.hpp"
+    #include "Utility/Environment.hpp"
 
-    Engine::Engine() : m_CollisionSystem(std::make_unique<CollisionSystem>(*this)), m_Window(sf::VideoMode(Enviroment::ScreenResolution), Enviroment::GameName), m_View(Enviroment::DefaultView),
+    Engine::Engine() : m_CollisionSystem(std::make_unique<CollisionSystem>(*this)), m_Window(sf::VideoMode(Environment::ScreenResolution), Environment::GameName), m_View(Environment::DefaultView),
                        m_ShouldPop(false), m_ShouldExit(false),m_ShouldChangeState(false), m_EventQueue(std::make_unique<EventQueue>())
     {
-        m_Window.setFramerateLimit(Enviroment::FrameLimit);
+        m_Window.setFramerateLimit(Environment::FrameLimit);
 
     }
 
@@ -35,7 +37,7 @@
 
     void Engine::ResetView()
     {
-        m_View.setCenter(sf::Vector2f(Enviroment::ScreenResolution.x / 2, Enviroment::ScreenResolution.y / 2));
+        m_View.setCenter(sf::Vector2f(Environment::ScreenResolution.x / 2, Environment::ScreenResolution.y / 2));
        this->SetView(m_View);
     }
 
@@ -46,7 +48,6 @@
 
     void Engine::Prepare()
     {
-
         PushState<StartScreen>(*this);
     }
 
@@ -100,24 +101,21 @@
                 m_States.clear();
                 return true;
             }
-            else if (m_ShouldChangeState)
-            {
-                m_ShouldChangeState = false;
-                m_States.back().reset();
-                m_States.pop_back();
-                return this->PushState(std::move(m_ChangedState));
-            }
-
             m_States.back().reset();
             m_States.pop_back();
+            if (m_ShouldChangeState)
+            {
+                m_ShouldChangeState = false;
+                return this->PushState(std::move(m_ChangedState));
+            }
             m_reset = false;
             if (dynamic_cast<HomeScreen*>(m_States.back().get()))
             {
                 m_reset = true;
                 EventDispatcher::GetInstance().UnRegisterAllListeners();
-                m_CollisionSystem.reset(new CollisionSystem(*this));
-                m_EventQueue.reset(new EventQueue());
-                m_States.back().reset(new HomeScreen(*this));
+                m_CollisionSystem = std::make_unique<CollisionSystem>(*this);
+                m_EventQueue = std::make_unique<EventQueue>();
+                m_States.back() = std::make_unique<HomeScreen>(*this);
             }
 
         }
@@ -142,36 +140,22 @@
     }
 
     CollisionSystem & Engine::GetCollisionSystem() {
-        return *(m_CollisionSystem.get());
+        return *(m_CollisionSystem);
     }
 
     void Engine::Run()
     {
-        int Ticks = 0;
 
         sf::Clock Timer;
-        sf::Time Lag = sf::Time::Zero;
 
         while (m_Window.isOpen() && !m_States.empty())
         {
             Screen &State = this->GetCurrentState();
-
             sf::Time Elapsed = Timer.restart();
-
-            Lag += Elapsed;
-            if (m_reset) Lag = sf::Time::Zero;
-
             HandleInput();
             m_CollisionSystem->HandleCollisions();
             ProcessEvents();
             State.Update(Elapsed);
-
-            while (Lag >= Enviroment::TimePerUpdate)
-            {
-                Ticks++;
-                Lag -= Enviroment::TimePerUpdate;
-                State.FixLagUpdate(Elapsed);
-            }
             m_Window.clear();
             State.Render(m_Window);
             m_Window.display();

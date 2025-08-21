@@ -73,8 +73,6 @@ public:
 
     bool HandleInput(const sf::Event &Event) override;
 
-    bool FixLagUpdate(const sf::Time &DT) override;
-
     void SetPosition(const sf::Vector2f &position) ;
 
     bool SetIntRect(const sf::IntRect &Rect);
@@ -96,9 +94,9 @@ public:
 
     void ChangeState(std::unique_ptr<BaseState<Character> > NewState);
 
-    void AddDirection(const Direction NewDirection);
+    void AddDirection(Direction NewDirection);
 
-    void RemoveDirection(const Direction NewDirection);
+    void RemoveDirection(Direction NewDirection);
 
     Weapon &GetWeapon() const;
 
@@ -129,7 +127,7 @@ enum EnemyState
 class Enemy : public GraphicBase
 {
 public:
-    virtual ~Enemy() = default;
+    ~Enemy() override = default;
     KnockBackHandler m_KnockBackHandler;
     Enemy(Character& Player,Engine &g_Engine);
     void SetStartPosition(const sf::Vector2f& position);

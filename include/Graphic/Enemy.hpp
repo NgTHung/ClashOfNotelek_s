@@ -16,7 +16,6 @@ public:
         bool Update(const sf::Time& DT) override;
         bool HandleEvent(std::shared_ptr<BaseEvent> Event);
         bool HandleInput(const sf::Event& Event) override;
-        bool FixLagUpdate(const sf::Time&DT) override;
         void SetPosition(const sf::Vector2f& position) override;
         bool SetIntRect (const sf::IntRect& rect);
         void Move(const sf::Vector2f& direction);

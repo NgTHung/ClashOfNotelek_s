@@ -16,5 +16,5 @@ public:
     ~ScreenShake() = default;
     sf::View GetShakeViewUpdate(const sf::Time& DT,sf::View CurrentView);
     void Start();
-    bool IsActive();
+    bool IsActive() const;
 };

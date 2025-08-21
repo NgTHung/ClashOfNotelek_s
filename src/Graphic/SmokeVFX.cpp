@@ -2,11 +2,11 @@
 
 #include "Resources/ResourcesManager.hpp"
 
-HitSmokeVFX::HitSmokeVFX():GraphicBase(sf::Vector2f(Enviroment::SpriteSize)), m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("HitSmokeVFX.png"))
+HitSmokeVFX::HitSmokeVFX():GraphicBase(sf::Vector2f(Environment::SpriteSize)), m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("HitSmokeVFX.png"))
 {
     m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(64,64)));
     m_Sprite.setOrigin(sf::Vector2f(31,64));
-    m_Sprite.setScale(Enviroment::SpriteScalingFactor);
+    m_Sprite.setScale(Environment::SpriteScalingFactor);
     m_Index = 0;
 }
 
@@ -42,10 +42,6 @@ bool HitSmokeVFX::Update(const sf::Time &DT)
     m_Sprite.setRotation(sf::degrees(angle + 90.0f));
     return false;
 }
-bool HitSmokeVFX::FixLagUpdate(const sf::Time&)
-{
-    return false;
-}
 
 bool HitSmokeVFX::HandleInput(const sf::Event&)
 {
@@ -64,11 +60,11 @@ void HitSmokeVFX::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 //======================================================================================
 
-DeadSmokeVFX::DeadSmokeVFX():GraphicBase(sf::Vector2f(Enviroment::SpriteSize)), m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("DeadSmokeVFX.png"))
+DeadSmokeVFX::DeadSmokeVFX():GraphicBase(sf::Vector2f(Environment::SpriteSize)), m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("DeadSmokeVFX.png"))
 {
     m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(64,64)));
     m_Sprite.setOrigin(sf::Vector2f(32,32));
-    m_Sprite.setScale(Enviroment::SpriteScalingFactor);
+    m_Sprite.setScale(Environment::SpriteScalingFactor);
     m_Index = 0;
 }
 
@@ -99,10 +95,6 @@ bool DeadSmokeVFX::Update(const sf::Time &DT)
         }
     }
     m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(m_Index*64,0),sf::Vector2i(64,64)));
-    return false;
-}
-bool DeadSmokeVFX::FixLagUpdate(const sf::Time&)
-{
     return false;
 }
 

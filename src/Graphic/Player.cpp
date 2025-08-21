@@ -78,15 +78,6 @@ bool Player::HandleInput(const std::optional<sf::Event> &Event)
     return true;
 }
 
-bool Player::FixLagUpdate(const sf::Time &DT)
-{
-    if (auto NewState = m_PlayerState->FixLagUpdate(DT))
-    {
-        ChangeState(std::move(NewState));
-    }
-    return true;
-}
-
 bool Player::setPosition(sf::Vector2f NewPosition)
 {
     this->m_Name.setPosition(NewPosition);

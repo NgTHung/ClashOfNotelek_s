@@ -9,26 +9,25 @@ class Engine;
 class Button : public GraphicBase
 {
 public:
-    Button(Engine &g_Engine, const sf::Vector2f, const std::string &);
-    Button(Engine &g_Engine, const sf::Vector2f, const sf::Texture &);
-    Button(Engine &g_Engine, const sf::Vector2f, const sf::Texture &, const std::string &);
-    virtual ~Button() = default;
+    Button(Engine &g_Engine, sf::Vector2f, const std::string &);
+    Button(Engine &g_Engine, sf::Vector2f, const sf::Texture &);
+    Button(Engine &g_Engine, sf::Vector2f, const sf::Texture &, const std::string &);
+    ~Button() override = default;
 
-    virtual bool Update(const sf::Time &) override;
-    bool FixLagUpdate(const sf::Time &) override;
+    bool Update(const sf::Time &) override;
     void SetPosition(const sf::Vector2f &) override;
-    virtual bool HandleInput(const sf::Event &) override;
+    bool HandleInput(const sf::Event &) override;
 
     sf::Vector2f GetSize() const override;
 
     void SetText(const std::string &);
-    void SetScale(const sf::Vector2f& ScalingFactor);
+    void SetScale(const sf::Vector2f& ScalingFactor) override;
     void SetTexture(const sf::Texture &);
     void SetOnClick(std::function<void()> func);
 
     void FixtateButtonSize();
 
-    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
     Button(Engine &g_Engine, const sf::Vector2f &);

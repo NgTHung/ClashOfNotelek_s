@@ -27,9 +27,6 @@ private:
     int m_HP;
     std::set<Direction> s;
 
-
-   
-
 public:
     Player(const Engine &g_Engine);
     ~Player() = default;
@@ -37,14 +34,13 @@ public:
     bool Update(const sf::Time &DT);
     bool HandleEvent(std::shared_ptr<BaseEvent> Event);
     bool HandleInput(const std::optional<sf::Event> &Event);
-    bool FixLagUpdate(const sf::Time &DT);
     bool setPosition(sf::Vector2f NewPosition);
     void ChangeState(std::unique_ptr<BaseState<Player>> NewState);
     void SetName(const std::string &Name);
     void AdvanceIndex();
     void ResetIndex();
-    void AddDirection(const Direction NewDirection);
-    void RemoveDirection(const Direction NewDirection);
+    void AddDirection(Direction NewDirection);
+    void RemoveDirection(Direction NewDirection);
     std::set<Direction> GetDirection();
 
     sf::Vector2f GetPosition() const;

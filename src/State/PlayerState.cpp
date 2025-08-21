@@ -3,7 +3,7 @@
 #include "Utility/Logger.hpp"
 #include "Graphic/Player.hpp"
 #include "State/StartScreen.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
 PlayerState::PlayerState(Player &PlayerInstance) : BaseState(PlayerInstance)
 {
@@ -183,7 +183,7 @@ std::unique_ptr<BaseState<Player>> MovingState::FixLagUpdate(const sf::Time &DT)
 
 std::unique_ptr<BaseState<Player>> MovingState::Update(const sf::Time &DT)
 {
-    sf::Vector2f NewPosition = sf::Vector2f(Enviroment::BaseLocation);
+    sf::Vector2f NewPosition = sf::Vector2f(Environment::BaseLocation);
     for (const auto it : this->m_Instance.GetDirection())
     {
         switch (it)
@@ -195,28 +195,28 @@ std::unique_ptr<BaseState<Player>> MovingState::Update(const sf::Time &DT)
         }
         case Direction::WEST:
         {
-            NewPosition.x -= Enviroment::Velocity;
+            NewPosition.x -= Environment::Velocity;
             break;
         }
         case Direction::EAST:
         {
-            NewPosition.x += Enviroment::Velocity;
+            NewPosition.x += Environment::Velocity;
             break;
         }
         case Direction::NORTH:
         {
-            NewPosition.y -= Enviroment::Velocity;
+            NewPosition.y -= Environment::Velocity;
             break;
         }
         case Direction::SOUTH:
         {
-            NewPosition.y += Enviroment::Velocity;
+            NewPosition.y += Environment::Velocity;
         }
         }
     }
     if (this->m_Instance.GetDirection().size() == 2)
     {
-        NewPosition *= Enviroment::VelocityNormalizationValue;
+        NewPosition *= Environment::VelocityNormalizationValue;
     }
     this->m_Instance.setPosition(NewPosition + this->m_Instance.GetPosition());
     return nullptr;

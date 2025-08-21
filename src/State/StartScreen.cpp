@@ -2,7 +2,7 @@
 
 #include "Resources/ResourcesManager.hpp"
 #include "Utility/Logger.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 #include "State/HomeScreen.hpp"
 // Define start State
 
@@ -51,14 +51,6 @@ bool StartScreen::HandleInput(const std::optional<sf::Event> Event)
 bool StartScreen::HandleEvent(std::shared_ptr<BaseEvent> Event)
 {
     return false;
-}
-
-bool StartScreen::FixLagUpdate(const sf::Time& DT)
-{
-    m_PlayButton.FixLagUpdate(DT);
-    m_ExitButton.FixLagUpdate(DT);
-    return true;
-    //return m_StartButton.FixLagUpdate(DT);
 }
 
 bool StartScreen::Update(const sf::Time& DT)

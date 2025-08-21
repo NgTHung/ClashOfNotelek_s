@@ -16,7 +16,7 @@ WinScreen::WinScreen(Engine& g_Engine): Screen(g_Engine), m_ExitButton(
                                         m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("DeadScreen.png"))
 
 {
-    m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(Enviroment::ScreenResolution)));
+    m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(Environment::ScreenResolution)));
     m_ReplayButton.SetOnClick([this]()
     {
       this->m_Engine.PopState();
@@ -57,14 +57,6 @@ bool WinScreen::HandleInput(const std::optional<sf::Event> Event)
     m_ExitButton.HandleInput(Event.value());
     return true;
 }
-
-bool WinScreen::FixLagUpdate(const sf::Time &DT)
-{
-    m_ReplayButton.FixLagUpdate(DT);
-    m_ExitButton.FixLagUpdate(DT);
-    return true;
-}
-
 
 
 

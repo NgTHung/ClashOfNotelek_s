@@ -1,6 +1,6 @@
 #pragma once
 #include "Graphic/Base.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 class HitSmokeVFX: public GraphicBase
 {
 private:
@@ -15,7 +15,6 @@ public:
     void Active(sf::Vector2f Pos,sf::Vector2f Direction);
     bool IsActive() const;
     bool Update(const sf::Time& DT) override;
-    bool FixLagUpdate(const sf::Time&) override;
     bool HandleInput(const sf::Event&) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     GlobalEventType GetCollisionEventType() const override;
@@ -35,7 +34,6 @@ public:
     void Active(sf::Vector2f Pos);
     bool IsActive() const;
     bool Update(const sf::Time& DT) override;
-    bool FixLagUpdate(const sf::Time&) override;
     bool HandleInput(const sf::Event&) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     GlobalEventType GetCollisionEventType() const override;

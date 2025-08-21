@@ -14,6 +14,5 @@ public:
     virtual bool Render(sf::RenderTarget &Renderer) = 0;
     virtual bool Update(const sf::Time &DT) = 0;
     virtual bool HandleEvent(std::shared_ptr<BaseEvent> Event) = 0;
-    virtual bool HandleInput(const std::optional<sf::Event> Event) = 0;
-    virtual bool FixLagUpdate(const sf::Time &DT) = 0;
+    virtual bool HandleInput(std::optional<sf::Event> Event) = 0;
 };
