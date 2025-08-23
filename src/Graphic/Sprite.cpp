@@ -59,16 +59,8 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
 
 }
 
-int Character::GetNumberofSlimeHasKilled() const
-{
-    return this->m_SlimeHasKilled;
-}
 
-void Character::HasKilledaSlime()
-{
-    m_SlimeHasKilled++;
-    LOG_DEBUG("Character has killed a slime");
-}
+
 
 Weapon &Character::GetWeapon() const {
     return *m_Weapon;
@@ -167,6 +159,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
                             this->m_HP -= enemy->GetDame();
                             enemy->Attack();
                             m_Engine.ShakeScreen();
+                            m_Engine.PlaySound("ouch");
                             m_PlayerHealthBar.BeAttack();
 
                         }
@@ -242,17 +235,17 @@ void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const {
     States.transform *= GetTransform();
     Target.draw(m_Shape, States);
 
-    std::vector<sf::Vector2f> Points = this->GetTransformedPoints();
-    sf::VertexArray shape(sf::PrimitiveType::LineStrip,Points.size() + 1);
-    for (size_t i = 0; i < Points.size(); ++i) {
-        shape[i].position = Points[i];
-        shape[i].color = sf::Color::Red;
-    }
-    if(Points.size() > 0)
-        shape[Points.size()].position = Points[0];
-    // for(auto i : Points)
-    //     std::cout<< i.x << " " << i.y << '\n';
-    Target.draw(shape);
+    // std::vector<sf::Vector2f> Points = this->GetTransformedPoints();
+    // sf::VertexArray shape(sf::PrimitiveType::LineStrip,Points.size() + 1);
+    // for (size_t i = 0; i < Points.size(); ++i) {
+    //     shape[i].position = Points[i];
+    //     shape[i].color = sf::Color::Red;
+    // }
+    // if(Points.size() > 0)
+    //     shape[Points.size()].position = Points[0];
+    // // for(auto i : Points)
+    // //     std::cout<< i.x << " " << i.y << '\n';
+    // Target.draw(shape);
     if (m_Weapon) {
         Target.draw(*m_Weapon, States);
     }
@@ -397,8 +390,8 @@ std::vector<sf::Vector2f> Character::GetFootVertices() const
 Enemy::Enemy(Character& Player, Engine &g_Engine): GraphicBase(sf::Vector2f(Environment::SpriteSize)),
                                                    m_MovingRight(false), m_PatrolRange(0),
                                                    m_Speed(0),
-                                                   m_Player(Player), m_Index(0), m_HP(0), m_Engine(g_Engine),
-                                                   m_Radius(0), m_LastAttackID(0), m_Dame(0) {
+                                                   m_Engine(g_Engine), m_Radius(0), m_LastAttackID(0), m_Dame(0),
+                                                   m_Player(Player), m_Index(0), m_HP(0) {
     m_State = Patrol;
 }
 

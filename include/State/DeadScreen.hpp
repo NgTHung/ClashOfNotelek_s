@@ -8,6 +8,9 @@ private:
     GraphicButton m_ReplayButton;
     GraphicButton m_ExitButton;
     sf::Sprite m_Sprite;
+    int m_TimePerFrame = 150;
+    int m_TimeCounter = 0;
+    int m_Index = 0;
 public:
     DeadScreen(Engine &g_Engine);
     ~DeadScreen() override = default;

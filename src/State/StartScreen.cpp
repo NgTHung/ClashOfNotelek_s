@@ -34,6 +34,7 @@ StartScreen::StartScreen(Engine& g_Engine) : Screen(g_Engine),
     m_Grass.SetPosition(sf::Vector2f(431,704));
     m_Grass.SetScale(sf::Vector2f(10,10));
     m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(Environment::ScreenResolution)));
+    m_Engine.SetBackGroundMusic(ResourcesManager::GetManager().GetAudioHolder().GetMusic("win"));
 }
 
 bool StartScreen::Render(sf::RenderTarget& Renderer)
@@ -68,6 +69,7 @@ bool StartScreen::Update(const sf::Time& DT)
         m_index = (m_index + 1) % 5;
         m_LastUpdate -= m_TimeperFrame;
     }
+
     m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(m_index*Environment::ScreenResolution.x,0),sf::Vector2i(Environment::ScreenResolution)));
     m_PlayButton.Update(DT);
     m_LeafFalling.Update(DT);

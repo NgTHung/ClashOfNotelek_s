@@ -37,7 +37,9 @@ sf::Vector2f Leaf::GetPosition() const
 {
     return m_Sprite.getPosition();
 }
-bool Leaf::HandleInput(const sf::Event&)
+
+
+bool Leaf::HandleInput(const sf::Event& Event)
 {
     return true;
 }
@@ -71,8 +73,8 @@ void LeafFalling::SpawnLeave()
 
 void LeafFalling::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    for (const auto & m_Leave : m_Leaves)
-        target.draw(*m_Leave);
+    for (int i = 0; i < m_Leaves.size(); i++)
+        target.draw(*m_Leaves[i]);
 }
 
 GlobalEventType LeafFalling::GetCollisionEventType() const
@@ -82,12 +84,12 @@ GlobalEventType LeafFalling::GetCollisionEventType() const
 
 bool LeafFalling::Update(const sf::Time& DT)
 {
-    for (auto & m_Leave : m_Leaves)
-        m_Leave->Update(DT);
+    for (int i = 0; i < m_Leaves.size(); i++)
+        m_Leaves[i]->Update(DT);
 
     m_Leaves.erase(
           std::remove_if(m_Leaves.begin(), m_Leaves.end(),
-              [&](const std::shared_ptr<Leaf>& leaf) {
+              [&](std::shared_ptr<Leaf> leaf) {
                   sf::Vector2f pos = leaf->GetPosition();
                   if (pos.y > m_Engine.GetWindow().getSize().y + 50) {
                       SpawnLeave();

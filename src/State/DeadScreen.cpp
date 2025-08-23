@@ -26,7 +26,11 @@ DeadScreen::DeadScreen(Engine &g_Engine): Screen(g_Engine), m_ReplayButton(
     m_ReplayButton.SetPosition(sf::Vector2f(g_Engine.GetWindow().getSize().x / 2.f,
                                             g_Engine.GetWindow().getSize().y / 3.f));
     m_ExitButton.SetPosition(sf::Vector2f(g_Engine.GetWindow().getSize().x / 2.f,
-                                          g_Engine.GetWindow().getSize().y * 2.f / 3.f));
+                                          g_Engine.GetWindow().getSize().y * 2.f / 3.f - 100.f));
+    m_Engine.stopBackGroundMusic();
+    m_Engine.StopWalkingMusic();
+    m_Engine.PlaySound("loseSound");
+    m_Engine.SetBackGroundMusic(ResourcesManager::GetManager().GetAudioHolder().GetMusic("lose"),true);
 }
 
 bool DeadScreen::Render(sf::RenderTarget &Renderer) {
@@ -38,6 +42,13 @@ bool DeadScreen::Render(sf::RenderTarget &Renderer) {
 
 bool DeadScreen::Update(const sf::Time &DT) {
     m_Engine.ResetView();
+    m_TimeCounter += DT.asMilliseconds();
+    if (m_TimeCounter >= m_TimePerFrame)
+    {
+        m_TimeCounter -= m_TimePerFrame;
+        m_Index = (m_Index + 1)%7;
+    }
+    m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(m_Index*Environment::ScreenResolution.x, 0), sf::Vector2i(Environment::ScreenResolution)));
     m_ReplayButton.Update(DT);
     m_ExitButton.Update(DT);
     return true;

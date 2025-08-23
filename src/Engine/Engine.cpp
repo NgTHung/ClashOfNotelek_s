@@ -10,8 +10,10 @@ Engine::Engine() : m_CollisionSystem(std::make_unique<CollisionSystem>(*this)),
                    m_Window(sf::VideoMode(Environment::ScreenResolution), Environment::GameName),
                    m_View(Environment::DefaultView),
                    m_ShouldPop(false), m_ShouldExit(false), m_ShouldChangeState(false),
-                   m_EventQueue(std::make_unique<EventQueue>()) {
+                   m_EventQueue(std::make_unique<EventQueue>()),
+                    m_WalkingMusic(ResourcesManager::GetManager().GetAudioHolder().GetMusic("running")){
     m_Window.setFramerateLimit(Environment::FrameLimit);
+    m_WalkingMusic.setLooping(true);
 }
 
 void Engine::ResetWindow() {
@@ -31,6 +33,36 @@ void Engine::ShakeScreen() {
 ScreenShake &Engine::GetScreenShake() {
     return m_ScreenShake;
 }
+void Engine::PlaySound(const std::string& SoundName)
+{
+    sf::Sound tmp (ResourcesManager::GetManager().GetAudioHolder().GetSoundBuffer(SoundName));
+    m_Sound.push_back(tmp);
+    m_Sound.back().play();
+}
+
+void Engine::SetBackGroundMusic(const std::string& music,const bool& isLoop)
+{
+    m_Music.openFromFile(music);
+    m_Music.setLooping(isLoop);
+    m_Music.play();
+    m_Music.setVolume(70.f);
+}
+
+void Engine::stopBackGroundMusic()
+{
+    m_Music.stop();
+}
+
+void Engine::PlayWalkingMusic()
+{
+    m_WalkingMusic.play();
+}
+
+void Engine::StopWalkingMusic()
+{
+    m_WalkingMusic.stop();
+}
+
 
 void Engine::ResetView() {
     m_View.setCenter(sf::Vector2f(Environment::ScreenResolution.x / 2, Environment::ScreenResolution.y / 2));
@@ -120,15 +152,22 @@ CollisionSystem &Engine::GetCollisionSystem() {
     return *(m_CollisionSystem);
 }
 
+void Engine::ClearSound()
+{
+    m_Sound.erase(
+        std::remove_if(m_Sound.begin(), m_Sound.end(),
+                       [](const sf::Sound& s) {
+                           return s.getStatus() == sf::Sound::Status::Stopped
+                               && s.getPlayingOffset() > sf::Time::Zero;
+                       }),
+        m_Sound.end());
+}
+
 void Engine::Run() {
     sf::Clock Timer;
 
     //AUDIO USING HERE
-    std::string ms = ResourcesManager::GetManager().GetAudioHolder().GetMusic("win");
-    sf::Music music;
-    music.openFromFile(ms.c_str());
-    music.setLooping(true);
-    music.play();
+
 
     while (m_Window.isOpen() && !m_States.empty())
     {
@@ -138,6 +177,7 @@ void Engine::Run() {
         m_CollisionSystem->HandleCollisions();
         ProcessEvents();
         State.Update(Elapsed);
+        ClearSound();
         m_Window.clear();
         State.Render(m_Window);
         m_Window.display();
