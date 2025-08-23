@@ -30,7 +30,7 @@ public:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    Button(Engine &g_Engine, const sf::Vector2f &);
+    Button(Engine &g_Engine, const sf::Vector2f         &);
 
 public:
     GlobalEventType GetCollisionEventType() const override;
