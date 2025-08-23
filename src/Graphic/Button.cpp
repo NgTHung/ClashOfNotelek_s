@@ -126,7 +126,7 @@ bool GraphicButton::Update(const sf::Time& Time)
 
     if (!m_HasClicked)
     {
-        sf::Vector2f mPos(sf::Mouse::getPosition(this->m_Engine.GetWindow()));
+        sf::Vector2f mPos = m_Engine.GetWindow().mapPixelToCoords(sf::Mouse::getPosition(m_Engine.GetWindow()));
         if (this->m_Button.getGlobalBounds().contains(mPos))
             m_Index = 0;
         else
@@ -158,6 +158,16 @@ bool GraphicButton::Update(const sf::Time& Time)
 void GraphicButton::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::Transform transform;
+    // sf::RectangleShape debugRect;
+    // sf::FloatRect gb = m_Button.getGlobalBounds();
+    // debugRect.setPosition(gb.position);
+    // debugRect.setSize(gb.size );
+    // debugRect.setFillColor(sf::Color::Transparent);
+    // debugRect.setOutlineColor(sf::Color::Red);
+    // debugRect.setOutlineThickness(3.f);
+    //
+    // // Trong hàm render// vẽ object gốc
+    // target.draw(debugRect);
     target.draw(m_Button, transform);
 
 }

@@ -46,13 +46,14 @@ namespace Environment
     constexpr int MapEntityCollisionLayer = 3;
     constexpr int AttackableLayer = 2;
 
-
-    constexpr float SwordAttackCooldown = 1.0f;
-    constexpr int SwordDame = 10;
-    constexpr float KnockBackStrength = 250.0f;
+    
+    const float SwordAttackCooldown = 1.0f;
+    const int SwordDame = 10;
+    const float KnockBackStrength = 250.0f;
 
     //win game conditions
-    constexpr int NumberSlimeToKilled = 1;
+    const int NumberSlimeToKilled = 10;
+
 
     const std::vector TreePositions = {
         sf::Vector2f{40,35},
