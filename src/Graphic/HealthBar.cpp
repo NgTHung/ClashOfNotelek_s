@@ -10,9 +10,9 @@ HealthBar::HealthBar(): m_Offset(sf::Vector2f{0,0})
     m_BackgroundBar.setOutlineThickness(1);
 }
 
-void HealthBar::SetMaxHealth(const float& Maxhealth)
+void HealthBar::SetMaxHealth(const float& MaxHealth)
 {
-    m_MaxHealth = Maxhealth;
+    m_MaxHealth = MaxHealth;
 }
 
 

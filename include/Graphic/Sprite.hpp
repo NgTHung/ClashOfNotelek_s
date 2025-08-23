@@ -3,14 +3,11 @@
 #include <SFML/Graphics.hpp>
 
 #include "Base.hpp"
-#include "PlayerHealthbar.hpp"
-#include "SmokeVFX.hpp"
 #include "Graphic/Player.hpp"
 #include "Graphic/Weapon.hpp"
 #include "State/KnockbackHandler.hpp"
 #include "Graphic/HealthBar.hpp"
 #include "Graphic/SmokeVFX.hpp"
-#include "SFML/Audio/Listener.hpp"
 #include "Graphic/PlayerHealthbar.hpp"
 
 enum class EnemyType{
@@ -73,8 +70,6 @@ public:
 
     bool HandleInput(const sf::Event &Event) override;
 
-    bool FixLagUpdate(const sf::Time &DT) override;
-
     void SetPosition(const sf::Vector2f &position) ;
 
     bool SetIntRect(const sf::IntRect &Rect);
@@ -96,9 +91,9 @@ public:
 
     void ChangeState(std::unique_ptr<BaseState<Character> > NewState);
 
-    void AddDirection(const Direction NewDirection);
+    void AddDirection(Direction NewDirection);
 
-    void RemoveDirection(const Direction NewDirection);
+    void RemoveDirection(Direction NewDirection);
 
     Weapon &GetWeapon() const;
 
@@ -129,7 +124,7 @@ enum EnemyState
 class Enemy : public GraphicBase
 {
 public:
-    virtual ~Enemy() = default;
+    ~Enemy() override = default;
     KnockBackHandler m_KnockBackHandler;
     Enemy(Character& Player,Engine &g_Engine);
     void SetStartPosition(const sf::Vector2f& position);

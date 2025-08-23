@@ -1,6 +1,6 @@
 #pragma once
-#include "Engine/Engine.hpp"
-#include "cmath"
+#include <SFML/Graphics.hpp>
+
 class KnockBackHandler
 {
 private:

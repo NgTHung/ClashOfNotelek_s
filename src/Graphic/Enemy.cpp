@@ -5,24 +5,24 @@
 #include "Event/CollisionEvent.hpp"
 #include "Resources/ResourcesHolder.hpp"
 #include "Resources/ResourcesManager.hpp"
-#include "Utility/Enviroment.hpp"
-
+#include "Utility/Environment.hpp"
+#include "Utility/Logger.hpp"
 
 
 Slime::Slime(Character& Player, Engine &g_Engine):Enemy(Player,g_Engine)
 {
     this->m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("Slime.png"));
-    Slime::SetScale(Enviroment::SpriteScalingFactor);
+    Slime::SetScale(Environment::SpriteScalingFactor);
     Slime::SetPosition(sf::Vector2f(0,0));
-    this->m_Shape.setTextureRect(Enviroment::DefaultIntRect);
+    this->m_Shape.setTextureRect(Environment::DefaultIntRect);
     this->m_Shape.setSize(Slime::GetSize());
     this->m_Vertices.push_back(sf::Vector2f(4,15));
-    this->m_Vertices.push_back(sf::Vector2f(Enviroment::BaseSpriteSize - 6,15));
-    this->m_Vertices.push_back(sf::Vector2f(Enviroment::BaseSpriteSize - 6,Enviroment::BaseSpriteSize));
-    this->m_Vertices.push_back(sf::Vector2f(4,Enviroment::BaseSpriteSize));
+    this->m_Vertices.push_back(sf::Vector2f(Environment::BaseSpriteSize - 6,15));
+    this->m_Vertices.push_back(sf::Vector2f(Environment::BaseSpriteSize - 6,Environment::BaseSpriteSize));
+    this->m_Vertices.push_back(sf::Vector2f(4,Environment::BaseSpriteSize));
 
-    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::AttackableLayer);
-    m_Engine.GetCollisionSystem().AddCollidable(this, Enviroment::EnemyAttackLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this, Environment::AttackableLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this, Environment::EnemyAttackLayer);
 
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
@@ -69,11 +69,11 @@ void Slime::UpdateAnimation()
 {
     sf::IntRect TextureRect = this->m_Shape.getTextureRect();
     if (m_MovingRight)
-        TextureRect.position.y = 3*Enviroment::BaseSpriteSize;
+        TextureRect.position.y = 3*Environment::BaseSpriteSize;
     else
-        TextureRect.position.y = 2*Enviroment::BaseSpriteSize;
+        TextureRect.position.y = 2*Environment::BaseSpriteSize;
     m_Index = (m_Index + 1) % 7;
-    TextureRect.position.x = m_Index*Enviroment::BaseSpriteSize;
+    TextureRect.position.x = m_Index*Environment::BaseSpriteSize;
     m_Shape.setTextureRect(TextureRect);
 }
 
@@ -81,11 +81,11 @@ void Slime::Flash()
 {
     m_Index = 0;
     sf::IntRect TextureRect = m_Shape.getTextureRect();
-    TextureRect.position.x = m_Index*Enviroment::BaseSpriteSize;
+    TextureRect.position.x = m_Index*Environment::BaseSpriteSize;
     if (m_MovingRight)
-        TextureRect.position.y = 5*Enviroment::BaseSpriteSize;
+        TextureRect.position.y = 5*Environment::BaseSpriteSize;
     else
-        TextureRect.position.y = 4*Enviroment::BaseSpriteSize;
+        TextureRect.position.y = 4*Environment::BaseSpriteSize;
     m_Shape.setTextureRect(TextureRect);
 }
 
@@ -96,7 +96,7 @@ void Slime::BeHitProcess()
     sf::Vector2f PlayerPos = m_Player.GetPosition();
     sf::Vector2f Pos = this->m_Shape.getPosition();
     sf::Vector2f Dir = Pos - PlayerPos;
-    m_KnockBackHandler.ApplyVelocity(Dir,Enviroment::KnockBackStrength);
+    m_KnockBackHandler.ApplyVelocity(Dir,Environment::KnockBackStrength);
     sf::Vector2f SmokePos = sf::Vector2f{this->getPosition().x + 15*this->getScale().x,this->getPosition().y + 27*this->getScale().y};
     m_HitSmokeVFX.Active(SmokePos,Dir);
 }
@@ -159,7 +159,7 @@ bool Slime::Update(const sf::Time &DT)
     {
         sf::Vector2f Pos = this->m_Shape.getPosition();
         m_KnockBackHandler.Update(Pos,DT.asSeconds());
-        if (m_Engine.GetCollisionSystem().IsFree(Pos,*this,Enviroment::MapEntityCollisionLayer))
+        if (m_Engine.GetCollisionSystem().IsFree(Pos,*this,Environment::MapEntityCollisionLayer))
             Slime::SetPosition(Pos);
         else
             this->m_KnockBackHandler.Stop();
@@ -174,7 +174,7 @@ bool Slime::Update(const sf::Time &DT)
     sf::Vector2f Pos = m_Shape.getPosition();
     switch (m_State)
     {
-    case EnemyState::Patrol:
+    case Patrol:
         {
             if (m_MovingRight)
             {
@@ -190,7 +190,7 @@ bool Slime::Update(const sf::Time &DT)
             }
             break;
         }
-    case::EnemyState::Chase:
+    case Chase:
         {
             if (PlayerPos.x > Pos.x)
             {
@@ -209,7 +209,7 @@ bool Slime::Update(const sf::Time &DT)
             break;
         }
     }
-    if (m_Engine.GetCollisionSystem().IsFree(Pos,*this,Enviroment::MapEntityCollisionLayer))
+    if (m_Engine.GetCollisionSystem().IsFree(Pos,*this,Environment::MapEntityCollisionLayer))
         Slime::SetPosition(Pos);
     else
         m_MovingRight = !m_MovingRight;
@@ -220,7 +220,7 @@ bool Slime::Update(const sf::Time &DT)
 
 void Slime::Move(const sf::Vector2f& direction)
 {
-    Transformable::move(direction);
+    move(direction);
     m_Shape.move(direction);
 }
 
@@ -279,11 +279,6 @@ bool Slime::HandleEvent(std::shared_ptr<BaseEvent> Event)
 }
 
 bool Slime::HandleInput(const sf::Event& Event)
-{
-    return true;
-}
-
-bool Slime::FixLagUpdate(const sf::Time& DT)
 {
     return true;
 }

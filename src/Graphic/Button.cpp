@@ -1,7 +1,9 @@
+#include <utility>
+
 #include "Graphic/Button.hpp"
 #include "Utility/Logger.hpp"
 #include "Engine/Engine.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
 Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_Engine(g_Engine), GraphicBase(m_Button.getSize())
 {
@@ -34,11 +36,6 @@ Button::Button(Engine &g_Engine, const sf::Vector2f pos, const sf::Texture &text
 }
 
 bool Button::Update(const sf::Time &DT)
-{
-    return true;
-}
-
-bool Button::FixLagUpdate(const sf::Time &DT)
 {
     return true;
 }
@@ -86,12 +83,12 @@ void Button::SetTexture(const sf::Texture &texture)
 
 void Button::SetOnClick(std::function<void()> func)
 {
-    this->m_OnClick = func;
+    this->m_OnClick = std::move(func);
 }
 
 void Button::FixtateButtonSize()
 {
-    this->m_Button.setSize({this->m_Text.getLocalBounds().size.x + Enviroment::ButtonPadding, this->m_Text.getLocalBounds().size.y + Enviroment::ButtonPadding});
+    this->m_Button.setSize({this->m_Text.getLocalBounds().size.x + Environment::ButtonPadding, this->m_Text.getLocalBounds().size.y + Environment::ButtonPadding});
 }
 
 void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -104,7 +101,7 @@ void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 GraphicButton::GraphicButton(Engine& g_Engine, const sf::Vector2f& Pos, const sf::Texture& Texture): Button(g_Engine,Pos, Texture)
 {
-    m_Button.setScale(Enviroment::SpriteScalingFactor);
+    m_Button.setScale(Environment::SpriteScalingFactor);
     m_Button.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(90,27)));
     m_Button.setSize(sf::Vector2f(90,27));
     m_Button.setOrigin(sf::Vector2f(m_Button.getSize().x / 2,m_Button.getSize().y / 2));
@@ -157,8 +154,6 @@ bool GraphicButton::Update(const sf::Time& Time)
 
     return true;
 }
-
-
 
 void GraphicButton::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {

@@ -3,27 +3,26 @@
 #include "SFML/System/Time.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "SFML/Graphics.hpp"
-#include "SFML/Audio/Listener.hpp"
 
-namespace Enviroment
+namespace Environment
 {
-    const double Velocity = 200;
+    constexpr float Velocity = 200;
 
-    const sf::Vector2u ScreenResolution = {1280, 720};
+    constexpr sf::Vector2u ScreenResolution = {1280, 720};
     const std::string GameName = "Clash of Notelek\'s";
-    const sf::View DefaultView(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(Enviroment::ScreenResolution.x,Enviroment::ScreenResolution.y)));
+    const sf::View DefaultView(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(ScreenResolution.x,ScreenResolution.y)));
 
-    const int FrameLimit = 120;
-    const int TickPerSecond = 30;
-    const sf::Time TimePerUpdate = sf::seconds(1.f / TickPerSecond);
+    constexpr int FrameLimit = 120;
+    constexpr int TickPerSecond = 30;
+    constexpr sf::Time TimePerUpdate = sf::seconds(1.f / TickPerSecond);
 
-    const sf::Vector2i BaseLocation = {0, 0};
-    const sf::Vector2f SpriteScalingFactor = {4, 4};
-    const sf::Vector2f MapScalingFactor = {1, 1};
-    const int BaseSpriteSize = 32;
-    const sf::Vector2f CenterPointOfPlayer = sf::Vector2f(16,17);
-    const sf::Vector2i SpriteSize = {BaseSpriteSize, BaseSpriteSize};
-    const sf::FloatRect SpriteHitBoxOffset = {sf::Vector2f(5.0f,0.0f),sf::Vector2f(22.0f, 32.0f)};
+    constexpr sf::Vector2i BaseLocation = {0, 0};
+    constexpr sf::Vector2f SpriteScalingFactor = {4, 4};
+    constexpr sf::Vector2f MapScalingFactor = {1, 1};
+    constexpr int BaseSpriteSize = 32;
+    constexpr sf::Vector2f CenterPointOfPlayer = sf::Vector2f(16,17);
+    constexpr sf::Vector2i SpriteSize = {BaseSpriteSize, BaseSpriteSize};
+    constexpr sf::FloatRect SpriteHitBoxOffset = {sf::Vector2f(5.0f,0.0f),sf::Vector2f(22.0f, 32.0f)};
 
     const std::string FontExtention = ".ttf";
     const std::string FontDirectory = "assets/fonts";
@@ -33,19 +32,19 @@ namespace Enviroment
     const std::string AudioExtention = ".mp3";
     const std::string AudioDirectory = "assets/audio";
 
-    const float VelocityNormalizationValue = (std::sqrt(2) / 2.f);
-    const int CharacterMovingFrameCount = 7;
-    const int CharacterStandingFrameCount = 5;
+    constexpr float VelocityNormalizationValue = (std::sqrt(2) / 2.f);
+    constexpr int CharacterMovingFrameCount = 7;
+    constexpr int CharacterStandingFrameCount = 5;
 
-    const int ButtonPadding = 5;
-    const int DefaultTextureIndex = 0;
-    const bool DefaultAttackingState = false;
-    const float DefaultAttackingDamage = 50.0f;
-    const sf::IntRect DefaultIntRect = {BaseLocation, SpriteSize};
-    const int PlayerCollisionLayer = 1;
-    const int EnemyAttackLayer = 4;
-    const int MapEntityCollisionLayer = 3;
-    const int AttackableLayer = 2;
+    constexpr int ButtonPadding = 5;
+    constexpr int DefaultTextureIndex = 0;
+    constexpr bool DefaultAttackingState = false;
+    constexpr float DefaultAttackingDamage = 50.0f;
+    constexpr sf::IntRect DefaultIntRect = {BaseLocation, SpriteSize};
+    constexpr int PlayerCollisionLayer = 1;
+    constexpr int EnemyAttackLayer = 4;
+    constexpr int MapEntityCollisionLayer = 3;
+    constexpr int AttackableLayer = 2;
 
     
     const float SwordAttackCooldown = 1.0f;
@@ -55,7 +54,8 @@ namespace Enviroment
     //win game conditions
     const int NumberSlimeToKilled = 10;
 
-    const std::vector<sf::Vector2f> TreePositions = {
+
+    const std::vector TreePositions = {
         sf::Vector2f{40,35},
         sf::Vector2f{141,223},
         sf::Vector2f{38,260},
@@ -70,7 +70,7 @@ namespace Enviroment
         sf::Vector2f{376,277}
     };
 
-    const std::vector<sf::Vector2f> GrassPositions = {
+    const std::vector GrassPositions = {
         sf::Vector2f{76,26},
         sf::Vector2f{113,22},
         sf::Vector2f{41,71},
@@ -91,7 +91,7 @@ namespace Enviroment
         sf::Vector2f{511,38}
     };
 
-    const std::vector<sf::Vector2f> TinyGrassPositions = {
+    const std::vector TinyGrassPositions = {
         sf::Vector2f{36,112},
         sf::Vector2f{298,13},
         sf::Vector2f{309,36},

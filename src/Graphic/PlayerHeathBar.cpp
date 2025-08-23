@@ -9,7 +9,7 @@ PlayerHealthBarFace::PlayerHealthBarFace()
 {
    m_sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(30,30)));
     m_sprite.setScale(sf::Vector2f(4.5f,4.5f));
-    SetScale(sf::Vector2f(4.5f,4.5f));
+   Collidable::SetScale(sf::Vector2f(4.5f,4.5f));
 
 }
 void PlayerHealthBarFace::BeAttack()
@@ -29,11 +29,11 @@ GlobalEventType PlayerHealthBarFace::GetCollisionEventType() const
 
 bool PlayerHealthBarFace::Update(const sf::Time& DT)
 {
-    m_Lastupdate += DT.asMilliseconds();
-    if (m_Lastupdate >= m_Millisecondsperframe)
+    m_LastUpdate += DT.asMilliseconds();
+    if (m_LastUpdate >= m_MillisecondsPerFrame)
     {
         m_Index = (m_Index + 1) % 6;
-        m_Lastupdate -= m_Millisecondsperframe;
+        m_LastUpdate -= m_MillisecondsPerFrame;
         if (m_Flash)
         {
             m_Index = 6;
@@ -41,11 +41,6 @@ bool PlayerHealthBarFace::Update(const sf::Time& DT)
         }
     }
     m_sprite.setTextureRect(sf::IntRect(sf::Vector2i(m_Index*30,0),sf::Vector2i(30,30)));
-    return true;
-}
-
-bool PlayerHealthBarFace::FixLagUpdate(const sf::Time& DT)
-{
     return true;
 }
 
@@ -68,16 +63,16 @@ sf::Vector2f PlayerHealthBarFace::GetPosition() const
     return m_sprite.getPosition();
 }
 
-PlayerHealthBar::PlayerHealthBar():GraphicBase(sf::Vector2f(0,0))
-{
+
+PlayerHealthBar::PlayerHealthBar(): GraphicBase(sf::Vector2f(0, 0)), m_CurrentHealth(0) {
     m_MaxHealth = 0;
-    m_Size = sf::Vector2f(200,15);
+    m_Size = sf::Vector2f(200, 15);
     m_BackgroundBar.setSize(m_Size);
     m_HealthBar.setSize(m_Size);
-    m_HealthBar.setFillColor(sf::Color(99,199,77));
+    m_HealthBar.setFillColor(sf::Color(99, 199, 77));
 
-    m_BackgroundBar.setFillColor(sf::Color(138,87,78));
-    m_BackgroundBar.setOutlineColor(sf::Color(99,66,67));
+    m_BackgroundBar.setFillColor(sf::Color(138, 87, 78));
+    m_BackgroundBar.setOutlineColor(sf::Color(99, 66, 67));
     m_BackgroundBar.setOutlineThickness(5);
 }
 
@@ -114,11 +109,6 @@ bool PlayerHealthBar::Update(const sf::Time& DT)
 void PlayerHealthBar::BeAttack()
 {
     m_Face.BeAttack();
-}
-
-bool PlayerHealthBar::FixLagUpdate(const sf::Time&)
-{
-    return true;
 }
 
 bool PlayerHealthBar::HandleInput(const sf::Event&)

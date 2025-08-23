@@ -8,56 +8,56 @@
 
 HomeScreen::HomeScreen(Engine &g_Engine)
     : Screen(g_Engine),m_Character(g_Engine),
-      m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),
-       m_Water(g_Engine),m_Menu(g_Engine,*this)
+      m_Water(g_Engine),
+       m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),m_Menu(g_Engine,*this)
 {
     //m_Walls.push_back(std::make_shared<Wall>(this->m_Engine,sf::Vector2f(0,0),sf::Vector2f(26,299)));
     m_MapTexture.setScale(sf::Vector2f(10,10));
     m_MapTexture.setPosition(sf::Vector2f(0, 0));
 
-    for (auto WaterWall : Enviroment::WaterWall)
+    for (auto WaterWall : Environment::WaterWall)
     {
         sf::Vector2f Pos = sf::Vector2f(WaterWall.position.x * m_MapTexture.getScale().x,WaterWall.position.y * m_MapTexture.getScale().y);
         sf::Vector2f Size = sf::Vector2f(WaterWall.size.x * m_MapTexture.getScale().x,WaterWall.size.y * m_MapTexture.getScale().y);
         m_Water.AddWall(Pos,Size);
     }
 
-    for (auto box : Enviroment::BoxPositions)
+    for (auto box : Environment::BoxPositions)
     {
-        std::shared_ptr<Box> tmp = std::make_shared<Box>(g_Engine,sf::Vector2f(Enviroment::SpriteSize.x,Enviroment::SpriteSize.y));
+        std::shared_ptr<Box> tmp = std::make_shared<Box>(g_Engine,sf::Vector2f(Environment::SpriteSize.x,Environment::SpriteSize.y));
         tmp->SetPosition(sf::Vector2f(box.x*m_MapTexture.getScale().x,box.y*m_MapTexture.getScale().y));
         m_Boxes.push_back(tmp);
     }
 
-    for (auto tinyygrasspos: Enviroment::TinyGrassPositions)
+    for (auto tinyygrasspos: Environment::TinyGrassPositions)
     {
-        std::shared_ptr<TinyGrass> tmp = std::make_shared<TinyGrass>(g_Engine,sf::Vector2f(Enviroment::SpriteSize.x,Enviroment::SpriteSize.y));
+        std::shared_ptr<TinyGrass> tmp = std::make_shared<TinyGrass>(g_Engine,sf::Vector2f(Environment::SpriteSize.x,Environment::SpriteSize.y));
         tmp->SetPosition(sf::Vector2f(tinyygrasspos.x*m_MapTexture.getScale().x,tinyygrasspos.y*m_MapTexture.getScale().y));
         m_TinyGrasses.push_back(tmp);
     }
 
-    for (auto Grasspos: Enviroment::GrassPositions)
+    for (auto Grasspos: Environment::GrassPositions)
     {
-        std::shared_ptr<Grass> tmp = std::make_shared<Grass>(g_Engine,sf::Vector2f(Enviroment::SpriteSize.x,Enviroment::SpriteSize.y));
+        std::shared_ptr<Grass> tmp = std::make_shared<Grass>(g_Engine,sf::Vector2f(Environment::SpriteSize.x,Environment::SpriteSize.y));
         tmp->SetPosition(sf::Vector2f(Grasspos.x*m_MapTexture.getScale().x,Grasspos.y*m_MapTexture.getScale().y));
         m_Grasses.push_back(tmp);
     }
 
-    for (auto TreePos: Enviroment::TreePositions)
+    for (auto TreePos: Environment::TreePositions)
     {
-        std::shared_ptr<Tree> tmp = std::make_shared<Tree>(g_Engine,sf::Vector2f(Enviroment::SpriteSize.x,Enviroment::SpriteSize.y));
+        std::shared_ptr<Tree> tmp = std::make_shared<Tree>(g_Engine,sf::Vector2f(Environment::SpriteSize.x,Environment::SpriteSize.y));
         tmp->SetPosition(sf::Vector2f(TreePos.x*m_MapTexture.getScale().x,TreePos.y*m_MapTexture.getScale().y));
         m_Trees.push_back(tmp);
     }
 
 
-    for (auto wall : m_Walls)
+    for (const auto& wall : m_Walls)
         wall->SetScale(sf::Vector2f(10,10));
     m_Enemy.clear();
-    m_vDT.reserve(Enviroment::FrameLimit + 1);
+    m_vDT.reserve(Environment::FrameLimit + 1);
     m_FPS.setFillColor(sf::Color::Black);
     m_Overlay.setFillColor(sf::Color(0,0,0,150));
-    m_Overlay.setSize(sf::Vector2f(Enviroment::ScreenResolution));
+    m_Overlay.setSize(sf::Vector2f(Environment::ScreenResolution));
     m_Menu.SetOrigin(sf::Vector2f(150,125));
 }
 
@@ -73,15 +73,15 @@ bool HomeScreen::Render(sf::RenderTarget &Renderer)
     m_RenderQueue.clear();
     m_RenderQueue.push_back(&m_Character);
 
-    for (auto box : this->m_Boxes)
+    for (const auto& box : this->m_Boxes)
         m_RenderQueue.push_back(box.get());
-    for (auto tinygrass: m_TinyGrasses)
+    for (const auto& tinygrass: m_TinyGrasses)
         m_RenderQueue.push_back(tinygrass.get());
-    for (auto grass: m_Grasses)
+    for (const auto& grass: m_Grasses)
         m_RenderQueue.push_back(grass.get());
-    for (auto tree : m_Trees)
+    for (const auto& tree : m_Trees)
         m_RenderQueue.push_back(tree.get());
-    for (auto enemy : m_Enemy)
+    for (const auto& enemy : m_Enemy)
         m_RenderQueue.push_back(enemy.get());
 
     sort(m_RenderQueue.begin(), m_RenderQueue.end(), [](GraphicBase *lhs, GraphicBase *rhs)
@@ -129,11 +129,6 @@ bool HomeScreen::HandleEvent(std::shared_ptr<BaseEvent> Event)
     return false;
 }
 
-bool HomeScreen::FixLagUpdate(const sf::Time &DT)
-{
-    return m_Character.FixLagUpdate(DT);
-}
-
 bool HomeScreen::Update(const sf::Time &DT)
 {
 
@@ -149,17 +144,17 @@ bool HomeScreen::Update(const sf::Time &DT)
         m_Engine.PushState(std::make_unique<WinScreen>(m_Engine));
     }
 
-    for (auto tinygrass: m_TinyGrasses)
+    for (const auto& tinygrass: m_TinyGrasses)
         tinygrass->Update(DT);
-    for (auto grass : m_Grasses)
+    for (const auto& grass : m_Grasses)
         grass->Update(DT);
-    for (auto enemy : m_Enemy)
+    for (const auto& enemy : m_Enemy)
         enemy->Update(DT);
-    fps += DT.asSeconds()/ Enviroment::FrameLimit;
+    fps += DT.asSeconds()/ Environment::FrameLimit;
     m_vDT.push_back(DT.asSeconds());
-    if (m_vDT.size() > Enviroment::FrameLimit)
+    if (m_vDT.size() > Environment::FrameLimit)
     {
-        fps -= m_vDT.front() / Enviroment::FrameLimit;
+        fps -= m_vDT.front() / Environment::FrameLimit;
         m_vDT.erase(m_vDT.begin());
     }
     m_FPS.setString(std::format("FPS: {:.2f}", 1.f / fps));
@@ -171,8 +166,8 @@ bool HomeScreen::Update(const sf::Time &DT)
         {
             if (enemy->GetType() == EnemyType::slime)
                 m_Character.HasKilledaSlime();
-            m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::AttackableLayer);
-            m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Enviroment::EnemyAttackLayer);
+            m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Environment::AttackableLayer);
+            m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Environment::EnemyAttackLayer);
         }
     }
     m_Enemy.erase(
@@ -198,7 +193,7 @@ void HomeScreen::CameraProcess()
 {
     sf::View view = m_Engine.GetWindow().getView();
     sf::Vector2f ViewSize = view.getSize();
-    sf::Vector2f CenterPoint = sf::Vector2f(m_Character.GetPosition().x + Enviroment::CenterPointOfPlayer.x * Enviroment::SpriteScalingFactor.x,m_Character.GetPosition().y + Enviroment::CenterPointOfPlayer.y* Enviroment::SpriteScalingFactor.y);
+    sf::Vector2f CenterPoint = sf::Vector2f(m_Character.GetPosition().x + Environment::CenterPointOfPlayer.x * Environment::SpriteScalingFactor.x,m_Character.GetPosition().y + Environment::CenterPointOfPlayer.y* Environment::SpriteScalingFactor.y);
     sf::Vector2f PlayerPosition = CenterPoint;
     sf::Vector2f MapSize = m_MapTexture.getGlobalBounds().size;
     sf::Vector2f HaftView = sf::Vector2f(ViewSize.x / 2, ViewSize.y / 2);
@@ -220,7 +215,7 @@ void HomeScreen::CameraProcess()
 
 bool HomeScreen::IsWinGame()
 {
-    if (m_Character.GetNumberofSlimeHasKilled() >= Enviroment::NumberSlimeToKilled)
+    if (m_Character.GetNumberofSlimeHasKilled() >= Environment::NumberSlimeToKilled)
         return true;
     return false;
 }
@@ -229,13 +224,12 @@ bool HomeScreen::IsWinGame()
 void HomeScreen::SpawnEnemy(){
     std::random_device rd; 
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(1, 10);
 //int num = distrib(gen);
     int num = 2;
     Enemy * fac_Enemy;
     for (int i = 0; i < num; i ++){
         std::uniform_int_distribution<> count(0, static_cast<int>(EnemyType::EnemyTypeCount) - 1);
-        EnemyType type = static_cast<EnemyType>(count(gen));
+        auto type = static_cast<EnemyType>(count(gen));
 
         switch (type)
         {
@@ -250,13 +244,13 @@ void HomeScreen::SpawnEnemy(){
         // set position for each enemy
         // fac_Enemy->SetPosition(n_Position); need to edit
        // std::uniform_int_distribution<> distribx(0, m_MapTexture.getGlobalBounds().size.x);
-        std::uniform_int_distribution<> distribx(0, Enviroment::ScreenResolution.x - 1);
+        std::uniform_int_distribution<> distribx(0, Environment::ScreenResolution.x - 1);
         int x = distribx(gen);
         //std::uniform_int_distribution<> distriby(0, m_MapTexture.getGlobalBounds().size.y);
-        std::uniform_int_distribution<> distriby(0, Enviroment::ScreenResolution.y - 1);
+        std::uniform_int_distribution<> distriby(0, Environment::ScreenResolution.y - 1);
         int y = distriby(gen);
-        sf::Vector2f pos = {x, y};
-        if (m_Engine.GetCollisionSystem().IsFree(pos,*fac_Enemy,Enviroment::MapEntityCollisionLayer))
+        sf::Vector2f pos = {(float)x, (float)y};
+        if (m_Engine.GetCollisionSystem().IsFree(pos,*fac_Enemy,Environment::MapEntityCollisionLayer))
         {
             fac_Enemy->SetPosition(pos);
             fac_Enemy->SetStartPosition(pos);

@@ -1,4 +1,6 @@
 #include "State/KnockbackHandler.hpp"
+#include <cmath>
+
 KnockBackHandler::KnockBackHandler()
     : m_Velocity(0.f, 0.f), m_Damping(600.f), m_Active(false) {}
 

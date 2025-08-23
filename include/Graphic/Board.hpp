@@ -13,7 +13,6 @@ public:
     bool Update(const sf::Time&) override;
     void SetPosition(const sf::Vector2f& position) override;
     void SetOrigin(sf::Vector2f origin) override;
-    bool FixLagUpdate(const sf::Time&) override;
     bool HandleInput(const sf::Event&) override;
 private:
     HomeScreen& m_homeScreen;
