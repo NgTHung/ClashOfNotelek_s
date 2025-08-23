@@ -2,9 +2,9 @@
 
 #include "Resources/ResourcesManager.hpp"
 #include "State/HomeScreen.hpp"
-Board::Board(Engine& g_Engine,HomeScreen& homeScreen):GraphicBase(sf::Vector2f(0,0)),m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("board.png")),
+Board::Board(Engine& g_Engine,HomeScreen& homeScreen):GraphicBase(sf::Vector2f(0,0)),m_homeScreen(homeScreen),
     m_Engine(g_Engine),
-    m_homeScreen(homeScreen),
+    m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("board.png")),
     m_ContinueButton(m_Engine,sf::Vector2f(0,0),ResourcesManager::GetManager().GetTextureHolder().GetTexture("PlayAgain_button.png")),
     m_ExitButton(m_Engine,sf::Vector2f(0,0),ResourcesManager::GetManager().GetTextureHolder().GetTexture("Exit_button.png"))
 {

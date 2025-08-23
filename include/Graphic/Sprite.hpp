@@ -3,14 +3,11 @@
 #include <SFML/Graphics.hpp>
 
 #include "Base.hpp"
-#include "PlayerHealthbar.hpp"
-#include "SmokeVFX.hpp"
 #include "Graphic/Player.hpp"
 #include "Graphic/Weapon.hpp"
 #include "State/KnockbackHandler.hpp"
 #include "Graphic/HealthBar.hpp"
 #include "Graphic/SmokeVFX.hpp"
-#include "SFML/Audio/Listener.hpp"
 #include "Graphic/PlayerHealthbar.hpp"
 
 enum class EnemyType{

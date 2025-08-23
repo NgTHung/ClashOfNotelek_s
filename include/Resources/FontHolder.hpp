@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <map>
-#include <algorithm>
 
 class FontHolder : public ResourcesHolder {
 public:

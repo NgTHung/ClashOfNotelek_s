@@ -8,8 +8,8 @@
 
 HomeScreen::HomeScreen(Engine &g_Engine)
     : Screen(g_Engine),m_Character(g_Engine),
-      m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),
-       m_Water(g_Engine),m_Menu(g_Engine,*this)
+      m_Water(g_Engine),
+       m_MapTexture(ResourcesManager::GetManager().GetTextureHolder().GetTexture("test_map.png")),m_Menu(g_Engine,*this)
 {
     //m_Walls.push_back(std::make_shared<Wall>(this->m_Engine,sf::Vector2f(0,0),sf::Vector2f(26,299)));
     m_MapTexture.setScale(sf::Vector2f(10,10));

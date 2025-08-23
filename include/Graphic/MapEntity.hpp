@@ -14,7 +14,6 @@ public:
     void SetScale(const sf::Vector2f& scale) override;
     void SetOrigin(sf::Vector2f origin) override;
     bool Update(const sf::Time& ) override;
-    bool FixLagUpdate(const sf::Time& ) override;
     bool HandleInput(const sf::Event& ) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     GlobalEventType GetCollisionEventType() const override;
@@ -34,7 +33,6 @@ public:
     void SetScale(const sf::Vector2f& scale) override;
     void SetOrigin(sf::Vector2f origin) override;
     bool Update(const sf::Time& ) override;
-    bool FixLagUpdate(const sf::Time& ) override;
     bool HandleInput(const sf::Event& ) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     GlobalEventType GetCollisionEventType() const override;
@@ -54,7 +52,6 @@ public:
     void SetScale(const sf::Vector2f& scale) override;
     void SetOrigin(sf::Vector2f origin) override;
     bool Update(const sf::Time& ) override;
-    bool FixLagUpdate(const sf::Time& ) override;
     bool HandleInput(const sf::Event& ) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     GlobalEventType GetCollisionEventType() const override;
@@ -73,7 +70,6 @@ public:
     void SetScale(const sf::Vector2f& scale) override;
     void SetOrigin(sf::Vector2f origin) override;
     bool Update(const sf::Time& ) override;
-    bool FixLagUpdate(const sf::Time& ) override;
     bool HandleInput(const sf::Event& ) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     GlobalEventType GetCollisionEventType() const override;

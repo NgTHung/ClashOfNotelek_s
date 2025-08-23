@@ -1,7 +1,6 @@
 #pragma once
 #include "State/Screen.hpp"
 #include "Graphic/Player.hpp"
-#include "Command/Command.hpp"
 #include "Graphic/Button.hpp"
 #include <SFML/Graphics.hpp>
 

@@ -1,9 +1,6 @@
 #pragma once
 #include <Graphic/Base.hpp>
-#include <Utility/Logger.hpp>
 #include <Graphic/Sprite.hpp>
-
-
 
 class Slime: public Enemy
 {

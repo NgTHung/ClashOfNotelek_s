@@ -9,8 +9,8 @@ namespace Environment
     constexpr float Velocity = 200;
 
     constexpr sf::Vector2u ScreenResolution = {1280, 720};
-    constexpr std::string GameName = "Clash of Notelek\'s";
-    constexpr sf::View DefaultView(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(ScreenResolution.x,ScreenResolution.y)));
+    const std::string GameName = "Clash of Notelek\'s";
+    const sf::View DefaultView(sf::FloatRect(sf::Vector2f(0,0),sf::Vector2f(ScreenResolution.x,ScreenResolution.y)));
 
     constexpr int FrameLimit = 120;
     constexpr int TickPerSecond = 30;
@@ -24,13 +24,13 @@ namespace Environment
     constexpr sf::Vector2i SpriteSize = {BaseSpriteSize, BaseSpriteSize};
     constexpr sf::FloatRect SpriteHitBoxOffset = {sf::Vector2f(5.0f,0.0f),sf::Vector2f(22.0f, 32.0f)};
 
-    constexpr std::string FontExtention = ".ttf";
-    constexpr std::string FontDirectory = "assets/fonts";
-    constexpr std::string ImageTextureExtention = ".png";
-    constexpr std::string FormatTextureExtention = ".json";
-    constexpr std::string TextureDirectory = "assets/sprite";
-    constexpr std::string AudioExtention = ".mp3";
-    constexpr std::string AudioDirectory = "assets/audio";
+    const std::string FontExtention = ".ttf";
+    const std::string FontDirectory = "assets/fonts";
+    const std::string ImageTextureExtention = ".png";
+    const std::string FormatTextureExtention = ".json";
+    const std::string TextureDirectory = "assets/sprite";
+    const std::string AudioExtention = ".mp3";
+    const std::string AudioDirectory = "assets/audio";
 
     constexpr float VelocityNormalizationValue = (std::sqrt(2) / 2.f);
     constexpr int CharacterMovingFrameCount = 7;
@@ -54,7 +54,7 @@ namespace Environment
     //win game conditions
     constexpr int NumberSlimeToKilled = 1;
 
-    constexpr std::vector TreePositions = {
+    const std::vector TreePositions = {
         sf::Vector2f{40,35},
         sf::Vector2f{141,223},
         sf::Vector2f{38,260},
@@ -69,7 +69,7 @@ namespace Environment
         sf::Vector2f{376,277}
     };
 
-    constexpr std::vector GrassPositions = {
+    const std::vector GrassPositions = {
         sf::Vector2f{76,26},
         sf::Vector2f{113,22},
         sf::Vector2f{41,71},
@@ -90,7 +90,7 @@ namespace Environment
         sf::Vector2f{511,38}
     };
 
-    constexpr std::vector TinyGrassPositions = {
+    const std::vector TinyGrassPositions = {
         sf::Vector2f{36,112},
         sf::Vector2f{298,13},
         sf::Vector2f{309,36},
@@ -101,11 +101,11 @@ namespace Environment
         sf::Vector2f{245,146}
     };
 
-    constexpr std::vector<sf::Vector2f> BoxPositions = {
+    const std::vector<sf::Vector2f> BoxPositions = {
         sf::Vector2f{91,23}
     };
 
-    constexpr std::vector<sf::FloatRect> WaterWall = {
+    const std::vector<sf::FloatRect> WaterWall = {
         {sf::Vector2f{0,0},sf::Vector2f{32,300}},
         {sf::Vector2f{33,277},sf::Vector2f{330,24}},
         {sf::Vector2f{33,124},sf::Vector2f{50,38}}  ,

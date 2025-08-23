@@ -1,18 +1,20 @@
+#include "Engine/Engine.hpp"
 #include "State/WinScreen.hpp"
 
 #include "Resources/ResourcesManager.hpp"
-#include "State/HomeScreen.hpp"
+#include "Utility/Environment.hpp"
+
 
 WinScreen::WinScreen(Engine& g_Engine): Screen(g_Engine), m_ExitButton(
-                                              g_Engine,
-                                              static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()),
-                                              ResourcesManager::GetManager().GetTextureHolder().
-                                                                             GetTexture("Exit_button.png")),
-                                          m_ReplayButton(
-                                              g_Engine,
-                                              static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()),
-                                              ResourcesManager::GetManager().GetTextureHolder().
-                                                                             GetTexture("PlayAgain_button.png")),
+                                            g_Engine,
+                                            static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()),
+                                            ResourcesManager::GetManager().GetTextureHolder().
+                                            GetTexture("Exit_button.png")),
+                                        m_ReplayButton(
+                                            g_Engine,
+                                            static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()),
+                                            ResourcesManager::GetManager().GetTextureHolder().
+                                            GetTexture("PlayAgain_button.png")),
                                         m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("DeadScreen.png"))
 
 {

@@ -1,4 +1,6 @@
 #include "State/SpriteState.hpp"
+
+#include "Command/SpriteCommand.hpp"
 #include "Graphic/Player.hpp"
 #include "Resources/ResourcesManager.hpp"
 #include "Utility/Logger.hpp"
@@ -106,7 +108,7 @@ std::unique_ptr<BaseState<Character> > CharacterStandingState::Update(const sf::
     return nullptr;
 }
 
-bool CharacterStandingState::HandleEvent(const std::shared_ptr<BaseEvent> Event) {
+bool CharacterStandingState::HandleEvent(const std::shared_ptr<BaseEvent> &Event) {
     if (!Event) {
         LOG_ERROR("Received null event in CharacterStandingState");
         return false;
@@ -202,7 +204,7 @@ std::unique_ptr<BaseState<Character> > CharacterMovingState::Update(const sf::Ti
     return nullptr;
 }
 
-bool CharacterMovingState::HandleEvent(const std::shared_ptr<BaseEvent> Event) {
+bool CharacterMovingState::HandleEvent(const std::shared_ptr<BaseEvent> &Event) {
     if (!Event) {
         LOG_ERROR("Received null event in CharacterStandingState");
         return false;
@@ -248,7 +250,7 @@ void CharacterAttackState::EnterState() {
 void CharacterAttackState::ExitState() {
 }
 
-bool CharacterAttackState::HandleEvent(std::shared_ptr<BaseEvent> Event) {
+bool CharacterAttackState::HandleEvent(const std::shared_ptr<BaseEvent> &Event) {
     if (!Event) {
         LOG_ERROR("Received null event in CharacterAttackState");
         return false;

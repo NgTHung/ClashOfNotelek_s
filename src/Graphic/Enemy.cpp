@@ -6,7 +6,7 @@
 #include "Resources/ResourcesHolder.hpp"
 #include "Resources/ResourcesManager.hpp"
 #include "Utility/Environment.hpp"
-
+#include "Utility/Logger.hpp"
 
 
 Slime::Slime(Character& Player, Engine &g_Engine):Enemy(Player,g_Engine)
