@@ -42,9 +42,22 @@ bool AudioHolder::LoadFile(const std::string& FilePath)
     std::string musicID = path.stem().string();
 
     LOG_DEBUG("Loading music file: {}. Attempting to add with ID: {}", FilePath, musicID);
-
+    m_Sound.insert({musicID,sf::SoundBuffer(FilePath)});
     return AddMusic(musicID, FilePath);
 }
+
+const sf::SoundBuffer& AudioHolder::GetSoundBuffer(const std::string& musicName) const
+{
+    auto selectMusic = m_MusicMap.find(musicName);
+    if (selectMusic == m_MusicMap.end()) {
+        LOG_ERROR("Music {} not found in soundmap.", musicName);
+        // Throw an exception or return a reference to an empty/default string
+        // Throwing is safer as it prevents a dangling reference
+        throw std::out_of_range("Music name not found in soundmap: " + musicName);
+    }
+    return m_Sound.at(musicName);
+}
+
 
 // Update GetMusic to return the file path
 const std::string& AudioHolder::GetMusic(const std::string& musicName) const

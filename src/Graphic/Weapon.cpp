@@ -79,7 +79,7 @@ bool Sword::Update(const sf::Time &DT) {
         if (m_Index == 1) {
             m_Vertices.clear();
             m_Vertices.emplace_back(0, 0);
-            m_Vertices.emplace_back(-2, -15);
+            m_Vertices.emplace_back(-2, -22);
         } else {
             sf::Vector2f tmp = m_Vertices.back();
             m_Vertices.clear();
@@ -134,6 +134,7 @@ void Sword::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 }
 
 void Sword::Attack() {
+    m_Engine.PlaySound("weapon-hit");
     m_AttackID = ++s_AttackCount;
     m_Attacking = true;
 }

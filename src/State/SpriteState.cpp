@@ -145,6 +145,7 @@ CharacterMovingState::CharacterMovingState(Engine &g_Engine, Character &Characte
 }
 
 void CharacterMovingState::EnterState() {
+    m_Engine.PlayWalkingMusic();
     this->m_Instance.ResetIndex();
     this->m_Instance.UpdateAnimationTagWALK();
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
@@ -153,6 +154,7 @@ void CharacterMovingState::EnterState() {
 }
 
 void CharacterMovingState::ExitState() {
+    m_Engine.StopWalkingMusic();
     EventDispatcher::GetInstance().UnRegisterListener(GlobalEventType::CharacterStopMoved, this->m_Listener);
 }
 
@@ -195,11 +197,6 @@ std::unique_ptr<BaseState<Character> > CharacterMovingState::Update(const sf::Ti
         NewPosition *= Environment::VelocityNormalizationValue;
     }
     this->m_Instance.SetPosition(NewPosition + this->m_Instance.GetPosition());
-    // if (m_Engine.GetCollisionSystem().IsFree(this->m_Instance.GetPosition() + NewPosition, m_Instance, Enviroment::PlayerCollisionLayer)) {
-    //
-    // } else {
-    //     LOG_DEBUG("Character Moving State: Collision Detected, not moving");
-    // }
     this->m_Instance.NextFrame(Environment::CharacterMovingFrameCount,DT);
     return nullptr;
 }
@@ -242,6 +239,7 @@ CharacterAttackState::CharacterAttackState(Engine &g_Engine, Character &Characte
 }
 
 void CharacterAttackState::EnterState() {
+
     this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
     EventDispatcher::GetInstance().RegisterListener(
         GlobalEventType::CharacterAttack, this->m_Listener);
