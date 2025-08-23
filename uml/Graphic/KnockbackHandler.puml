@@ -1,0 +1,39 @@
+@startuml
+!theme plain
+title KnockBackHandler Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- External Dependencies ---
+package SFML <<library>> {
+    class Vector2f
+}
+
+' --- The Main Class ---
+class KnockBackHandler {
+    .. private attributes ..
+    - m_Velocity: sf::Vector2f
+    - m_Damping: float
+    - m_Active: bool
+    .. public methods ..
+    + KnockBackHandler()
+    + ApplyVelocity(direction: const sf::Vector2f&, strength: float): void
+    + Update(position: sf::Vector2f&, deltaTime: float): void
+    + IsActive(): const bool
+    + Stop(): void
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Composition (Owns-A)
+' The handler owns its internal velocity vector.
+KnockBackHandler *-- "1" SFML.Vector2f : as m_Velocity
+
+' ==> Dependency (Uses-A)
+' The handler's methods use Vector2f as parameters.
+KnockBackHandler ..> SFML.Vector2f : uses as parameter
+
+
+@enduml

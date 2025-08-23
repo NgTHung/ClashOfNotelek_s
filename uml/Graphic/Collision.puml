@@ -1,0 +1,75 @@
+@startuml
+!theme plain
+title Collision System and Collidable Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- External Dependencies ---
+package SFML <<library>> {
+    class Transformable
+    class Drawable
+}
+
+class Engine
+class ID
+
+enum GlobalEventType
+abstract class BaseEvent <<abstract>>
+
+abstract class Collidable <<abstract>> {
+    - m_ID: ID
+    - m_Size: sf::Vector2f
+    # m_Vertices: std::vector<sf::Vector2f>
+    --
+    + Collidable(const sf::Vector2f &size)
+    + GetID(): int
+    + {abstract} GetCollisionEventType(): GlobalEventType
+    + GetTransformedPoints(): std::vector<sf::Vector2f>
+    + GetBoundingBox(): sf::FloatRect
+    + DrawDebug(sf::RenderTarget &Renderer): void
+}
+
+' --- Collision Management System ---
+class CollisionSystem {
+    - m_Engine: Engine&
+    - m_CollisionLayers: std::array<std::vector<Collidable *>, 16>
+    --
+    + CollisionSystem(Engine &g_Engine)
+    + HandleCollisions(): const void
+    + AddCollidable(collidable: Collidable *, layer: int): void
+    + RemoveCollidable(CollidableID: const int&, layer: int): void
+    + IsFree(...): const bool
+    + {static} GetAxes(...): std::vector<sf::Vector2f>
+    + {static} Project(...): sf::Vector2f
+    + {static} CheckSATCollision(...): bool
+    + {static} CollisionEventFactory(A: Collidable*, B: Collidable*): std::shared_ptr<BaseEvent>
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A)
+' Collidable inherits from two SFML base classes.
+SFML.Transformable <|-- Collidable
+SFML.Drawable <|-- Collidable
+
+' ==> Composition (Owns-A)
+' A Collidable has a unique ID.
+Collidable *-- "1" ID : has a unique >
+
+' ==> Aggregation (Manages-A / Has-A)
+' The CollisionSystem manages a collection of NON-OWNING pointers to Collidable objects.
+CollisionSystem o-- "0..*" Collidable : manages in layers >
+' The CollisionSystem holds a NON-OWNING reference to the Engine.
+CollisionSystem o-u- "1" Engine : uses >
+
+' ==> Dependency (Uses-A)
+' The factory method creates a specific type of BaseEvent.
+CollisionSystem .u.> BaseEvent : creates via factory >
+' The Collidable interface depends on the event type enum.
+Collidable ..> GlobalEventType : returns >
+CollisionSystem -- Environment : global context >
+Collidable -- Logger : logs debug info >
+@enduml

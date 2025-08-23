@@ -1,0 +1,86 @@
+@startuml
+!theme plain
+title Engine Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' External dependencies from SFML
+package SFML <<library>> {
+    class RenderWindow
+    class View
+    class Clock
+}
+
+' Application-specific classes
+class Screen
+class ScreenShake
+class CollisionSystem
+class EventQueue
+class BaseEvent
+
+' The main Engine class
+class Engine {
+    - m_CollisionSystem: std::unique_ptr<CollisionSystem>
+    - m_ScreenShake: ScreenShake
+    - m_Window: sf::RenderWindow
+    - m_View: sf::View
+    - m_States: std::vector<std::unique_ptr<Screen>>
+    - m_EventQueue: std::unique_ptr<EventQueue>
+    - m_ChangedState: std::unique_ptr<Screen>
+    - m_ShouldPop: bool
+    - m_ShouldExit: bool
+    - m_ShouldChangeState: bool
+    - m_reset: bool
+    - bool HandleInput()
+    - bool TryPop()
+    --
+    + Engine()
+    + void Prepare()
+    + void Run()
+    + void PopState()
+    + {method} template<T, ...> bool PushState(Args&&...)
+    + bool PushState(std::unique_ptr<Screen> state)
+    + {method} template<T, ...> bool ChangeState(Args&&...)
+    + void ResetWindow()
+    + void SetView(const sf::View& view)
+    + void ShakeScreen()
+    + ScreenShake& GetScreenShake()
+    + void ResetView()
+    + const sf::RenderWindow& GetWindow() const
+    + void CloseWindow()
+    + Screen& GetCurrentState() const
+    + void PostEvent(const std::shared_ptr<BaseEvent>& Event)
+    + {method} template<T, ...> void PostEvent(Args&&...)
+    + void ProcessEvents()
+    + CollisionSystem& GetCollisionSystem()
+}
+
+' --- Relationships ---
+
+' Composition: The Engine OWNS and MANAGES the lifetime of these objects.
+' Represented by a filled diamond.
+Engine *-- "1" CollisionSystem : owns >
+Engine *-- "1" ScreenShake : owns >
+Engine *-- "1" RenderWindow : owns >
+Engine *-- "1" View : owns >
+Engine *-- "1" EventQueue : owns >
+Engine -- Logger : uses >
+Engine -- Environment : uses >
+Engine -- Clock : uses >
+Engine -- Time : uses >
+' Aggregation/Composition of states: The Engine owns a collection of Screens.
+Engine *-- "0..*" Screen : manages states >
+Screen <|-- StartScreen
+Screen <|-- HomeScreen
+
+Engine ..> StartScreen : creates in Prepare() >
+Engine ..> HomeScreen : uses in TryPop() >
+
+' Dependency: The Engine USES these classes, but does not own them directly in this context.
+' Represented by a dashed arrow.
+Engine ..> BaseEvent : posts >
+EventQueue ..> BaseEvent : contains >
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+!theme plain
+title FontHolder Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- External Dependencies ---
+package SFML <<library>> {
+    class Font
+}
+
+' --- Base Class ---
+abstract class ResourcesHolder <<abstract>>
+' --- The FontHolder Class ---
+class FontHolder {
+    - m_FontMap: std::map<std::string, std::unique_ptr<sf::Font>>
+    - AddFont(const std::string &FontName, std::unique_ptr<sf::Font> Font): bool
+    --
+    + FontHolder()
+    + ~FontHolder()
+    + LoadDirectory(): void
+    + LoadFile(const std::string &FontPath): bool
+    + GetFont(const std::string &FontName): sf::Font&
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A relationship)
+' FontHolder is a concrete implementation of ResourcesHolder.
+ResourcesHolder <|-- FontHolder
+
+' ==> Composition (Owns-A relationship)
+' The FontHolder exclusively owns the sf::Font objects via unique_ptr.
+FontHolder *-- "0..*" SFML.Font : holds in map >
+
+' ==> Dependency (Uses-A relationship)
+' The public GetFont method returns a reference to an SFML::Font.
+FontHolder ..> SFML.Font : provides access to
+
+FontHolder -- Logger : uses >
+FontHolder -- Environment : uses >
+
+@enduml

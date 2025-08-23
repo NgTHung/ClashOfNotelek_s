@@ -1,0 +1,61 @@
+@startuml
+!theme plain
+title Board Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Core & Parent Classes ---
+class Engine
+class HomeScreen
+' Assuming GraphicBase is an abstract base class from Base.hpp
+abstract class GraphicBase <<abstract>>
+
+' --- SFML Library Classes ---
+package SFML <<library>> {
+}
+
+' --- Game Specific Classes ---
+
+class GraphicButton
+
+Board -- ResourcesManager : loads resources >
+
+
+
+' --- The Board Class ---
+class Board {
+    - m_homeScreen: HomeScreen&
+    - m_Engine: Engine&
+    - m_Sprite: sf::Sprite
+    - m_ContinueButton: GraphicButton
+    - m_ExitButton: GraphicButton
+    --
+    + Board(Engine& g_Engine, HomeScreen& homeScreen)
+    + draw(target: sf::RenderTarget&, states: sf::RenderStates) const
+    + GetCollisionEventType(): const GlobalEventType
+    + Update(const sf::Time&): bool
+    + SetPosition(const sf::Vector2f& position): void
+    + SetOrigin(sf::Vector2f origin): void
+    + HandleInput(const sf::Event&): bool
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A relationship)
+GraphicBase <|-- Board
+
+' ==> Composition (Owns-A relationship)
+' The Board is composed of a sprite and two buttons. Their lifetimes are tied to the Board's.
+Board *-- "1" SFML.Sprite : contains >
+Board *-- "2" GraphicButton : contains >
+
+' ==> Aggregation (Has-A / Refers-To relationship)
+' The Board holds non-owning references to the Engine and its parent HomeScreen.
+Board o-- "1" Engine : uses >
+Board o-- "1" HomeScreen : is part of >
+
+
+@enduml

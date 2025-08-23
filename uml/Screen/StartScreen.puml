@@ -1,0 +1,49 @@
+@startuml
+!theme plain
+title StartScreen Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Core & Parent Classes ---
+class Engine
+abstract class Screen <<abstract>>
+
+' --- Game Specific Classes ---
+package Graphic {
+    class GraphicButton
+}
+
+' --- The StartScreen Class ---
+class StartScreen {
+    - m_PlayButton: GraphicButton
+    - m_ExitButton: GraphicButton
+    --
+    + StartScreen(Engine &g_Engine)
+    + ~StartScreen()
+    + Render(sf::RenderTarget &Renderer): bool
+    + Update(const sf::Time &DT): bool
+    + HandleInput(std::optional<sf::Event> Event): bool
+    + HandleEvent(std::shared_ptr<BaseEvent> Event): bool
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A relationship)
+' StartScreen is a specific type of Screen.
+Screen <|-- StartScreen
+
+HomeScreen <|--u Screen
+
+' ==> Composition (Owns-A relationship)
+' A StartScreen is composed of two buttons. Their lifetimes are tied to the StartScreen.
+StartScreen *-- "2" GraphicButton : contains >
+StartScreen -- ResourcesManager : load resources >
+StartScreen --r HomeScreen : navigates to >
+' ==> Aggregation (Has-A relationship)
+' The Engine manages the Screen, and the Screen holds a reference back to the Engine.
+Engine o-- Screen : manages >
+
+
+@enduml

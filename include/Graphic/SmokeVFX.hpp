@@ -1,6 +1,6 @@
 #pragma once
 #include "Graphic/Base.hpp"
-#include "Utility/Environment.hpp"
+
 class HitSmokeVFX: public GraphicBase
 {
 private:

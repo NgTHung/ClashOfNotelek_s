@@ -1,0 +1,53 @@
+@startuml
+!theme plain
+title ResourcesManager Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Utility Classes & Enums ---
+enum ResourcesType{
+    None
+    Font
+    Texture
+}
+
+
+' --- Resource Holder Classes ---
+package Resources {
+    class FontHolder
+    class TextureHolder
+}
+
+
+' --- The ResourcesManager Singleton Class ---
+class ResourcesManager <<singleton>> {
+    .. private attributes ..
+    - m_FontHolder: std::unique_ptr<FontHolder>
+    - m_TextureHolder: std::unique_ptr<TextureHolder>
+    .. private methods ..
+    - ResourcesManager()
+    - ~ResourcesManager()
+    .. public methods ..
+    + {static} GetManager(): const ResourcesManager&
+    + GetFontHolder(): const FontHolder&
+    + GetTextureHolder(): const TextureHolder&
+    + LoadFile(Type: ResourcesType, Path: const string&): bool
+    + LoadFiles(Type: ResourcesType, FileTable: const std::vector<string>&): std::vector<string>
+    + LoadDirectory(DirectoryPath: const string&): void
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Composition (Owns-A relationship)
+' The unique_ptr members signify exclusive ownership.
+ResourcesManager *-- "1" FontHolder : owns >
+ResourcesManager *-- "1" TextureHolder : owns >
+
+' ==> Dependency (Uses-A relationship)
+' The LoadFile/LoadFiles methods use the ResourcesType enum.
+ResourcesManager ..> ResourcesType : uses >
+ResourcesManager -- Logger : uses >
+ResourcesManager -- Environment : uses >
+@enduml

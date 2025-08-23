@@ -1,0 +1,82 @@
+@startuml
+!theme plain
+title TextureHolder and Data Classes Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- External Libraries ---
+package SFML <<library>> {
+    class Texture
+    class Vector2f
+    class IntRect
+}
+package nlohmann <<library>> {
+    class json
+}
+
+' --- Base Class ---
+
+abstract class ResourcesHolder <<abstract>>
+
+
+' --- Data Structures ---
+package Data {
+    ' ObjectInfo is a simple data struct
+    class ObjectInfo <<struct>> {
+        + Position: sf::Vector2f
+        + IntRect: sf::IntRect
+    }
+
+    ' JsonObject is a wrapper around a nlohmann::json object
+    class JsonObject {
+        - m_Json: json
+        --
+        + JsonObject()
+        + JsonObject(JSON: json)
+        + GetInfo(): ObjectInfo
+    }
+}
+
+' --- The TextureHolder Class ---
+class TextureHolder {
+    - m_TextureMap: std::map<string, unique_ptr<sf::Texture>>
+    - m_JsonMap: std::map<string, JsonObject>
+    - AddTexture(TextureName: string, Texture: unique_ptr<sf::Texture>): bool
+    - AddJson(JsonName: string, JSON: const JsonObject&): bool
+    --
+    + TextureHolder()
+    + ~TextureHolder()
+    + LoadDirectory(): void
+    + LoadFile(const std::string &FilePath): bool
+    + {static} LoadJsonFile(const std::string &FilePath): bool
+    + GetTexture(const std::string& TextureName): const sf::Texture&
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A)
+ResourcesHolder <|-- TextureHolder
+
+' ==> Composition (Owns-A / Is-Part-Of)
+' TextureHolder owns collections of Textures and JsonObjects
+TextureHolder *-- "0..*" SFML.Texture : holds in m_TextureMap >
+TextureHolder *-- "0..*" JsonObject : holds in m_JsonMap >
+' JsonObject owns a json object
+JsonObject *-- "1" json : wraps >
+' ObjectInfo is composed of SFML types
+ObjectInfo *-- "1" SFML.Vector2f
+ObjectInfo *-- "1" SFML.IntRect
+
+' ==> Dependency (Uses-A)
+' JsonObject's GetInfo method creates and returns an ObjectInfo
+JsonObject ..> ObjectInfo : creates >
+' TextureHolder's private methods use these types
+TextureHolder ..> JsonObject
+TextureHolder ..> SFML.Texture
+' The static method creates a dependency on the json library
+TextureHolder -- json
+TextureHolder -- Logger : uses >
+TextureHolder -- Environment : uses >
+@endutml

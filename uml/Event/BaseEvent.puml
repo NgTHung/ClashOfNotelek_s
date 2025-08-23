@@ -1,0 +1,42 @@
+@startuml
+!theme plain
+title BaseEvent System Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- The Enumeration for Event Types ---
+enum GlobalEventType {
+    Generic
+    GameQuit
+    SaveGame
+    PlayerAction
+    PlayerMoved
+    PlayerStopMoved
+    PlayerAttacked
+    CharacterMoved
+    CharacterStopMoved
+    CharacterAttacked
+    Collision
+    CharacterCollision
+    WallCollision
+    EnemyCollision
+    MapEntityCollision
+    SwordCollision
+    CharacterAttack
+}
+
+' --- The Abstract Base Class for all Events ---
+abstract class BaseEvent <<abstract>> {
+    + virtual ~BaseEvent()
+    + {abstract} GetEventType(): GlobalEventType
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Dependency (Uses-A relationship)
+' The BaseEvent interface is defined in terms of GlobalEventType.
+BaseEvent ..> GlobalEventType : returns >
+
+@enduml

@@ -1,0 +1,61 @@
+@startuml
+!theme plain
+title WinScreen Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Core & Parent Classes ---
+class Engine
+abstract class Screen <<abstract>>
+
+' --- SFML Library Classes ---
+package SFML <<library>> {
+    class Sprite
+}
+
+' --- Game Specific Classes ---
+package Graphic {
+    class GraphicButton
+}
+
+package EventSystem {
+    class BaseEvent
+}
+
+
+' --- The WinScreen Class ---
+class WinScreen {
+    .. private attributes ..
+    - m_ReplayButton: GraphicButton
+    - m_ExitButton: GraphicButton
+    - m_Sprite: sf::Sprite
+    .. public methods ..
+    + WinScreen(Engine &g_Engine)
+    + ~WinScreen()
+    + Render(sf::RenderTarget& Renderer): bool
+    + Update(const sf::Time& DT): bool
+    + HandleEvent(std::shared_ptr<BaseEvent> Event): bool
+    + HandleInput(std::optional<sf::Event> Event): bool
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A relationship)
+' WinScreen is a specific type of Screen.
+Screen <|-- WinScreen
+
+' ==> Composition (Owns-A relationship)
+' A WinScreen is composed of these parts. Their lifetime is tied to the WinScreen.
+WinScreen *--l "2" GraphicButton : contains >
+WinScreen *-- "1" SFML.Sprite : contains >
+
+' ==> Aggregation (Has-A relationship)
+' The Engine manages the Screen, and the Screen holds a reference back to the Engine.
+Engine o-- Screen : manages >
+WinScreen -u- BaseEvent: handles >
+WinScreen -u- Engine: uses >
+WinScreen -- ResourcesManager : load resources >
+
+@enduml

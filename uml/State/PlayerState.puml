@@ -1,0 +1,76 @@
+@startuml
+!theme plain
+title Player State Machine Hierarchy
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+class BaseEvent
+class EventDispatcher {
+    + {inner} EventListener
+}
+
+abstract class BaseCommand
+
+
+' --- The Abstract Base State Template ---
+abstract class "BaseState<Player>" as BaseState<Player> <<abstract>>
+
+' --- The Player State Hierarchy ---
+    ' PlayerState is an intermediate abstract class
+abstract class PlayerState <<abstract>>{
+    # m_WPressedCommand: shared_ptr<BaseCommand>
+    # m_APressedCommand: shared_ptr<BaseCommand>
+    # m_SPressedCommand: shared_ptr<BaseCommand>
+    # m_DPressedCommand: shared_ptr<BaseCommand>
+
+    # m_WReleaseCommand: shared_ptr<BaseCommand>
+    # m_AReleaseCommand: shared_ptr<BaseCommand>
+    # m_SReleaseCommand: shared_ptr<BaseCommand>
+    # m_DReleaseCommand: shared_ptr<BaseCommand>
+    # m_SpacePressedCommand: shared_ptr<BaseCommand>
+    --
+    + HandleInput(optional<sf.Event>): unique_ptr<BaseState>
+    + {abstract} EnterState(): void
+    + {abstract} ExitState(): void
+    + {abstract} Update(const sf.Time&): unique_ptr<BaseState>
+    + {abstract} HandleEvent(const shared_ptr<BaseEvent>&): bool
+}
+
+' StandingState is a concrete state
+class StandingState {
+    --
+    - m_Listener: EventDispatcher.EventListener
+}
+
+' MovingState is a concrete state
+class MovingState {
+    --
+    - m_Listener: EventDispatcher.EventListener
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance Hierarchy (Is-A)
+BaseState <|-- PlayerState
+PlayerState <|-- StandingState
+PlayerState <|-- MovingState
+
+' ==> Context Relationship (Has-A / Manages)
+' The Player owns its current state
+Player o-- "1" BaseState : has state >
+' The state holds a reference back to its context (Player)
+
+' ==> Command Aggregation (Uses-A)
+' PlayerState holds references to command objects to execute on input
+PlayerState o-- "0..*" BaseCommand : delegates to >
+
+' ==> Listener Composition (Owns-A)
+' The concrete states own an EventListener to react to game events
+StandingState *-- "1" EventListener : owns >
+MovingState *-- "1" EventListener : owns >
+PlayerState -l- MovePlayerCommand : uses >
+PlayerState -l- StopPlayerMovingCommand : uses >
+PlayerState -l- AdvancePlayerIndexCommand : uses >
+@enduml

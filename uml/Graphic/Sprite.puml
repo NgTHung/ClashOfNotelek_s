@@ -1,0 +1,155 @@
+@startuml
+!theme plain
+title Character and Enemy Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+
+' --- Enums ---
+enum EnemyType {
+    slime
+    EnemyTypeCount
+}
+enum AnimationTag {
+    IDLE_S_W,
+    IDLE_S_E,
+    IDLE_N_W,
+    IDLE_N_E,
+    WALK_S_W,
+    WALK_S_E,
+    WALK_N_W,
+    WALK_N_E
+}
+enum EnemyState {
+    Patrol
+    Chase
+    Dying
+    Dead
+    CanDelete
+    None
+}
+enum Direction
+
+' --- Application Classes ---
+class Engine
+class Weapon
+class KnockBackHandler
+class HealthBar
+class HitSmokeVFX
+class DeadSmokeVFX
+class PlayerHealthBar
+class BaseEvent
+class EventDispatcher {
+    + {inner} EventListener
+}
+abstract class "BaseState<Character>" as BaseState<Character> <<template>> <<abstract>>
+abstract class GraphicBase <<abstract>>
+
+class Character {
+    - m_Listener: EventDispatcher::EventListener
+    - m_Engine: Engine&
+    - m_CharacterState: std::unique_ptr<BaseState<Character>>
+    - m_IntRect: sf::IntRect
+    - m_Index: int
+    - m_HP: float
+    - s: std::set<Direction>
+    - isNorth: bool
+    - isSouth: bool
+    - isWest: bool
+    - isEast: bool
+    - m_CurrentAnimationTag: AnimationTag
+    - m_Weapon: std::shared_ptr<Weapon>
+    - m_Shape: sf::RectangleShape
+    - m_OldPosition: sf::Vector2f
+    - m_FootVertices: std::vector<sf::Vector2f>
+    - m_PlayerHealthBar: PlayerHealthBar
+    - m_SlimeHasKilled: int
+    --
+    + Character(Engine &g_Engine)
+    + GetPlayerHealthBar(): PlayerHealthBar&
+    + GetHP(): const float
+    + GetNumberofSlimeHasKilled(): const int
+    + HasKilledaSlime(): void
+    + Update(const sf::Time &DT): bool
+    + HandleEvent(std::shared_ptr<BaseEvent> Event): bool
+    + HandleInput(const sf::Event &Event): bool
+    + SetPosition(const sf::Vector2f &position): void
+    + SetIntRect(const sf::IntRect &Rect): bool
+    + SetScale(const sf::Vector2f &Factor): void
+    + SetDirection(Direction NewDirection): bool
+    + AnimationTagToInt(): const int
+    + NextFrame(int maxframe, const sf::Time & DT): bool
+    + ResetIndex(): bool
+    + UpdateAnimationTagIDLE(): bool
+    + UpdateAnimationTagWALK(): bool
+    + ChangeState(std::unique_ptr<BaseState<Character>> NewState): void
+    + AddDirection(Direction NewDirection): void
+    + RemoveDirection(Direction NewDirection): void
+    + GetWeapon(): Weapon &
+    + GetDirection(): std::set<Direction>
+    + draw(sf::RenderTarget &Target, sf::RenderStates States) const: void
+    + GetCollisionEventType(): const GlobalEventType
+    + GetSize(): const sf::Vector2f
+    + GetYAxisPoint(): float
+    + GetFootVertices(): const std::vector<sf::Vector2f>
+}
+
+abstract class Enemy <<abstract>> {
+    + m_KnockBackHandler: KnockBackHandler
+    # m_State: EnemyState
+    # m_Player: Character&
+    # m_Engine: Engine&
+    # m_HitSmokeVFX: HitSmokeVFX
+    # m_DeadSmokeVFX: DeadSmokeVFX
+    # m_HealthBar: HealthBar
+    --
+    + Enemy(Character& Player, Engine &g_Engine)
+    + GetState(): const EnemyState
+    + {abstract} OffAttack(): void
+    + {abstract} OnAttack(): void
+    + {abstract} Attack(): void
+    + {abstract} BeHitProcess(): void
+    + {abstract} Flash(): void
+    + {abstract} Die(): void
+    + {abstract} GetType(): const EnemyType
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+GraphicBase <|-- Character
+GraphicBase <|-- Enemy
+
+' ==> Composition
+Character *-- "1" EventListener : owns >
+Character *-- "1" BaseState: owns state >
+Character *-- "1" PlayerHealthBar : owns >
+Enemy *-- "1" KnockBackHandler : has a >
+Enemy *-- "1" HitSmokeVFX : has a >
+Enemy *-- "1" DeadSmokeVFX : has a >
+Enemy *-- "1" HealthBar : has a >
+
+' ==> Aggregation
+Character o-- "1" Engine : uses >
+Character o-- "1" Weapon : has a >
+Enemy o-- "1" Character : targets >
+Enemy o-- "1" Engine : uses >
+
+' ==> Dependencies
+Character ..> BaseEvent : handles >
+Character ..> Direction : uses >
+Character ..> AnimationTag : uses >
+Character -- DeadScreen : navigates to >
+Character -- Logger : uses >
+Character -- ResourceManager : load resources >
+Character -- Environment : use global settings >
+Enemy -- Logger : uses >
+Enemy -- ResourceManager : load resources >
+Enemy -- Environment : use global settings >
+Enemy ..> EnemyState : uses >
+Enemy ..> EnemyType : returns >
+
+@enduml

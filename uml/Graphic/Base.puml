@@ -1,0 +1,54 @@
+@startuml
+!theme plain
+title GraphicBase and ArielText Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- External Dependencies & Parent Classes ---
+package SFML <<library>>{
+}
+
+' Collidable inherits from SFML classes
+abstract class Collidable <<abstract>> {
+  + {abstract} GetCollisionEventType(): GlobalEventType
+}
+SFML.Drawable <|-- Collidable
+SFML.Transformable <|-- Collidable
+
+
+' --- New UI Class ---
+
+class ArielText {
+    + ArielText()
+}
+
+
+' --- New Abstract Game Object Base ---
+abstract class GraphicBase <<abstract>> {
+    # m_MiliSecondUpdate: int
+    --
+    + GraphicBase(const sf::Vector2f &size)
+    + {abstract} Update(const sf::Time &): bool
+    + {abstract} HandleInput(const sf::Event &): bool
+    + virtual GetYAxisPoint(): float
+}
+
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance Hierarchy (Is-A)
+' ArielText is a specialized sf::Text
+SFML.Text <|-- ArielText
+
+' GraphicBase is a specialized, updatable Collidable
+Collidable <|-- GraphicBase
+
+' ==> Dependency (Uses-A)
+' GraphicBase's abstract methods depend on these SFML types.
+GraphicBase ..> SFML.Time : uses in Update()
+GraphicBase ..> SFML.Event : uses in HandleInput()
+
+@enduml
