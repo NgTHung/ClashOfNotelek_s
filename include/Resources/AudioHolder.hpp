@@ -1,10 +1,9 @@
 #pragma once
-#include <SFML/Audio/Sound.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Audio.hpp>
 #include <memory>
-#include <Resources/ResourcesHolder.hpp>
+#include "Resources/ResourcesHolder.hpp"
 #include <map>
-#include <fstream>
+#include <string>
 
 class AudioHolder : public ResourcesHolder
 {
@@ -13,9 +12,12 @@ public:
     virtual ~AudioHolder() override;
     virtual void LoadDirectory() override;
     virtual bool LoadFile(const std::string &FilePath) override;
-    // bool LoadJsonFile(const std::string &FilePath);
-    const sf::Sound &GetSound(std::string SoundName) const;
+
+    // Change the return type to a const string reference
+    const std::string& GetMusic(const std::string& musicName) const;
+
 private:
-    bool AddSound(const std::string &AudioName, std::unique_ptr<sf::Sound> n_Sound);
-    std::map<std::string, std::unique_ptr<sf::Sound>> m_AudioMap;
+    bool AddMusic(const std::string& musicName, const std::string& filePath);
+
+    std::map<std::string, std::string> m_MusicMap;
 };

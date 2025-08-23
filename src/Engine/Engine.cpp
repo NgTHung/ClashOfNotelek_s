@@ -1,11 +1,11 @@
-#include <memory>
-
 #include "Engine/Engine.hpp"
 #include "State/StartScreen.hpp"
 #include "Utility/Logger.hpp"
 #include "State/HomeScreen.hpp"
 #include "Utility/Environment.hpp"
 
+
+#include "Resources/ResourcesManager.hpp"
 Engine::Engine() : m_CollisionSystem(std::make_unique<CollisionSystem>(*this)),
                    m_Window(sf::VideoMode(Environment::ScreenResolution), Environment::GameName),
                    m_View(Environment::DefaultView),
@@ -123,7 +123,15 @@ CollisionSystem &Engine::GetCollisionSystem() {
 void Engine::Run() {
     sf::Clock Timer;
 
-    while (m_Window.isOpen() && !m_States.empty()) {
+    //AUDIO USING HERE
+    std::string ms = ResourcesManager::GetManager().GetAudioHolder().GetMusic("win");
+    sf::Music music;
+    music.openFromFile(ms.c_str());
+    music.setLooping(true);
+    music.play();
+
+    while (m_Window.isOpen() && !m_States.empty())
+    {
         Screen &State = this->GetCurrentState();
         sf::Time Elapsed = Timer.restart();
         HandleInput();
