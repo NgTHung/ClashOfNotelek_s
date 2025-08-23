@@ -3,7 +3,7 @@
 #include "Utility/Logger.hpp"
 #include "Graphic/Player.hpp"
 #include "State/StartScreen.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
 PlayerState::PlayerState(Player &PlayerInstance) : BaseState(PlayerInstance)
 {
@@ -77,7 +77,7 @@ std::unique_ptr<BaseState<Player>> PlayerState::HandleInput(std::optional<sf::Ev
         }
         }
     }
-    if (currentCommand.get() != nullptr)
+    if (currentCommand != nullptr)
     {
         currentCommand->execute();
     }
@@ -106,12 +106,6 @@ void StandingState::EnterState()
 void StandingState::ExitState()
 {
 }
-
-std::unique_ptr<BaseState<Player>> StandingState::FixLagUpdate(const sf::Time &DT)
-{
-    return nullptr;
-}
-
 std::unique_ptr<BaseState<Player>> StandingState::Update(const sf::Time &DT)
 {
     return nullptr;
@@ -122,7 +116,7 @@ std::unique_ptr<BaseState<Player>> StandingState::HandleInput(const std::optiona
     return PlayerState::HandleInput(Event);
 }
 
-bool StandingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
+bool StandingState::HandleEvent(const std::shared_ptr<BaseEvent> &Event)
 {
     if (!Event)
     {
@@ -176,14 +170,9 @@ std::unique_ptr<BaseState<Player>> MovingState::HandleInput(const std::optional<
     return PlayerState::HandleInput(Event);
 }
 
-std::unique_ptr<BaseState<Player>> MovingState::FixLagUpdate(const sf::Time &DT)
-{
-    return nullptr;
-}
-
 std::unique_ptr<BaseState<Player>> MovingState::Update(const sf::Time &DT)
 {
-    sf::Vector2f NewPosition = sf::Vector2f(Enviroment::BaseLocation);
+    auto NewPosition = sf::Vector2f(Environment::BaseLocation);
     for (const auto it : this->m_Instance.GetDirection())
     {
         switch (it)
@@ -195,34 +184,34 @@ std::unique_ptr<BaseState<Player>> MovingState::Update(const sf::Time &DT)
         }
         case Direction::WEST:
         {
-            NewPosition.x -= Enviroment::Velocity;
+            NewPosition.x -= Environment::Velocity;
             break;
         }
         case Direction::EAST:
         {
-            NewPosition.x += Enviroment::Velocity;
+            NewPosition.x += Environment::Velocity;
             break;
         }
         case Direction::NORTH:
         {
-            NewPosition.y -= Enviroment::Velocity;
+            NewPosition.y -= Environment::Velocity;
             break;
         }
         case Direction::SOUTH:
         {
-            NewPosition.y += Enviroment::Velocity;
+            NewPosition.y += Environment::Velocity;
         }
         }
     }
     if (this->m_Instance.GetDirection().size() == 2)
     {
-        NewPosition *= Enviroment::VelocityNormalizationValue;
+        NewPosition *= Environment::VelocityNormalizationValue;
     }
     this->m_Instance.setPosition(NewPosition + this->m_Instance.GetPosition());
     return nullptr;
 }
 
-bool MovingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
+bool MovingState::HandleEvent(const std::shared_ptr<BaseEvent> &Event)
 {
     if (!Event)
     {

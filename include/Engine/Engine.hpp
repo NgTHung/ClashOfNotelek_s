@@ -6,6 +6,7 @@
 #include "Event/EventDispatcher.hpp"
 #include "Graphic/Collision.hpp"
 #include "State/Screen.hpp"
+#include "Graphic/ScreenShake.hpp"
 
 class Engine
 {
@@ -23,8 +24,11 @@ public:
 
     void ResetWindow();
     void SetView(const sf::View& view);
+    void ShakeScreen();
+    ScreenShake& GetScreenShake();
     void ResetView();
     const sf::RenderWindow &GetWindow() const;
+    void CloseWindow();
     Screen &GetCurrentState() const;
     void PostEvent(const std::shared_ptr<BaseEvent> &Event);
     template <typename T, typename... Args>
@@ -37,21 +41,23 @@ private:
     bool HandleInput();
     bool TryPop();
 
-
+    std::unique_ptr<CollisionSystem> m_CollisionSystem;
+    ScreenShake m_ScreenShake;
     sf::RenderWindow m_Window;
+    sf::View m_View;
     std::vector<std::unique_ptr<Screen>> m_States;
     bool m_ShouldPop;
     bool m_ShouldExit;
     bool m_ShouldChangeState;
     std::unique_ptr<Screen> m_ChangedState;
-    EventQueue m_EventQueue;
-    CollisionSystem m_CollisionSystem;
+    std::unique_ptr<EventQueue> m_EventQueue;
+    bool m_reset = false;
 };
 
 template <typename T, typename... Args>
 void Engine::PostEvent(Args &&...args)
 {
-    this->m_EventQueue.PushEvent<T>(std::forward<Args>(args)...);
+    this->m_EventQueue->PushEvent<T>(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>

@@ -6,7 +6,7 @@
 #include "Utility/IDGenerator.hpp"
 class Engine;
 
-class Collidable : private sf::Transformable, public sf::Drawable {
+class Collidable : public sf::Transformable, public sf::Drawable {
 private:
     ID m_ID;
     sf::Vector2f m_Size;
@@ -67,11 +67,13 @@ public:
 
     void HandleCollisions() const;
 
+    void HandleEnemyAttackLayer() const;
+
     void AddCollidable(Collidable *collidable, int layer);
 
     // void RemoveCollidable(const Collidable* &collidable, int layer);
 
     void RemoveCollidable(const int &CollidableID, int layer);
 
-   // bool IsFree(sf::Vector2f newPosition, Collidable &collidable, int layer) const;
+    bool IsFree(sf::Vector2f newPosition, Collidable &collidable, int layer) const;
 };

@@ -77,6 +77,10 @@ file(GLOB GameGraphicSource "src/Graphic/*.cpp")
 # Graphic Library
 add_library(GameGraphic STATIC
     ${GameGraphicSource}
+        src/Graphic/ScreenShake.cpp
+        src/Graphic/Water.cpp
+        src/Graphic/SmokeVFX.cpp
+        src/Graphic/HealthBar.cpp
 )
 target_include_directories(GameGraphic PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -127,6 +131,21 @@ file(GLOB EngineSource "src/Engine/*.cpp")
 # Engine Library
 add_library(Engine STATIC
         ${EngineSource}
+        src/State/KnockbackHandler.cpp
+        include/State/KnockbackHandler.hpp
+        include/Graphic/ScreenShake.hpp
+        include/Graphic/Water.hpp
+        include/Graphic/SmokeVFX.hpp
+        include/Graphic/HealthBar.hpp
+        src/State/DeadScreen.cpp
+        include/State/DeadScreen.hpp
+        src/State/Screen.cpp
+        src/State/WinsScreen.cpp
+        include/State/WinScreen.hpp
+        src/Graphic/PlayerHeathBar.cpp
+        include/Graphic/PlayerHealthbar.hpp
+        include/Graphic/Board.hpp
+        src/Graphic/Board.cpp
 )
 target_include_directories(Engine PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include

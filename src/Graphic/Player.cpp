@@ -34,12 +34,12 @@ bool Player::Update(const sf::Time &DT)
 
 bool Player::HandleEvent(std::shared_ptr<BaseEvent> Event)
 {
-    switch (Event.get()->GetEventType())
+    switch (Event->GetEventType())
     {
     case GlobalEventType::Generic:
     {
         LOG_ERROR("Incorrect populated Event");
-        throw "Incorrect populated Event";
+        throw std::invalid_argument("Incorrect populated Event");
     }
     case GlobalEventType::GameQuit:
     {
@@ -48,7 +48,7 @@ bool Player::HandleEvent(std::shared_ptr<BaseEvent> Event)
     case GlobalEventType::PlayerAction:
     {
         LOG_ERROR("Incorrect populated Event");
-        throw "Incorrect populated Event";
+        throw std::invalid_argument("Incorrect populated Event");
     }
     case GlobalEventType::PlayerMoved:
     case GlobalEventType::PlayerAttacked:
@@ -59,7 +59,7 @@ bool Player::HandleEvent(std::shared_ptr<BaseEvent> Event)
     }
     default:
     {
-        throw "Incorrect populated Event";
+        throw std::invalid_argument("Incorrect populated Event");
     }
     }
     // if (auto NewState = m_PlayerState->HandleEvent(*this))
@@ -72,15 +72,6 @@ bool Player::HandleEvent(std::shared_ptr<BaseEvent> Event)
 bool Player::HandleInput(const std::optional<sf::Event> &Event)
 {
     if (auto NewState = m_PlayerState->HandleInput(Event))
-    {
-        ChangeState(std::move(NewState));
-    }
-    return true;
-}
-
-bool Player::FixLagUpdate(const sf::Time &DT)
-{
-    if (auto NewState = m_PlayerState->FixLagUpdate(DT))
     {
         ChangeState(std::move(NewState));
     }

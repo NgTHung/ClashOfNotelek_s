@@ -5,6 +5,9 @@
 #include "Utility/Logger.hpp"
 #include <cmath>
 
+#include "Graphic/Sprite.hpp"
+#include "Utility/Environment.hpp"
+
 Collidable::Collidable(const sf::Vector2f &size) : m_Size(size)
 {
 }
@@ -132,15 +135,17 @@ CollisionSystem::~CollisionSystem()
 
 void CollisionSystem::HandleCollisions() const
 {
-    for (const auto &Layer : m_CollisionLayers)
+    for (int k = 0 ; k < (int)m_CollisionLayers.size(); k++)
+        if (k != Environment::MapEntityCollisionLayer && k!= Environment::EnemyAttackLayer)
     {
+        const std::vector<Collidable *>& Layer = m_CollisionLayers[k];
         for (size_t i = 0; i < Layer.size(); ++i)
         {
             for (size_t j = i + 1; j < Layer.size(); ++j)
             {
                 const auto &A = Layer[i];
                 const auto &B = Layer[j];
-                if (CheckSATCollision(A->GetTransformedPoints(), B->GetTransformedPoints()))
+                if (A->GetCollisionEventType() != B->GetCollisionEventType() && CheckSATCollision(A->GetTransformedPoints(), B->GetTransformedPoints()))
                 {
                     m_Engine.PostEvent(CollisionEventFactory(A, B));
                     m_Engine.PostEvent(CollisionEventFactory(B, A));
@@ -148,7 +153,27 @@ void CollisionSystem::HandleCollisions() const
             }
         }
     }
+    HandleEnemyAttackLayer();
 }
+
+void CollisionSystem::HandleEnemyAttackLayer() const
+{
+    const std::vector<Collidable *>& Layer = m_CollisionLayers[Environment::EnemyAttackLayer];
+    Character* Player = nullptr;
+    for (auto i : Layer)
+        if (auto it = dynamic_cast<Character*>(i))
+            Player = it;
+    for (auto i : Layer)
+        if (i != Player)
+        {
+            if (CheckSATCollision(Player->GetTransformedPoints(),i->GetTransformedPoints()))
+            {
+                m_Engine.PostEvent(CollisionEventFactory(Player, i));
+                m_Engine.PostEvent(CollisionEventFactory(i, Player));
+            }
+        }
+}
+
 
 void CollisionSystem::AddCollidable(Collidable *collidable, const int layer)
 {
@@ -167,25 +192,42 @@ void CollisionSystem::RemoveCollidable(const int &ID, int layer)
     }
 }
 
-// bool CollisionSystem::IsFree(sf::Vector2f newPosition, Collidable &collidable, const int layer) const
-// {
-//     sf::Vector2f OldPosition = collidable.GetPosition();
-//     collidable.SetPosition(newPosition);
-//     for (auto &OtherCollidable : m_CollisionLayers[layer])
-//     {
-//         if (OtherCollidable->GetID() == collidable.GetID())
-//         {
-//             continue;
-//         }
-//         if (CheckSATCollision(collidable.GetTransformedPoints(), OtherCollidable->GetTransformedPoints()))
-//         {
-//             collidable.SetPosition(OldPosition);
-//             return false;
-//         }
-//     }
-//     collidable.SetPosition(OldPosition);
-//     return true;
-// }
+bool CollisionSystem::IsFree(sf::Vector2f newPosition, Collidable &collidable, const int layer) const
+{
+    sf::Vector2f OldPosition = collidable.GetPosition();
+    collidable.setPosition(newPosition);
+    if (auto Player = dynamic_cast<Character *>(&collidable))
+    {
+        for (auto &OtherCollidable : m_CollisionLayers[layer])
+        {
+            if (OtherCollidable->GetID() == collidable.GetID())
+            {
+                continue;
+            }
+            else if (CheckSATCollision(Player->GetFootVertices(), OtherCollidable->GetTransformedPoints()))
+            {
+                collidable.setPosition(OldPosition);
+                return false;
+            }
+        }
+    }
+    else
+    {
+        for (auto &OtherCollidable : m_CollisionLayers[layer])
+        {
+            if (OtherCollidable->GetID() == collidable.GetID())
+            {
+                continue;
+            }
+            else if (CheckSATCollision(collidable.GetTransformedPoints(), OtherCollidable->GetTransformedPoints()))
+            {
+                collidable.setPosition(OldPosition);
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 std::vector<sf::Vector2f> CollisionSystem::GetAxes(const std::vector<sf::Vector2f> &Points)
 {
