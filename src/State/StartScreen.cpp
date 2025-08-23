@@ -33,7 +33,7 @@ StartScreen::StartScreen(Engine& g_Engine) : Screen(g_Engine),
     m_ExitButton.SetPosition(sf::Vector2f(m_Engine.GetWindow().getSize().x/2.f,m_Engine.GetWindow().getSize().y *2.f/ 3.f + 50.f));
     m_Grass.SetPosition(sf::Vector2f(431,704));
     m_Grass.SetScale(sf::Vector2f(10,10));
-    m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(Enviroment::ScreenResolution)));
+    m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0,0),sf::Vector2i(Environment::ScreenResolution)));
 }
 
 bool StartScreen::Render(sf::RenderTarget& Renderer)
@@ -68,7 +68,7 @@ bool StartScreen::Update(const sf::Time& DT)
         m_index = (m_index + 1) % 5;
         m_LastUpdate -= m_TimeperFrame;
     }
-    m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(m_index*Enviroment::ScreenResolution.x,0),sf::Vector2i(Enviroment::ScreenResolution)));
+    m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(m_index*Environment::ScreenResolution.x,0),sf::Vector2i(Environment::ScreenResolution)));
     m_PlayButton.Update(DT);
     m_LeafFalling.Update(DT);
     m_ExitButton.Update(DT);

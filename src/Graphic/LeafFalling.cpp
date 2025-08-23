@@ -37,11 +37,6 @@ sf::Vector2f Leaf::GetPosition() const
 {
     return m_Sprite.getPosition();
 }
-bool Leaf::FixLagUpdate(const sf::Time&)
-{
-    return true;
-}
-
 bool Leaf::HandleInput(const sf::Event&)
 {
     return true;
@@ -76,8 +71,8 @@ void LeafFalling::SpawnLeave()
 
 void LeafFalling::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    for (int i = 0; i < m_Leaves.size(); i++)
-        target.draw(*m_Leaves[i]);
+    for (const auto & m_Leave : m_Leaves)
+        target.draw(*m_Leave);
 }
 
 GlobalEventType LeafFalling::GetCollisionEventType() const
@@ -87,12 +82,12 @@ GlobalEventType LeafFalling::GetCollisionEventType() const
 
 bool LeafFalling::Update(const sf::Time& DT)
 {
-    for (int i = 0; i < m_Leaves.size(); i++)
-        m_Leaves[i]->Update(DT);
+    for (auto & m_Leave : m_Leaves)
+        m_Leave->Update(DT);
 
     m_Leaves.erase(
           std::remove_if(m_Leaves.begin(), m_Leaves.end(),
-              [&](std::shared_ptr<Leaf> leaf) {
+              [&](const std::shared_ptr<Leaf>& leaf) {
                   sf::Vector2f pos = leaf->GetPosition();
                   if (pos.y > m_Engine.GetWindow().getSize().y + 50) {
                       SpawnLeave();
@@ -104,11 +99,6 @@ bool LeafFalling::Update(const sf::Time& DT)
       );
 
     return false;
-}
-
-bool LeafFalling::FixLagUpdate(const sf::Time&)
-{
-    return true;
 }
 
 bool LeafFalling::HandleInput(const sf::Event&)

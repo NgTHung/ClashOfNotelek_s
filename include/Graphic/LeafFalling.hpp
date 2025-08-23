@@ -21,7 +21,6 @@ public:
     GlobalEventType GetCollisionEventType() const override;
     sf::Vector2f GetPosition() const override;
     bool Update(const sf::Time&) override;
-    bool FixLagUpdate(const sf::Time&) override;
     bool HandleInput(const sf::Event&) override;
 };
 
@@ -35,7 +34,6 @@ public:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     GlobalEventType GetCollisionEventType() const override;
     bool Update(const sf::Time&) override;
-    bool FixLagUpdate(const sf::Time&) override;
     bool HandleInput(const sf::Event&) override;
 
 private:

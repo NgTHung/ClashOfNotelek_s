@@ -397,8 +397,8 @@ std::vector<sf::Vector2f> Character::GetFootVertices() const
 Enemy::Enemy(Character& Player, Engine &g_Engine): GraphicBase(sf::Vector2f(Environment::SpriteSize)),
                                                    m_MovingRight(false), m_PatrolRange(0),
                                                    m_Speed(0),
-                                                   m_Engine(g_Engine), m_Radius(0), m_LastAttackID(0), m_Dame(0),
-                                                   m_Player(Player), m_Index(0), m_HP(0) {
+                                                   m_Player(Player), m_Index(0), m_HP(0), m_Engine(g_Engine),
+                                                   m_Radius(0), m_LastAttackID(0), m_Dame(0) {
     m_State = Patrol;
 }
 

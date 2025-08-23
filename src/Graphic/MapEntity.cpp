@@ -5,16 +5,16 @@
 #include "Utility/Environment.hpp"
 
 Tree::Tree(Engine &g_Engine, const sf::Vector2f &size): GraphicBase(size),
-                                                        m_SpriteTree(
+                                                        m_Engine(g_Engine), m_SpriteTree(
                                                             ResourcesManager::GetManager().GetTextureHolder().
-                                                            GetTexture("Tree.png")), m_Engine(g_Engine) {
+                                                            GetTexture("Tree.png")) {
     m_SpriteTree.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(30, 31)));
     Tree::SetScale(sf::Vector2f(10, 10));
     Tree::SetOrigin(sf::Vector2f(9, 27));
-    this->m_Vertices.push_back(sf::Vector2f(8, 25));
-    this->m_Vertices.push_back(sf::Vector2f(22, 25));
-    this->m_Vertices.push_back(sf::Vector2f(22, 30));
-    this->m_Vertices.push_back(sf::Vector2f(8, 30));
+    this->m_Vertices.emplace_back(8, 25);
+    this->m_Vertices.emplace_back(22, 25);
+    this->m_Vertices.emplace_back(22, 30);
+    this->m_Vertices.emplace_back(8, 30);
     m_Engine.GetCollisionSystem().AddCollidable(this, Environment::MapEntityCollisionLayer);
 }
 
@@ -113,9 +113,9 @@ float Grass::GetYAxisPoint() {
 //========================================================================================
 
 TinyGrass::TinyGrass(Engine &g_Engine, const sf::Vector2f &size): GraphicBase(size),
-                                                                  m_Sprite(
+                                                                  m_Engine(g_Engine), m_Sprite(
                                                                       ResourcesManager::GetManager().GetTextureHolder().
-                                                                      GetTexture("TinyGrass.png")), m_Engine(g_Engine) {
+                                                                      GetTexture("TinyGrass.png")) {
     m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(16, 16)));
     TinyGrass::SetScale(sf::Vector2f(10, 10));
     TinyGrass::SetOrigin(sf::Vector2f(6, 10));
@@ -167,16 +167,16 @@ float TinyGrass::GetYAxisPoint() {
 
 //==========================================================================
 Box::Box(Engine &g_Engine, const sf::Vector2f &size): GraphicBase(size),
-                                                      m_Sprite(
+                                                      m_Engine(g_Engine), m_Sprite(
                                                           ResourcesManager::GetManager().GetTextureHolder().GetTexture(
-                                                              "Box.png")), m_Engine(g_Engine) {
+                                                              "Box.png")) {
     m_Sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 48)));
     Box::SetScale(sf::Vector2f(10, 10));
     Box::SetOrigin(sf::Vector2f(18, 30));
-    this->m_Vertices.push_back(sf::Vector2f(17, 24));
-    this->m_Vertices.push_back(sf::Vector2f(31, 24));
-    this->m_Vertices.push_back(sf::Vector2f(31, 31));
-    this->m_Vertices.push_back(sf::Vector2f(17, 31));
+    this->m_Vertices.emplace_back(17, 24);
+    this->m_Vertices.emplace_back(31, 24);
+    this->m_Vertices.emplace_back(31, 31);
+    this->m_Vertices.emplace_back(17, 31);
     m_Engine.GetCollisionSystem().AddCollidable(this, Environment::MapEntityCollisionLayer);
 }
 
