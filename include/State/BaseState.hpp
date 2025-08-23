@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
-#include "Event/EventQueue.hpp"
 #include <SFML/Graphics.hpp>
+#include <Event/Event.hpp>
 template <class T>
 class BaseState
 {
@@ -15,5 +15,5 @@ public:
     virtual void ExitState() = 0;
     virtual std::unique_ptr<BaseState> HandleInput(std::optional<sf::Event> Event) = 0;
     virtual std::unique_ptr<BaseState> Update(const sf::Time &DT) = 0;
-    virtual bool HandleEvent(std::shared_ptr<BaseEvent>) = 0;
+    virtual bool HandleEvent(const std::shared_ptr<BaseEvent>&) = 0;
 };

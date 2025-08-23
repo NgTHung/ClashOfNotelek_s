@@ -135,7 +135,7 @@ CollisionSystem::~CollisionSystem()
 
 void CollisionSystem::HandleCollisions() const
 {
-    for (int k = 0 ; k < m_CollisionLayers.size(); k++)
+    for (int k = 0 ; k < (int)m_CollisionLayers.size(); k++)
         if (k != Environment::MapEntityCollisionLayer && k!= Environment::EnemyAttackLayer)
     {
         const std::vector<Collidable *>& Layer = m_CollisionLayers[k];

@@ -3,9 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <map>
-#include <algorithm>
 #include "External/json.hpp"
-#include <fstream>
 
 using json = nlohmann::json;
 
@@ -32,7 +30,7 @@ public:
     virtual ~TextureHolder() override;
     virtual void LoadDirectory() override;
     virtual bool LoadFile(const std::string &FilePath) override;
-    static static bool LoadJsonFile(const std::string &FilePath);
+    static bool LoadJsonFile(const std::string &FilePath);
     const sf::Texture &GetTexture(const std::string& TextureName) const;
 
 private:

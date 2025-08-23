@@ -2,8 +2,7 @@
 #include "State/PlayerState.hpp"
 #include <set>
 #include "Engine/Engine.hpp"
-#include "State/KnockbackHandler.hpp"
-#include "Graphic/Collision.hpp"
+
 enum class Direction
 {
     WEST,

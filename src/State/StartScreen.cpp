@@ -1,7 +1,6 @@
 #include "State/StartScreen.hpp"
 
 #include "Resources/ResourcesManager.hpp"
-#include "Utility/Logger.hpp"
 #include "Utility/Environment.hpp"
 #include "State/HomeScreen.hpp"
 // Define start State

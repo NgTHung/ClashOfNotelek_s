@@ -77,7 +77,7 @@ std::unique_ptr<BaseState<Player>> PlayerState::HandleInput(std::optional<sf::Ev
         }
         }
     }
-    if (currentCommand.get() != nullptr)
+    if (currentCommand != nullptr)
     {
         currentCommand->execute();
     }
@@ -106,12 +106,6 @@ void StandingState::EnterState()
 void StandingState::ExitState()
 {
 }
-
-std::unique_ptr<BaseState<Player>> StandingState::FixLagUpdate(const sf::Time &DT)
-{
-    return nullptr;
-}
-
 std::unique_ptr<BaseState<Player>> StandingState::Update(const sf::Time &DT)
 {
     return nullptr;
@@ -122,7 +116,7 @@ std::unique_ptr<BaseState<Player>> StandingState::HandleInput(const std::optiona
     return PlayerState::HandleInput(Event);
 }
 
-bool StandingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
+bool StandingState::HandleEvent(const std::shared_ptr<BaseEvent> &Event)
 {
     if (!Event)
     {
@@ -176,14 +170,9 @@ std::unique_ptr<BaseState<Player>> MovingState::HandleInput(const std::optional<
     return PlayerState::HandleInput(Event);
 }
 
-std::unique_ptr<BaseState<Player>> MovingState::FixLagUpdate(const sf::Time &DT)
-{
-    return nullptr;
-}
-
 std::unique_ptr<BaseState<Player>> MovingState::Update(const sf::Time &DT)
 {
-    sf::Vector2f NewPosition = sf::Vector2f(Environment::BaseLocation);
+    auto NewPosition = sf::Vector2f(Environment::BaseLocation);
     for (const auto it : this->m_Instance.GetDirection())
     {
         switch (it)
@@ -222,7 +211,7 @@ std::unique_ptr<BaseState<Player>> MovingState::Update(const sf::Time &DT)
     return nullptr;
 }
 
-bool MovingState::HandleEvent(const std::shared_ptr<BaseEvent> Event)
+bool MovingState::HandleEvent(const std::shared_ptr<BaseEvent> &Event)
 {
     if (!Event)
     {

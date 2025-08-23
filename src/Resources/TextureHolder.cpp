@@ -1,6 +1,9 @@
 #include <utility>
 
 #include "Resources/TextureHolder.hpp"
+
+#include <fstream>
+
 #include "Utility/Logger.hpp"
 #include "Utility/Environment.hpp"
 // JSON OBJECTs
@@ -81,7 +84,7 @@ bool TextureHolder::AddTexture(const std::string &TextureName, std::unique_ptr<s
     if (!InsertedTexture.second)
     {
         LOG_ERROR("Texture {} already exists in the map.", TextureName);
-        throw "Cannot insert texture " + TextureName;
+        throw std::runtime_error("Cannot insert texture " + TextureName);
     }
     return true;
 }
@@ -92,7 +95,7 @@ bool TextureHolder::AddJson(const std::string &JsonName, const JsonObject& JSON)
     if (!InsertedJson.second)
     {
         LOG_ERROR("Texture {} already exists in the map.", JsonName);
-        throw "Cannot insert texture " + JsonName;
+        throw std::runtime_error("Cannot insert texture " + JsonName);
     }
     return true;
 }
