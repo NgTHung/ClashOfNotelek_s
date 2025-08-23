@@ -70,7 +70,9 @@ add_library(GameUtility STATIC
 target_include_directories(GameUtility PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-
+target_link_libraries( GameUtility PUBLIC
+        SFML::Audio
+)
 file(GLOB GameGraphicSource "src/Graphic/*.cpp")
 # Graphic Library
 add_library(GameGraphic STATIC
@@ -98,6 +100,7 @@ target_include_directories(GameResources PUBLIC
 )
 target_link_libraries(GameResources PUBLIC
         SFML::Graphics
+        SFML::Audio
         GameUtility
         nlohmann_json::nlohmann_json
 )
@@ -132,6 +135,7 @@ target_link_libraries(Engine PUBLIC
         SFML::Window
         SFML::Graphics
         SFML::System
+        SFML::Audio
         GameState
         GameGraphic
         GameResources

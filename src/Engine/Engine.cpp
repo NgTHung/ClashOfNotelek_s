@@ -4,6 +4,8 @@
 #include "State/HomeScreen.hpp"
 #include "Utility/Enviroment.hpp"
 
+#include "Resources/ResourcesManager.hpp"
+
 Engine::Engine() : m_Window(sf::VideoMode(Enviroment::ScreenResolution), Enviroment::GameName), m_ShouldPop(false), m_ShouldExit(false),
                    m_ShouldChangeState(false), m_CollisionSystem(*this)
 {
@@ -124,6 +126,13 @@ void Engine::Run()
     sf::Clock Timer;
     sf::Time Lag = sf::Time::Zero;
 
+    //AUDIO USING HERE
+    std::string ms = ResourcesManager::GetManager().GetAudioHolder().GetMusic("win");
+    sf::Music music;
+    music.openFromFile(ms.c_str());
+    music.setLooping(true);
+    music.play();
+
     while (m_Window.isOpen() && !m_States.empty())
     {
         Screen &State = this->GetCurrentState();
@@ -135,6 +144,7 @@ void Engine::Run()
         m_CollisionSystem.HandleCollisions();
         ProcessEvents();
         State.Update(Elapsed);
+        // SoundPlayer::GetInstance().update();
 
         while (Lag >= Enviroment::TimePerUpdate)
         {

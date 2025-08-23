@@ -1,5 +1,7 @@
 #include "Resources/ResourcesManager.hpp"
 #include "Utility/Enviroment.hpp"
+#include "Utility/Logger.hpp"
+// #include <SFML/>
 
 const FontHolder &ResourcesManager::GetFontHolder() const
 {
@@ -9,6 +11,10 @@ const FontHolder &ResourcesManager::GetFontHolder() const
 const TextureHolder &ResourcesManager::GetTextureHolder() const
 {
     return *m_TextureHolder;
+}
+const AudioHolder &ResourcesManager::GetAudioHolder() const
+{
+    return *m_AudioHolder;
 }
 
 const ResourcesManager &ResourcesManager::GetManager()
@@ -28,6 +34,13 @@ ResourcesManager::ResourcesManager()
     m_TextureHolder = std::make_unique<TextureHolder>();
     m_TextureHolder->AddDirectory(Enviroment::TextureDirectory, true);
     m_TextureHolder->LoadDirectory();
+
+    // Load Sound
+    m_AudioHolder = std::make_unique<AudioHolder>();
+    m_AudioHolder->AddDirectory(Enviroment::AudioDirectory, true);
+    m_AudioHolder->LoadDirectory();
+
+    LOG_DEBUG("Play Sound demo");
 }
 
 bool ResourcesManager::LoadFile(ResourcesType Type, const std::string &File)

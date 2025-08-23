@@ -31,7 +31,7 @@ namespace Enviroment
     const std::string FormatTextureExtention = ".json";
     const std::string TextureDirectory = "assets/sprite";
     const std::string AudioExtention = ".mp3";
-    const std::string AudioDirectory = "assets/audio";
+    const std::string AudioDirectory = "assets/sound";
 
     const float VelocityNormalizationValue = (std::sqrt(2) / 2.f);
     const int CharacterMovingFrameCount = 7;
