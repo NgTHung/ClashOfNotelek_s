@@ -11,7 +11,7 @@ private:
     Engine& m_Engine;
 public:
     void AddWall(sf::Vector2f Position,sf::Vector2f Size);
-    void DrawWalls(sf::RenderTarget& Target);
+    void DrawWalls(sf::RenderTarget& Target) const;
     Water(Engine& g_Engine);
     ~Water() = default;
 };

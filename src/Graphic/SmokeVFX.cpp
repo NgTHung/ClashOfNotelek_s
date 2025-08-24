@@ -1,6 +1,7 @@
 #include "Graphic/SmokeVFX.hpp"
 
 #include "Resources/ResourcesManager.hpp"
+#include "Utility/Environment.hpp"
 
 HitSmokeVFX::HitSmokeVFX():GraphicBase(sf::Vector2f(Environment::SpriteSize)), m_Sprite(ResourcesManager::GetManager().GetTextureHolder().GetTexture("HitSmokeVFX.png"))
 {

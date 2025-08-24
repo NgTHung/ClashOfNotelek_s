@@ -20,6 +20,4 @@ public:
     bool HandleInput(const sf::Event &) override;
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-
-
 };

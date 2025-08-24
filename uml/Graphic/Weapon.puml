@@ -1,0 +1,77 @@
+@startuml
+!theme plain
+title Weapon and Sword Class Hierarchy
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+}
+
+' --- Application Classes ---
+class Engine
+enum GlobalEventType
+class Environment
+
+abstract class GraphicBase <<abstract>>
+
+abstract class Weapon <<abstract>>{
+    # m_Rect: sf::IntRect
+    # m_Index: int
+    # m_Attacking: bool
+    # m_Damage: float
+    # m_AttackID: int
+    + {static} s_AttackCount: int
+    --
+    + Weapon(const sf::IntRect &Rect)
+    + {abstract} SetDamage(const float &damage): void
+    + {abstract} GetDamage() const: float
+    + {abstract} GetHitBoxPoint(): std::vector<sf::Vector2f>
+    + {abstract} Attack(): void
+    + {abstract} IsAttacking() const: bool
+    + GetAttackID() const: int
+}
+
+class Sword {
+    - m_Engine: Engine&
+    - m_Shape: sf::RectangleShape
+    --
+    + Sword(Engine &g_Engine)
+    + ~Sword()
+    + SetPosition(const sf::Vector2f &position): void
+    + SetDamage(const float &damage): void
+    + GetDamage() const: float
+    + RotateToMouse(): void
+    + SetRotation(float angle): void
+    + SetScale(const sf::Vector2f &Scale): void
+    + SetOrigin(sf::Vector2f origin): void
+    + draw(sf::RenderTarget &target, sf::RenderStates states) const: void
+    + Attack(): void
+    + IsAttacking() const: bool
+    + GetHitBoxPoint(): std::vector<sf::Vector2f>
+    + GetCollisionEventType() const: GlobalEventType
+    + GetSize() const: sf::Vector2f
+    + Update(const sf::Time &): bool
+    + HandleInput(const sf::Event &): bool
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+GraphicBase <|-- Weapon
+Weapon <|-- Sword
+
+' ==> Composition
+Sword *-- "1" SFML.RectangleShape : contains >
+
+' ==> Aggregation
+Sword o-- "1" Engine : uses >
+
+' ==> Dependency
+Weapon -- Environment : uses for defaults >
+Sword ..> GlobalEventType : returns >
+
+Sword -- ResourceManager : uses for textures >
+@enduml

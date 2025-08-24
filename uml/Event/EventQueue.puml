@@ -1,0 +1,36 @@
+@startuml
+!theme plain
+title EventQueue Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- External Dependencies ---
+abstract class BaseEvent <<abstract>>
+
+' Note: std::queue, std::shared_ptr, and std::optional are part of the C++ Standard Library
+' and are represented through type declarations and notes rather than full class boxes.
+
+
+' --- The EventQueue Class ---
+class EventQueue {
+    - m_Queue: std::queue<std::shared_ptr<BaseEvent>>
+    --
+    + EventQueue()
+    + PopEvent(): std::optional<std::shared_ptr<BaseEvent>>
+    + PushEvent(EnQueueEvent: std::shared_ptr<BaseEvent>): bool
+    + {method} template<T, ...> PushEvent(Args&&...): bool
+    + IsEmpty(): const bool
+    + Size(): const size_t
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Aggregation (Holds-A relationship)
+' The EventQueue holds a collection of BaseEvent objects via shared pointers.
+' This is aggregation because the queue manages the collection, but ownership is shared.
+EventQueue o--l "0..*" BaseEvent : holds >
+
+@enduml

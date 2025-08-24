@@ -1,9 +1,7 @@
 #include "Graphic/Wall.hpp"
 
 #include "Engine/Engine.hpp"
-#include "Event/CollisionEvent.hpp"
 #include "Utility/Environment.hpp"
-#include "Utility/Logger.hpp"
 
 Wall::Wall(Engine &g_engine, const sf::Vector2f &position, const sf::Vector2f &size): GraphicBase(size),
                                                                                       m_Engine(g_engine) {

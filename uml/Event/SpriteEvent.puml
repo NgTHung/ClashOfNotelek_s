@@ -1,0 +1,65 @@
+@startuml
+!theme plain
+title Character Event Classes Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Core Event System ---
+    enum GlobalEventType
+    abstract class BaseEvent <<abstract>> {
+        + {abstract} GetEventType(): GlobalEventType
+    }
+BaseEvent .l.|> GlobalEventType : returns >
+
+' --- Game Specific Classes & Enums ---
+
+enum Direction
+class Character
+
+' --- The Concrete Character Event Classes ---
+class CharacterMovedEvent {
+    - m_NewDirection: Direction
+    - m_Character: Character&
+    --
+    + CharacterMovedEvent(Character &Character, const Direction &NewDirection)
+    + GetEventType(): const GlobalEventType
+}
+
+class CharacterStopMoved {
+    - m_OldDirection: Direction
+    - m_Character: Character&
+    --
+    + CharacterStopMoved(Character &Character, const Direction &OldDirection)
+    + GetEventType(): const GlobalEventType
+}
+
+class CharacterAttackEvent {
+    - m_Character: Character&
+    --
+    + CharacterAttackEvent(Character &Character)
+    + GetEventType(): const GlobalEventType
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A relationship)
+' All three classes are concrete implementations of BaseEvent.
+BaseEvent <|-- CharacterMovedEvent
+BaseEvent <|-- CharacterStopMoved
+BaseEvent <|-- CharacterAttackEvent
+
+' ==> Association (Refers-To relationship)
+' All three event classes hold a non-owning reference to a Character.
+CharacterMovedEvent --o "1" Character : refers to >
+CharacterStopMoved --o "1" Character : refers to >
+CharacterAttackEvent --o "1" Character : refers to >
+
+' ==> Dependency (Uses-A relationship)
+' The movement events use the Direction enum as part of their data.
+CharacterMovedEvent ..> Direction : uses >
+CharacterStopMoved ..> Direction : uses >
+
+@enduml

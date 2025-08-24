@@ -9,9 +9,9 @@ class AudioHolder : public ResourcesHolder
 {
 public:
     AudioHolder();
-    virtual ~AudioHolder() override;
-    virtual void LoadDirectory() override;
-    virtual bool LoadFile(const std::string &FilePath) override;
+    ~AudioHolder() override;
+    void LoadDirectory() override;
+    bool LoadFile(const std::string &FilePath) override;
 
 
 

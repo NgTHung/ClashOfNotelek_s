@@ -1,0 +1,107 @@
+@startuml
+!theme plain
+title HomeScreen Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Parent Class & Core Dependencies ---
+class Engine
+abstract class Screen <<abstract>>
+
+' --- SFML Library Classes ---
+package SFML <<library>> {
+    class RenderTarget
+    class Time
+    class Event
+    class Sprite
+    class RectangleShape
+}
+
+' --- Game Entity & Graphic Classes ---
+
+class Character
+class Wall
+class Tree
+class Grass
+class TinyGrass
+class Box
+class Enemy
+class Water
+class Board
+class ArielText
+class GraphicBase
+
+
+' --- Event System ---
+    class BaseEvent
+
+
+
+' --- The HomeScreen Class ---
+class HomeScreen {
+    - m_Character: Character
+    - m_Walls: vector<shared_ptr<Wall>>
+    - m_Trees: vector<shared_ptr<Tree>>
+    - m_Grasses: vector<shared_ptr<Grass>>
+    - m_TinyGrasses: vector<shared_ptr<TinyGrass>>
+    - m_Boxes: vector<shared_ptr<Box>>
+    - m_Enemy: vector<shared_ptr<Enemy>>
+    - m_Water: Water
+    - m_RenderQueue: vector<GraphicBase*>
+    - m_MapTexture: sf::Sprite
+    - m_Overlay: sf::RectangleShape
+    - m_Menu: Board
+    - m_FPS: ArielText
+    - isPause: bool
+    - m_SlimeBar: SlimeBar
+    --
+    + HomeScreen(Engine &g_Engine)
+    + ~HomeScreen()
+    + Render(sf::RenderTarget &Renderer): bool
+    + Update(const sf::Time &DT): bool
+    + HandleInput(std::optional<sf::Event> Event): bool
+    + HandleEvent(std::shared_ptr<BaseEvent> Event): bool
+    + IsWinGame(): bool
+    + PauseGame(): void
+    + CameraProcess(): void
+    + SpawnEnemy(int num, const sf::FloatRect& SpawnArea): void
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A)
+Screen <|-- HomeScreen
+
+' ==> Aggregation (Screen holds a reference back to its owner)
+Engine o-- Screen : manages >
+
+' ==> Composition (HomeScreen OWNS these members directly)
+HomeScreen *---- "1" Character : has a >
+HomeScreen *---- "1" Water : has a >
+HomeScreen *---- "1" SlimeBar : has a >
+HomeScreen *---- "1" SFML.Sprite : as m_MapTexture
+HomeScreen *---- "1" SFML.RectangleShape : as m_Overlay
+HomeScreen *---- "1" Board : as m_Menu
+HomeScreen *---- "1" ArielText : as m_FPS
+
+' ==> Shared Ownership / Aggregation (HomeScreen manages collections of entities)
+' Using Aggregation (o--) to represent shared_ptr and raw pointer collections
+HomeScreen o---- "0..*" Wall : manages >
+HomeScreen o---- "0..*" Tree : manages >
+HomeScreen o---- "0..*" Grass : manages >
+HomeScreen o---- "0..*" TinyGrass : manages >
+HomeScreen o---- "0..*" Box : manages >
+HomeScreen o---- "0..*" Enemy : manages >
+HomeScreen o---- "0..*" GraphicBase : renders from queue >
+HomeScreen --l ResourceManager : loads resources >
+
+' ==> Dependencies (Uses-A, inherited from Screen)
+HomeScreen ..> SFML.RenderTarget : renders to
+HomeScreen ..> SFML.Time : uses for updates
+HomeScreen ..> SFML.Event : handles input
+HomeScreen ..> BaseEvent : handles events
+
+@enduml

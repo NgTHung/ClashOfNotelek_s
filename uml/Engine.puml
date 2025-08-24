@@ -1,0 +1,92 @@
+@startuml
+!theme plain
+title Engine Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' External dependencies from SFML
+package SFML <<library>> {
+    class RenderWindow
+    class View
+    class Clock
+}
+
+' Application-specific classes
+class Screen
+class ScreenShake
+class CollisionSystem
+class EventQueue
+class BaseEvent
+
+' The main Engine class
+class Engine {
+    - m_Sound: std::vector<sf::Sound>
+    - m_Music: sf::Music
+    - m_WalkingMusic: sf::Music
+    - m_CollisionSystem: std::unique_ptr<CollisionSystem>
+    - m_ScreenShake: ScreenShake
+    - m_Window: sf::RenderWindow
+    - m_View: sf::View
+    - m_States: std::vector<std::unique_ptr<Screen>>
+    - m_EventQueue: std::unique_ptr<EventQueue>
+    - m_ChangedState: std::unique_ptr<Screen>
+    - HandleInput(): bool
+    - TryPop(): bool
+    --
+    + Engine()
+    + Prepare(): void
+    + Run(): void
+    + PopState(): void
+    + {method} PushState<T>(...): bool
+    + PushState(std::unique_ptr<Screen> state): bool
+    + {method} ChangeState<T>(...): bool
+    + ResetWindow(): void
+    + SetView(const sf::View& view): void
+    + ShakeScreen(): void
+    + GetScreenShake(): ScreenShake&
+    + ResetView(): void
+    + GetWindow() const: const sf::RenderWindow&
+    + CloseWindow(): void
+    + SetBackGroundMusic(const std::string& music, const bool& isLoop): void
+    + PlayWalkingMusic(): void
+    + StopWalkingMusic(): void
+    + PlaySound(const std::string& SoundName): void
+    + stopBackGroundMusic(): void
+    + GetCurrentState() const: Screen&
+    + PostEvent(const std::shared_ptr<BaseEvent> &Event): void
+    + {method} PostEvent<T>(...): void
+    + ProcessEvents(): void
+    + GetCollisionSystem(): CollisionSystem&
+    + ClearSound(): void
+}
+
+' --- Relationships ---
+
+' Composition: The Engine OWNS and MANAGES the lifetime of these objects.
+' Represented by a filled diamond.
+Engine *-- "1" CollisionSystem : owns >
+Engine *-- "1" ScreenShake : owns >
+Engine *-- "1" RenderWindow : owns >
+Engine *-- "1" View : owns >
+Engine *-- "1" EventQueue : owns >
+Engine *-- "2" SFML.Music : manages >
+Engine -- Logger : uses >
+Engine -- Environment : uses >
+Engine -- Clock : uses >
+Engine -- Time : uses >
+' Aggregation/Composition of states: The Engine owns a collection of Screens.
+Engine *-- "0..*" Screen : manages states >
+Screen <|-- StartScreen
+Screen <|-- HomeScreen
+
+Engine ..> StartScreen : creates in Prepare() >
+Engine ..> HomeScreen : uses in TryPop() >
+
+' Dependency: The Engine USES these classes, but does not own them directly in this context.
+' Represented by a dashed arrow.
+Engine ..> BaseEvent : posts >
+EventQueue ..> BaseEvent : contains >
+
+@enduml

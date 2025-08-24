@@ -1,0 +1,46 @@
+@startuml
+!theme plain
+title Wall Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+}
+
+' --- Application Classes ---
+class Engine
+enum GlobalEventType
+abstract class GraphicBase <<abstract>> {
+}
+
+class Wall {
+    - m_Size: sf::Vector2f
+    - m_Engine: Engine&
+    - m_Shape: sf::RectangleShape
+    --
+    + Wall(Engine& g_engine, const sf::Vector2f &position, const sf::Vector2f &size)
+    + GetCollisionEventType() const: GlobalEventType
+    + GetSize() const: sf::Vector2f
+    + Update(const sf::Time &): bool
+    + HandleInput(const sf::Event &): bool
+    + draw(sf::RenderTarget &target, sf::RenderStates states) const: void
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+GraphicBase <|-- Wall
+
+' ==> Composition
+Wall *-u- "1" SFML.RectangleShape : contains >
+
+' ==> Aggregation
+Wall o-- "1" Engine : uses >
+
+' ==> Dependency
+Wall ..> GlobalEventType : returns >
+
+@enduml
