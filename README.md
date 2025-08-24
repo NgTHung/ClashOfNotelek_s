@@ -83,7 +83,6 @@ OOP-Game
 ├── CMakeLists.txt
 ├── LICENSE
 ├── README.md
-├── tree.txt
 ├── assets
 │   ├── fonts
 │   │   └── arial.ttf
