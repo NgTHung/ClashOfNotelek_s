@@ -146,6 +146,12 @@ add_library(Engine STATIC
         include/Graphic/PlayerHealthbar.hpp
         include/Graphic/Board.hpp
         src/Graphic/Board.cpp
+        src/Graphic/LeafFalling.cpp
+        include/Graphic/LeafFalling.hpp
+        src/Graphic/SlimeBar.cpp
+        include/Graphic/SlimeBar.hpp
+        src/Graphic/TroppyCup.cpp
+        include/Graphic/TroppyCup.hpp
 )
 target_include_directories(Engine PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include

@@ -151,6 +151,7 @@ bool Slime::Update(const sf::Time &DT)
         if (!m_DeadSmokeVFX.IsActive())
         {
             this->m_State = EnemyState::CanDelete;
+            m_Engine.PlaySound("slimedead");
             return true;
         }
         return false;
@@ -269,6 +270,7 @@ bool Slime::HandleEvent(std::shared_ptr<BaseEvent> Event)
                 this->m_HP -= PlayerSword->GetDamage();
                 this->BeHitProcess();
                 m_Engine.ShakeScreen();
+                m_Engine.PlaySound("slime-hit");
                 if (this->m_HP <= 0)
                     this->Die();
             }
@@ -325,7 +327,7 @@ void Slime::draw(sf::RenderTarget& Target, sf::RenderStates states) const
     {
         //Target.draw(HP);
         Target.draw(this->m_Shape);
-        DrawDebug(Target);
+        //DrawDebug(Target);
         m_HealthBar.Draw(Target);
     }
 }

@@ -59,6 +59,13 @@ HomeScreen::HomeScreen(Engine &g_Engine)
     m_Overlay.setFillColor(sf::Color(0,0,0,150));
     m_Overlay.setSize(sf::Vector2f(Environment::ScreenResolution));
     m_Menu.SetOrigin(sf::Vector2f(150,125));
+    for (auto i : Environment::SpawEnemyArea)
+    {
+        SpawnEnemy(Environment::NumberSlimeToKilled/Environment::SpawEnemyArea.size(),sf::FloatRect(i.position*m_MapTexture.getScale().x,i.size*m_MapTexture.getScale().y));
+    }
+    if (m_Enemy.size() < Environment::NumberSlimeToKilled)
+        SpawnEnemy(Environment::NumberSlimeToKilled - m_Enemy.size(),sf::FloatRect(Environment::SpawEnemyArea.back().position*m_MapTexture.getScale().x,Environment::SpawEnemyArea.back().size*m_MapTexture.getScale().y));
+    m_Engine.SetBackGroundMusic(ResourcesManager::GetManager().GetAudioHolder().GetMusic("background-music"),true);
 }
 
 void HomeScreen::PauseGame()
@@ -93,6 +100,7 @@ bool HomeScreen::Render(sf::RenderTarget &Renderer)
         Renderer.draw(*renderthing);
     Renderer.draw(m_FPS);
     Renderer.draw(m_Character.GetPlayerHealthBar());
+    Renderer.draw(m_SlimeBar);
     if (isPause)
     {
         Renderer.draw(m_Overlay);
@@ -165,7 +173,7 @@ bool HomeScreen::Update(const sf::Time &DT)
         if (enemy->GetState() == EnemyState::CanDelete)
         {
             if (enemy->GetType() == EnemyType::slime)
-                m_Character.HasKilledaSlime();
+                m_SlimeBar.KillASlime();
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Environment::AttackableLayer);
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Environment::EnemyAttackLayer);
         }
@@ -180,11 +188,9 @@ bool HomeScreen::Update(const sf::Time &DT)
 
     this->CameraProcess();
     m_Engine.SetView(m_Engine.GetScreenShake().GetShakeViewUpdate(DT,m_Engine.GetWindow().getView()));
-    if (this->m_Enemy.size() < 2)
-        this->SpawnEnemy();
 
-
-
+    m_SlimeBar.SetPosition(m_Engine.GetWindow().getView().getCenter() - sf::Vector2f(Environment::ScreenResolution)/2.f);
+    m_SlimeBar.Update(DT);
     return m_Character.Update(DT);
 }
 
@@ -215,19 +221,17 @@ void HomeScreen::CameraProcess()
 
 bool HomeScreen::IsWinGame()
 {
-    if (m_Character.GetNumberofSlimeHasKilled() >= Environment::NumberSlimeToKilled)
-        return true;
-    return false;
+    return m_SlimeBar.IsWin();
 }
 
 //Enemy function
-void HomeScreen::SpawnEnemy(){
+void HomeScreen::SpawnEnemy(const int& num,const sf::FloatRect& SpawnArea){
     std::random_device rd; 
     std::mt19937 gen(rd());
 //int num = distrib(gen);
-    int num = 2;
     Enemy * fac_Enemy;
-    for (int i = 0; i < num; i ++){
+    int cnt = 0;
+    while (cnt < num){
         std::uniform_int_distribution<> count(0, static_cast<int>(EnemyType::EnemyTypeCount) - 1);
         auto type = static_cast<EnemyType>(count(gen));
 
@@ -244,14 +248,15 @@ void HomeScreen::SpawnEnemy(){
         // set position for each enemy
         // fac_Enemy->SetPosition(n_Position); need to edit
        // std::uniform_int_distribution<> distribx(0, m_MapTexture.getGlobalBounds().size.x);
-        std::uniform_int_distribution<> distribx(0, Environment::ScreenResolution.x - 1);
+        std::uniform_int_distribution<> distribx(SpawnArea.position.x,SpawnArea.position.x + SpawnArea.size.x);
         int x = distribx(gen);
         //std::uniform_int_distribution<> distriby(0, m_MapTexture.getGlobalBounds().size.y);
-        std::uniform_int_distribution<> distriby(0, Environment::ScreenResolution.y - 1);
+        std::uniform_int_distribution<> distriby(SpawnArea.position.y,SpawnArea.position.y + SpawnArea.size.y);
         int y = distriby(gen);
         sf::Vector2f pos = {(float)x, (float)y};
         if (m_Engine.GetCollisionSystem().IsFree(pos,*fac_Enemy,Environment::MapEntityCollisionLayer))
         {
+            cnt++;
             fac_Enemy->SetPosition(pos);
             fac_Enemy->SetStartPosition(pos);
             m_Enemy.emplace_back(fac_Enemy);

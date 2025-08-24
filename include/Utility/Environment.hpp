@@ -30,7 +30,7 @@ namespace Environment
     const std::string FormatTextureExtention = ".json";
     const std::string TextureDirectory = "assets/sprite";
     const std::string AudioExtention = ".mp3";
-    const std::string AudioDirectory = "assets/audio";
+    const std::string AudioDirectory = "assets/sound";
 
     constexpr float VelocityNormalizationValue = (std::sqrt(2) / 2.f);
     constexpr int CharacterMovingFrameCount = 7;
@@ -54,6 +54,13 @@ namespace Environment
     //win game conditions
     const int NumberSlimeToKilled = 10;
 
+    const std::vector<sf::FloatRect> SpawEnemyArea = {
+        sf::FloatRect{sf::Vector2f{36,12},sf::Vector2f(101,107)},
+        sf::FloatRect{sf::Vector2f{36,165},sf::Vector2f(100,108)},
+        sf::FloatRect{sf::Vector2f{138,214},sf::Vector2f(151,61)},
+        sf::FloatRect{sf::Vector2f{242,10},sf::Vector2f(113,155)},
+        sf::FloatRect{sf::Vector2f{432,11},sf::Vector2f(67,259)}
+    };
 
     const std::vector TreePositions = {
         sf::Vector2f{40,35},

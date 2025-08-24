@@ -1,13 +1,17 @@
 #pragma once
 #include "State/Screen.hpp"
 #include "Graphic/Button.hpp"
+#include "Graphic/TroppyCup.hpp"
 
 class WinScreen: public Screen
 {
 private:
     GraphicButton m_ReplayButton;
     GraphicButton m_ExitButton;
-    sf::Sprite m_Sprite;
+    sf::Sprite m_WindowTexture;
+    TroppyCup m_TroppyCup;
+    bool playmusic = false;
+    bool Renderbutton = false;
 public:
     WinScreen(Engine &g_Engine);
     ~WinScreen() override = default;

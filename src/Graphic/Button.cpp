@@ -3,6 +3,7 @@
 #include "Graphic/Button.hpp"
 #include "Utility/Logger.hpp"
 #include "Engine/Engine.hpp"
+#include "Resources/ResourcesManager.hpp"
 #include "Utility/Environment.hpp"
 
 Button::Button(Engine &g_Engine, const sf::Vector2f &pos) : m_Position(pos), m_Engine(g_Engine), GraphicBase(m_Button.getSize())
@@ -114,6 +115,7 @@ bool GraphicButton::HandleInput(const sf::Event& event)
         sf::Vector2f mPos(sf::Mouse::getPosition(this->m_Engine.GetWindow()));
         if (this->m_Button.getGlobalBounds().contains(mPos))
         {
+            m_Engine.PlaySound("button-press");
             m_HasClicked = true;
             LOG_DEBUG("Clicked {} {}\n", mPos.x, mPos.y);
         }

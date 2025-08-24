@@ -11,7 +11,8 @@
 #include "Graphic/MapEntity.hpp"
 #include "Graphic/ScreenShake.hpp"
 #include "Graphic/Water.hpp"
-
+#include "Graphic/SlimeBar.hpp"
+#include "Graphic/TroppyCup.hpp"
 
 class HomeScreen : public Screen
 {
@@ -25,9 +26,8 @@ public:
     bool IsWinGame();
     void PauseGame();
     void CameraProcess();
-    void SpawnEnemy();
+    void SpawnEnemy(const int& num,const sf::FloatRect& SpawnArea);
 private:
-
     Character m_Character;
     std::vector<std::shared_ptr<Wall>> m_Walls;
     std::vector<std::shared_ptr<Tree>> m_Trees;
@@ -37,6 +37,7 @@ private:
     Water m_Water;
     std::vector<GraphicBase*> m_RenderQueue;
     sf::Sprite m_MapTexture;
+    SlimeBar m_SlimeBar;
     std::vector<std::shared_ptr<Enemy>> m_Enemy;
     std::vector<float> m_vDT;
     bool isPause = false;

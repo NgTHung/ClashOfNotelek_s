@@ -1,12 +1,17 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <vector>
 #include <memory>
+#include <utility>
 
 #include "Event/EventDispatcher.hpp"
 #include "Graphic/Collision.hpp"
 #include "State/Screen.hpp"
 #include "Graphic/ScreenShake.hpp"
+
 
 class Engine
 {
@@ -29,6 +34,13 @@ public:
     void ResetView();
     const sf::RenderWindow &GetWindow() const;
     void CloseWindow();
+    void SetBackGroundMusic(const std::string& music,const bool& isLoop = false);
+    void PlayWalkingMusic();
+    void StopWalkingMusic();
+    void PlaySound(const std::string& SoundName);
+
+    void stopBackGroundMusic();
+
     Screen &GetCurrentState() const;
     void PostEvent(const std::shared_ptr<BaseEvent> &Event);
     template <typename T, typename... Args>
@@ -36,11 +48,15 @@ public:
     void ProcessEvents();
 
     CollisionSystem &GetCollisionSystem();
-
+    void ClearSound();
 private:
     bool HandleInput();
     bool TryPop();
 
+    std::vector<sf::Sound> m_Sound;
+
+    sf::Music m_Music;
+    sf::Music m_WalkingMusic;
     std::unique_ptr<CollisionSystem> m_CollisionSystem;
     ScreenShake m_ScreenShake;
     sf::RenderWindow m_Window;

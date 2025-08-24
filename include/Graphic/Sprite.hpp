@@ -2,6 +2,7 @@
 #include <set>
 #include <SFML/Graphics.hpp>
 
+
 #include "Base.hpp"
 #include "Graphic/Player.hpp"
 #include "Graphic/Weapon.hpp"
@@ -47,7 +48,7 @@ private:
     sf::Vector2f m_OldPosition;
     std::vector<sf::Vector2f> m_FootVertices;
     PlayerHealthBar m_PlayerHealthBar;
-    int m_SlimeHasKilled = 0;
+
 
 public:
 
@@ -60,9 +61,9 @@ public:
 
     float GetHP() const;
 
-    int GetNumberofSlimeHasKilled() const;
 
-    void HasKilledaSlime();
+
+
 
     bool Update(const sf::Time &DT) override;
 
