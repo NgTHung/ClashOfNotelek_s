@@ -11,14 +11,20 @@ class Engine
 abstract class Screen <<abstract>>
 
 ' --- Game Specific Classes ---
-package Graphic {
-    class GraphicButton
-}
+
+class GraphicButton
+
 
 ' --- The StartScreen Class ---
 class StartScreen {
     - m_PlayButton: GraphicButton
     - m_ExitButton: GraphicButton
+    - m_LeafFalling: LeafFalling
+    - m_Grass: Grass
+    - m_index: int
+    - m_LastUpdate: int
+    - m_TimeperFrame: int
+    - m_Sprite: sf::Sprite
     --
     + StartScreen(Engine &g_Engine)
     + ~StartScreen()
@@ -41,6 +47,11 @@ HomeScreen <|--u Screen
 StartScreen *-- "2" GraphicButton : contains >
 StartScreen -- ResourcesManager : load resources >
 StartScreen --r HomeScreen : navigates to >
+StartScreen -u- Engine : uses >
+StartScreen *-- "1" LeafFalling : has a >
+StartScreen *-- "1" Grass : has a >
+StartScreen *-- "1" SFML.Sprite : has a >
+
 ' ==> Aggregation (Has-A relationship)
 ' The Engine manages the Screen, and the Screen holds a reference back to the Engine.
 Engine o-- Screen : manages >

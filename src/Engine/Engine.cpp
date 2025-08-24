@@ -165,10 +165,6 @@ void Engine::ClearSound()
 
 void Engine::Run() {
     sf::Clock Timer;
-
-    //AUDIO USING HERE
-
-
     while (m_Window.isOpen() && !m_States.empty())
     {
         Screen &State = this->GetCurrentState();

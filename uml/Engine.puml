@@ -22,6 +22,9 @@ class BaseEvent
 
 ' The main Engine class
 class Engine {
+    - m_Sound: std::vector<sf::Sound>
+    - m_Music: sf::Music
+    - m_WalkingMusic: sf::Music
     - m_CollisionSystem: std::unique_ptr<CollisionSystem>
     - m_ScreenShake: ScreenShake
     - m_Window: sf::RenderWindow
@@ -29,32 +32,34 @@ class Engine {
     - m_States: std::vector<std::unique_ptr<Screen>>
     - m_EventQueue: std::unique_ptr<EventQueue>
     - m_ChangedState: std::unique_ptr<Screen>
-    - m_ShouldPop: bool
-    - m_ShouldExit: bool
-    - m_ShouldChangeState: bool
-    - m_reset: bool
-    - bool HandleInput()
-    - bool TryPop()
+    - HandleInput(): bool
+    - TryPop(): bool
     --
     + Engine()
-    + void Prepare()
-    + void Run()
-    + void PopState()
-    + {method} template<T, ...> bool PushState(Args&&...)
-    + bool PushState(std::unique_ptr<Screen> state)
-    + {method} template<T, ...> bool ChangeState(Args&&...)
-    + void ResetWindow()
-    + void SetView(const sf::View& view)
-    + void ShakeScreen()
-    + ScreenShake& GetScreenShake()
-    + void ResetView()
-    + const sf::RenderWindow& GetWindow() const
-    + void CloseWindow()
-    + Screen& GetCurrentState() const
-    + void PostEvent(const std::shared_ptr<BaseEvent>& Event)
-    + {method} template<T, ...> void PostEvent(Args&&...)
-    + void ProcessEvents()
-    + CollisionSystem& GetCollisionSystem()
+    + Prepare(): void
+    + Run(): void
+    + PopState(): void
+    + {method} PushState<T>(...): bool
+    + PushState(std::unique_ptr<Screen> state): bool
+    + {method} ChangeState<T>(...): bool
+    + ResetWindow(): void
+    + SetView(const sf::View& view): void
+    + ShakeScreen(): void
+    + GetScreenShake(): ScreenShake&
+    + ResetView(): void
+    + GetWindow() const: const sf::RenderWindow&
+    + CloseWindow(): void
+    + SetBackGroundMusic(const std::string& music, const bool& isLoop): void
+    + PlayWalkingMusic(): void
+    + StopWalkingMusic(): void
+    + PlaySound(const std::string& SoundName): void
+    + stopBackGroundMusic(): void
+    + GetCurrentState() const: Screen&
+    + PostEvent(const std::shared_ptr<BaseEvent> &Event): void
+    + {method} PostEvent<T>(...): void
+    + ProcessEvents(): void
+    + GetCollisionSystem(): CollisionSystem&
+    + ClearSound(): void
 }
 
 ' --- Relationships ---
@@ -66,6 +71,7 @@ Engine *-- "1" ScreenShake : owns >
 Engine *-- "1" RenderWindow : owns >
 Engine *-- "1" View : owns >
 Engine *-- "1" EventQueue : owns >
+Engine *-- "2" SFML.Music : manages >
 Engine -- Logger : uses >
 Engine -- Environment : uses >
 Engine -- Clock : uses >

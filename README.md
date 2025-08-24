@@ -1,66 +1,299 @@
 <!-- ![Logo of the project](https://raw.githubusercontent.com/jehna/readme-best-practices/master/sample-logo.png) -->
 
 # Clash of Notelek's
-> A normal life of a skeleton
+> A thrilling 2D adventure game built with SFML
 
-OOP Project.
+## Overview
 
-## Installing / Getting started
+Clash of Notelek's is a simple yet engaging top-down arcade game developed in C++ for our Object-Oriented Programming final project. Players take control of Notelek's, a small skeleton, and must survive by defeating waves of slime enemies. This project demonstrates core OOP principles, software design patterns, and an AI-assisted development process.
 
-### Getting the source code
 
-To download the source code, you need to change directory to sastifition location and clone the project.
+## Features
+
+- Engaging 2D gameplay with smooth animations
+- Immersive sound effects and background music
+
+## Technology Stack
+
+- C++ for core game logic
+- SFML for graphics rendering and audio
+- CMake for cross-platform build management
+
+## Installation and Setup
+
+### Requirements
+
+- C++ compiler (supporting C++20 or newer)
+- CMake 3.28 or newer
+- Git
+
+### Getting the Source Code
+
+To download the source code, you need to clone the project.
 
 ```shell
 git clone https://github.com/NgTHung/OOP-Game
 cd OOP-Game/
 ```
 
-### Building
+### Building the Project
 
-After making some changes(or not), running these command will help you building the code to test the game.
+After making some changes(or not), running these command will help you to build the code to test the game.
 
 ```shell
-mkdir buildbui
+mkdir build
 cd build
-cmake clean .
-cmake -DCMAKE_BUILD_TYPE=Debug ..
+cmake ..
 cmake --build .
+```
+
+### Running the Game
+
+```shell
 bin/main.exe
 ```
 
-After running `cmake --build .` the new code will be built and should running properly.
+## Project Structure
 
-## Features
+- `assets/`: Game resources (sprites, sounds, fonts)
+- `include/`: Header files organized by component
+- `src/`: Source files organized by component
+- `uml/`: UML diagrams documenting the architecture
 
+## Game Controls
 
-## Configuration
+- WASD: Movement
+- Left Click: Attack
+- ESC: Pause game
 
-#### Argument 1
+## Architecture
 
-#### Argument 2
+The game follows a component-based architecture with clear separation of concerns:
+- `Engine`: Core game loop and system management
+- `State`: Game state management (menu, gameplay, etc.)
+- `Graphic`: Rendering and animation systems
+- `Event`: Input handling and event dispatching
+- `Command`: Command pattern implementation for game actions
+- `Resources`: Asset management and resource caching
+- `Utility`: Helper functions and common utilities
 
-## Contributing
+## File Structure
+```bash
+OOP-Game
+├── CMakeLists.txt
+├── LICENSE
+├── README.md
+├── tree.txt
+├── assets
+│   ├── fonts
+│   │   └── arial.ttf
+│   ├── sound
+│   │   ├── background-music.mp3
+│   │   ├── button-press.mp3
+│   │   ├── lose.mp3
+│   │   ├── loseSound.mp3
+│   │   ├── ouch.mp3
+│   │   ├── running.mp3
+│   │   ├── slimedead.mp3
+│   │   ├── slime-hit.mp3
+│   │   ├── weapon-hit.mp3
+│   │   ├── win.mp3
+│   │   └── winMusic.mp3
+│   └── sprite
+│       ├── board.png
+│       ├── Box.png
+│       ├── DeadScreen.png
+│       ├── DeadSmokeVFX.png
+│       ├── Exit_button.png
+│       ├── grass.png
+│       ├── healthbarface.png
+│       ├── hi.json
+│       ├── hi.png
+│       ├── HitSmokeVFX.png
+│       ├── Leaf1.png
+│       ├── Leaf2.png
+│       ├── Leaf3.png
+│       ├── Leaf4.png
+│       ├── Leaf5.png
+│       ├── play_button.png
+│       ├── PlayAgain_button.png
+│       ├── Slime.png
+│       ├── startscreen.png
+│       ├── sword.png
+│       ├── test_map.png
+│       ├── TinyGrass.png
+│       ├── Tree.png
+│       ├── TroppyCup.png
+│       └── WinBackGround.png
+├── include
+│   ├── Command
+│   │   ├── Command.hpp
+│   │   ├── PlayerCommand.hpp
+│   │   └── SpriteCommand.hpp
+│   ├── Engine
+│   │   └── Engine.hpp
+│   ├── Event
+│   │   ├── CollisionEvent.hpp
+│   │   ├── Event.hpp
+│   │   ├── EventDispatcher.hpp
+│   │   ├── EventQueue.hpp
+│   │   ├── PlayerEvent.hpp
+│   │   └── SpriteEvent.hpp
+│   ├── External
+│   │   └── json.hpp
+│   ├── Graphic
+│   │   ├── Base.hpp
+│   │   ├── Board.hpp
+│   │   ├── Button.hpp
+│   │   ├── Collision.hpp
+│   │   ├── Enemy.hpp
+│   │   ├── HealthBar.hpp
+│   │   ├── LeafFalling.hpp
+│   │   ├── MapEntity.hpp
+│   │   ├── Player.hpp
+│   │   ├── PlayerHealthbar.hpp
+│   │   ├── ScreenShake.hpp
+│   │   ├── SlimeBar.hpp
+│   │   ├── SmokeVFX.hpp
+│   │   ├── Sprite.hpp
+│   │   ├── TroppyCup.hpp
+│   │   ├── Wall.hpp
+│   │   ├── Water.hpp
+│   │   └── Weapon.hpp
+│   ├── Resources
+│   │   ├── AudioHolder.hpp
+│   │   ├── FontHolder.hpp
+│   │   ├── ResourcesHolder.hpp
+│   │   ├── ResourcesManager.hpp
+│   │   └── TextureHolder.hpp
+│   ├── State
+│   │   ├── BaseState.hpp
+│   │   ├── DeadScreen.hpp
+│   │   ├── HomeScreen.hpp
+│   │   ├── KnockbackHandler.hpp
+│   │   ├── PlayerState.hpp
+│   │   ├── Screen.hpp
+│   │   ├── SpriteState.hpp
+│   │   ├── StartScreen.hpp
+│   │   └── WinScreen.hpp
+│   └── Utility
+│       ├── Environment.hpp
+│       ├── IDGenerator.hpp
+│       ├── Logger.hpp
+│       └── ResourcesUtility.hpp
+├── src
+│   ├── main.cpp
+│   ├── Command
+│   │   ├── PlayerCommand.cpp
+│   │   └── SpriteCommand.cpp
+│   ├── Engine
+│   │   └── Engine.cpp
+│   ├── Event
+│   │   ├── CollisionEvent.cpp
+│   │   ├── EventDispatcher.cpp
+│   │   ├── EventQueue.cpp
+│   │   ├── PlayerEvent.cpp
+│   │   └── SpriteEvent.cpp
+│   ├── Graphic
+│   │   ├── Base.cpp
+│   │   ├── Board.cpp
+│   │   ├── Button.cpp
+│   │   ├── Collision.cpp
+│   │   ├── Enemy.cpp
+│   │   ├── HealthBar.cpp
+│   │   ├── LeafFalling.cpp
+│   │   ├── MapEntity.cpp
+│   │   ├── Player.cpp
+│   │   ├── PlayerHeathBar.cpp
+│   │   ├── ScreenShake.cpp
+│   │   ├── SlimeBar.cpp
+│   │   ├── SmokeVFX.cpp
+│   │   ├── Sprite.cpp
+│   │   ├── TroppyCup.cpp
+│   │   ├── Wall.cpp
+│   │   ├── Water.cpp
+│   │   └── Weapon.cpp
+│   ├── Resources
+│   │   ├── AudioHolder.cpp
+│   │   ├── FontHolder.cpp
+│   │   ├── ResourcesHolder.cpp
+│   │   ├── ResourcesManager.cpp
+│   │   └── TextureHolder.cpp
+│   ├── State
+│   │   ├── DeadScreen.cpp
+│   │   ├── HomeScreen.cpp
+│   │   ├── KnockbackHandler.cpp
+│   │   ├── PlayerState.cpp
+│   │   ├── Screen.cpp
+│   │   ├── SpriteState.cpp
+│   │   ├── StartScreen.cpp
+│   │   └── WinsScreen.cpp
+│   └── Utility
+│       ├── IDGenerator.cpp
+│       └── Logger.cpp
+└── uml
+    ├── Command.puml
+    ├── Engine.puml
+    ├── Event
+    │   ├── BaseEvent.puml
+    │   ├── CollisionEvent.puml
+    │   ├── EventDispatcher.puml
+    │   ├── EventQueue.puml
+    │   ├── PlayerEvent.puml
+    │   └── SpriteEvent.puml
+    ├── Graphic
+    │   ├── Base.puml
+    │   ├── Board.puml
+    │   ├── Button.puml
+    │   ├── Collision.puml
+    │   ├── Enemy.puml
+    │   ├── HealthBar.puml
+    │   ├── KnockbackHandler.puml
+    │   ├── Leaf.puml
+    │   ├── Player.puml
+    │   ├── ScreenShake.puml
+    │   ├── SlimeBar.puml
+    │   ├── SmokeVFX.puml
+    │   ├── Sprite.puml
+    │   ├── TroppyCup.puml
+    │   ├── Wall.puml
+    │   ├── Water.puml
+    │   └── Weapon.puml
+    ├── Resources
+    │   ├── AudioHolder.puml
+    │   ├── FontHolder.puml
+    │   ├── ResourcesHolder.puml
+    │   ├── ResourcesManager.puml
+    │   └── TextureHolder.puml
+    ├── Screen
+    │   ├── DeadScreen.puml
+    │   ├── HomeScreen.puml
+    │   ├── Screen.puml
+    │   ├── StartScreen.puml
+    │   └── WinScreen.puml
+    ├── State
+    │   ├── BaseState.puml
+    │   ├── PlayerState.puml
+    │   └── SpriteState.puml
+    └── Utilities
+        └── IDGenerator.puml
 
-When you publish something open source, one of the greatest motivations is that
-anyone can just jump in and start contributing to your project.
+```
 
-These paragraphs are meant to welcome those kind souls to feel that they are
-needed. You should state something like:
+## Future Plans
 
-"If you'd like to contribute, please fork the repository and use a feature
-branch. Pull requests are warmly welcome."
+- Additional levels and environments
+- More enemy types and behaviors
+- Character progression system
+- Settings menu for customization
+- Multiplayer support
 
-If there's anything else the developer needs to know (e.g. the code style
-guide), you should link it here. If there's a lot of things to take into
-consideration, it is common to separate this section to its own file called
-`CONTRIBUTING.md` (or similar). If so, you should say that it exists here.
+## License
 
-## Links
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## To do
-- Add settings.
+## Acknowledgements
 
-## Licensing
-
-The code in this project is licensed under MIT license.
+- SFML team for their excellent graphics library
+- All contributors and testers
+- HCMUS for supporting this project

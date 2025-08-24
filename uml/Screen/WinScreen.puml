@@ -21,11 +21,13 @@ class BaseEvent
 
 ' --- The WinScreen Class ---
 class WinScreen {
-    .. private attributes ..
     - m_ReplayButton: GraphicButton
     - m_ExitButton: GraphicButton
-    - m_Sprite: sf::Sprite
-    .. public methods ..
+    - m_WindowTexture: sf::Sprite
+    - m_TroppyCup: TroppyCup
+    - playmusic: bool
+    - Renderbutton: bool
+    --
     + WinScreen(Engine &g_Engine)
     + ~WinScreen()
     + Render(sf::RenderTarget& Renderer): bool
@@ -44,7 +46,7 @@ Screen <|-- WinScreen
 ' A WinScreen is composed of these parts. Their lifetime is tied to the WinScreen.
 WinScreen *--l "2" GraphicButton : contains >
 WinScreen *-- "1" SFML.Sprite : contains >
-
+WinScreen *-- "1" TroppyCup : has a >
 ' ==> Aggregation (Has-A relationship)
 ' The Engine manages the Screen, and the Screen holds a reference back to the Engine.
 Engine o-- Screen : manages >

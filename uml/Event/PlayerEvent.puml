@@ -29,10 +29,9 @@ class Player
     }
 
     class PlayerStopMoved {
-        .. private attributes ..
         - m_OldDirection: Direction
         - m_Player: Player&
-        .. public methods ..
+        --
         + PlayerStopMoved(Player &Player, const Direction &OldDirection)
         + GetEventType(): const GlobalEventType
     }

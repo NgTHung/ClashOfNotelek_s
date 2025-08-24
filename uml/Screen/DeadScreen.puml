@@ -23,6 +23,9 @@ class DeadScreen {
     - m_ReplayButton: GraphicButton
     - m_ExitButton: GraphicButton
     - m_Sprite: sf::Sprite
+    - m_TimePerFrame: int
+    - m_TimeCounter: int
+    - m_Index: int
     --
     + DeadScreen(Engine &g_Engine)
     + ~DeadScreen()
@@ -43,7 +46,7 @@ Screen <|-- DeadScreen
 DeadScreen *-left- "2" GraphicButton : contains >
 DeadScreen *-- "1" SFML.Sprite : contains >
 DeadScreen -- ResourcesManager : load resources >
-DeadScreen -u- Engine
+DeadScreen -u- Engine : uses >
 ' ==> Aggregation (Has-A relationship)
 ' The Engine manages the Screen, and the Screen holds a reference back to the Engine.
 Engine o-d- Screen : manages >

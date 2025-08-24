@@ -41,7 +41,6 @@ class GraphicBase
 
 ' --- The HomeScreen Class ---
 class HomeScreen {
-    .. private attributes ..
     - m_Character: Character
     - m_Walls: vector<shared_ptr<Wall>>
     - m_Trees: vector<shared_ptr<Tree>>
@@ -56,7 +55,8 @@ class HomeScreen {
     - m_Menu: Board
     - m_FPS: ArielText
     - isPause: bool
-    .. public methods ..
+    - m_SlimeBar: SlimeBar
+    --
     + HomeScreen(Engine &g_Engine)
     + ~HomeScreen()
     + Render(sf::RenderTarget &Renderer): bool
@@ -66,7 +66,7 @@ class HomeScreen {
     + IsWinGame(): bool
     + PauseGame(): void
     + CameraProcess(): void
-    + SpawnEnemy(): void
+    + SpawnEnemy(int num, const sf::FloatRect& SpawnArea): void
 }
 
 
@@ -81,6 +81,7 @@ Engine o-- Screen : manages >
 ' ==> Composition (HomeScreen OWNS these members directly)
 HomeScreen *---- "1" Character : has a >
 HomeScreen *---- "1" Water : has a >
+HomeScreen *---- "1" SlimeBar : has a >
 HomeScreen *---- "1" SFML.Sprite : as m_MapTexture
 HomeScreen *---- "1" SFML.RectangleShape : as m_Overlay
 HomeScreen *---- "1" Board : as m_Menu
