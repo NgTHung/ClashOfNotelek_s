@@ -57,5 +57,5 @@ Board *-- "2" GraphicButton : contains >
 Board o-- "1" Engine : uses >
 Board o-- "1" HomeScreen : is part of >
 
-
+Board -- ResourcesManager : loads resources >
 @enduml

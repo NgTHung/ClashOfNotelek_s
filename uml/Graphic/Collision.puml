@@ -54,6 +54,11 @@ class CollisionSystem {
 ' Collidable inherits from two SFML base classes.
 SFML.Transformable <|-- Collidable
 SFML.Drawable <|-- Collidable
+PlayerCollisionEvent <|-- BaseEvent
+EnemyCollisionEvent <|-- BaseEvent
+WallCollisionEvent <|-- BaseEvent
+SwordCollisionEvent <|-- BaseEvent
+MapEntityCollisionEvent <|-- BaseEvent
 
 ' ==> Composition (Owns-A)
 ' A Collidable has a unique ID.
@@ -67,9 +72,14 @@ CollisionSystem o-u- "1" Engine : uses >
 
 ' ==> Dependency (Uses-A)
 ' The factory method creates a specific type of BaseEvent.
-CollisionSystem .u.> BaseEvent : creates via factory >
+CollisionSystem ..> BaseEvent : creates via factory >
 ' The Collidable interface depends on the event type enum.
 Collidable ..> GlobalEventType : returns >
 CollisionSystem -- Environment : global context >
 Collidable -- Logger : logs debug info >
+CollisionSystem -- PlayerCollisionEvent : creates >
+CollisionSystem -- EnemyCollisionEvent : creates >
+CollisionSystem -- WallCollisionEvent : creates >
+CollisionSystem -- SwordCollisionEvent : creates >
+CollisionSystem -- MapEntityCollisionEvent : creates >
 @enduml

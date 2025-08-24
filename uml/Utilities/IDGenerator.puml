@@ -1,27 +1,19 @@
 @startuml
-'https://plantuml.com/class-diagram
+!theme plain
+title ID Class Diagram
 
-\abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
+' Settings
+skinparam classAttributeIconSize 0
 
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
-}
-
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+class ID {
+    - {static} s_NextID: int
+    - m_ID: const int
+    --
+    + ID()
+    + ~ID()
+    + GetID() const: int
+    + operator==(Other: const ID&): bool
+    + operator!=(Other: const ID&): bool
 }
 
 @enduml

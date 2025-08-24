@@ -1,27 +1,37 @@
 @startuml
-'https://plantuml.com/class-diagram
+!theme plain
+title HealthBar Class Diagram
 
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
 
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+' --- SFML Library ---
+package SFML <<library>> {
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+' --- Application Class ---
+class HealthBar {
+    - m_BackgroundBar: sf::RectangleShape
+    - m_HealthBar: sf::RectangleShape
+    - m_MaxHealth: float
+    - m_Size: sf::Vector2f
+    - m_Offset: sf::Vector2f
+    --
+    + HealthBar()
+    + SetMaxHealth(const float& MaxHHealth): void
+    + Update(const float& CurrentHealth, const sf::Vector2f& Pos): void
+    + Draw(sf::RenderTarget& Target) const: void
+    + ~HealthBar()
 }
+
+' --- RELATIONSHIPS ---
+
+' ==> Composition
+HealthBar *-- "2" SFML.RectangleShape : contains >
+
+' ==> Dependency
+HealthBar ..> SFML.Vector2f : uses >
+HealthBar ..> SFML.RenderTarget : draws to >
 
 @enduml

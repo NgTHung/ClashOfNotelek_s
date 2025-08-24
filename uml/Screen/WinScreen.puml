@@ -16,14 +16,8 @@ package SFML <<library>> {
 }
 
 ' --- Game Specific Classes ---
-package Graphic {
-    class GraphicButton
-}
-
-package EventSystem {
-    class BaseEvent
-}
-
+class GraphicButton
+class BaseEvent
 
 ' --- The WinScreen Class ---
 class WinScreen {

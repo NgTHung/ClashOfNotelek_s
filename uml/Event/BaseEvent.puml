@@ -37,6 +37,6 @@ abstract class BaseEvent <<abstract>> {
 
 ' ==> Dependency (Uses-A relationship)
 ' The BaseEvent interface is defined in terms of GlobalEventType.
-BaseEvent ..> GlobalEventType : returns >
+BaseEvent .r.> GlobalEventType : returns >
 
 @enduml

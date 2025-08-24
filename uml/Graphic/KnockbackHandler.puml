@@ -13,11 +13,10 @@ package SFML <<library>> {
 
 ' --- The Main Class ---
 class KnockBackHandler {
-    .. private attributes ..
     - m_Velocity: sf::Vector2f
     - m_Damping: float
     - m_Active: bool
-    .. public methods ..
+    --
     + KnockBackHandler()
     + ApplyVelocity(direction: const sf::Vector2f&, strength: float): void
     + Update(position: sf::Vector2f&, deltaTime: float): void

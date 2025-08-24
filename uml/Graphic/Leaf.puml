@@ -1,0 +1,69 @@
+@startuml
+!theme plain
+title Leaf and LeafFalling Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+}
+
+' --- Application Classes ---
+class Engine
+enum GlobalEventType
+abstract class GraphicBase
+
+class Leaf {
+    - m_Sprite: sf::Sprite
+    - m_FallSpeed: float
+    - m_SwingSpeed: float
+    - m_SwingAmount: float
+    - m_RotationSpeed: float
+    - m_Time: float
+    - m_StartX: float
+    --
+    + Leaf(...)
+    + ~Leaf()
+    + draw(...) const: void
+    + GetCollisionEventType() const: GlobalEventType
+    + GetPosition() const: sf::Vector2f
+    + Update(const sf::Time&): bool
+    + HandleInput(const sf::Event&): bool
+}
+
+class LeafFalling {
+    - m_spawnArea: sf::FloatRect
+    - m_Engine: Engine&
+    - m_Textures: std::vector<const sf::Texture*>
+    - m_Leaves: std::vector<std::shared_ptr<Leaf>>
+    - SpawnLeave(): void
+    --
+    + LeafFalling(Engine& g_Engine, const sf::FloatRect& spawnArea, const int& leafCount)
+    + ~LeafFalling()
+    + draw(...) const: void
+    + GetCollisionEventType() const: GlobalEventType
+    + Update(const sf::Time&): bool
+    + HandleInput(const sf::Event&): bool
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+GraphicBase <|-- Leaf
+GraphicBase <|-- LeafFalling
+
+' ==> Composition
+Leaf *-- "1" SFML.Sprite : contains >
+
+' ==> Aggregation
+LeafFalling o-- "0..*" Leaf : manages >
+LeafFalling o-- "1" Engine : uses >
+LeafFalling o-r- "0..*" SFML.Texture : refers to >
+
+' ==> Dependency
+Leaf ..> GlobalEventType : returns >
+LeafFalling ..> GlobalEventType : returns >
+LeafFalling -- ResourceManager : load resources >
+@enduml

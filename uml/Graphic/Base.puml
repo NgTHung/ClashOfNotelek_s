@@ -11,9 +11,7 @@ package SFML <<library>>{
 }
 
 ' Collidable inherits from SFML classes
-abstract class Collidable <<abstract>> {
-  + {abstract} GetCollisionEventType(): GlobalEventType
-}
+abstract class Collidable <<abstract>>
 SFML.Drawable <|-- Collidable
 SFML.Transformable <|-- Collidable
 

@@ -12,9 +12,7 @@ package SFML <<library>> {
     class Time
 }
 
-package EventSystem {
-    class BaseEvent
-}
+class BaseEvent
 
 ' --- The Abstract BaseState Class ---
 abstract class BaseState <T> <<abstract>> {

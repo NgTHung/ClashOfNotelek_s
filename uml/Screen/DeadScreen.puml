@@ -15,9 +15,8 @@ package SFML <<library>> {
 }
 
 ' --- Game Specific Classes ---
-package Graphic {
-    class GraphicButton
-}
+class GraphicButton
+
 
 ' --- The DeadScreen Class ---
 class DeadScreen {

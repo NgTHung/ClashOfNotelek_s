@@ -1,0 +1,28 @@
+@startuml
+!theme plain
+title AudioHolder Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Application Classes ---
+abstract class ResourcesHolder <<abstract>>
+
+class AudioHolder {
+    - m_MusicMap: std::map<std::string, std::string>
+    - AddMusic(const std::string& musicName, const std::string& filePath): bool
+    --
+    + AudioHolder()
+    + ~AudioHolder()
+    + LoadDirectory(): void
+    + LoadFile(const std::string &FilePath): bool
+    + GetMusic(const std::string& musicName) const: const std::string&
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+ResourcesHolder <|-- AudioHolder
+
+@enduml

@@ -6,7 +6,6 @@ title Player State Machine Hierarchy
 skinparam classAttributeIconSize 0
 hide empty members
 
-class BaseEvent
 class EventDispatcher {
     + {inner} EventListener
 }
@@ -24,7 +23,6 @@ abstract class PlayerState <<abstract>>{
     # m_APressedCommand: shared_ptr<BaseCommand>
     # m_SPressedCommand: shared_ptr<BaseCommand>
     # m_DPressedCommand: shared_ptr<BaseCommand>
-
     # m_WReleaseCommand: shared_ptr<BaseCommand>
     # m_AReleaseCommand: shared_ptr<BaseCommand>
     # m_SReleaseCommand: shared_ptr<BaseCommand>
@@ -56,6 +54,9 @@ class MovingState {
 BaseState <|-- PlayerState
 PlayerState <|-- StandingState
 PlayerState <|-- MovingState
+AdvancePlayerIndexCommand <|-- BaseCommand
+MovePlayerCommand <|-- BaseCommand
+StopPlayerMovingCommand <|-- BaseCommand
 
 ' ==> Context Relationship (Has-A / Manages)
 ' The Player owns its current state
@@ -70,7 +71,10 @@ PlayerState o-- "0..*" BaseCommand : delegates to >
 ' The concrete states own an EventListener to react to game events
 StandingState *-- "1" EventListener : owns >
 MovingState *-- "1" EventListener : owns >
-PlayerState -l- MovePlayerCommand : uses >
-PlayerState -l- StopPlayerMovingCommand : uses >
-PlayerState -l- AdvancePlayerIndexCommand : uses >
+MovingState -- MovePlayerCommand : uses >
+MovingState -- StopPlayerMovingCommand : uses >
+StandingState -- MovePlayerCommand : uses >
+StandingState -- AdvancePlayerIndexCommand : uses >
+StandingState -l-> MovingState : transitions to >
+MovingState --> StandingState : transitions to >
 @enduml
