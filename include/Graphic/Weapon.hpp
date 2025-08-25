@@ -2,21 +2,21 @@
 #include <SFML/Graphics.hpp>
 
 #include "Base.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
 class Weapon : public GraphicBase
 {
 protected:
     sf::IntRect m_Rect;
-    int m_Index = Enviroment::DefaultTextureIndex;
-    bool m_Attacking = Enviroment::DefaultAttackingState;
-    float m_Damage = Enviroment::DefaultAttackingDamage;
+    int m_Index = Environment::DefaultTextureIndex;
+    bool m_Attacking = Environment::DefaultAttackingState;
+    float m_Damage = Environment::DefaultAttackingDamage;
     int m_AttackID;
 
 public:
     static int s_AttackCount;
 
-    Weapon(const sf::IntRect &Rect = Enviroment::DefaultIntRect);
+    Weapon(const sf::IntRect &Rect = Environment::DefaultIntRect);
 
     virtual void SetDamage(const float &damage) = 0;
 
@@ -37,10 +37,12 @@ private:
     Engine &m_Engine;
     sf::RectangleShape m_Shape;
 
+
+
 public:
     Sword(Engine &g_Engine);
 
-    ~Sword();
+    ~Sword() override;
 
     void SetPosition(const sf::Vector2f &position) override;
 
@@ -50,7 +52,7 @@ public:
 
     void RotateToMouse();
 
-    void SetRotation(const float angle) override;
+    void SetRotation(float angle) override;
 
     void SetScale(const sf::Vector2f &Scale) override;
 
@@ -69,8 +71,6 @@ public:
     sf::Vector2f GetSize() const override;
 
     bool Update(const sf::Time &) override;
-
-    bool FixLagUpdate(const sf::Time &) override;
 
     bool HandleInput(const sf::Event &) override;
 };

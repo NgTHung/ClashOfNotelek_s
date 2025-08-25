@@ -1,0 +1,41 @@
+@startuml
+!theme plain
+title ResourcesManager Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Application Classes ---
+class FontHolder
+class TextureHolder
+class AudioHolder
+enum ResourcesType
+
+class ResourcesManager <<singleton>> {
+    - m_FontHolder: std::unique_ptr<FontHolder>
+    - m_TextureHolder: std::unique_ptr<TextureHolder>
+    - m_AudioHolder: std::unique_ptr<AudioHolder>
+    - ResourcesManager()
+    - ~ResourcesManager()
+    --
+    + GetFontHolder() const: const FontHolder&
+    + GetTextureHolder() const: const TextureHolder&
+    + GetAudioHolder() const: const AudioHolder&
+    + {static} GetManager() const: const ResourcesManager&
+    + LoadFile(ResourcesType Type, const std::string &Path) const: bool
+    + LoadFiles(ResourcesType Type, const std::vector<std::string> &FileTable) const: std::vector<std::string>
+    + LoadDirectory(const std::string &DirectoryPath): void
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Composition
+ResourcesManager *-- "1" FontHolder : owns >
+ResourcesManager *-- "1" TextureHolder : owns >
+ResourcesManager *-- "1" AudioHolder : owns >
+
+' ==> Dependency
+ResourcesManager ..> ResourcesType : uses >
+
+@enduml

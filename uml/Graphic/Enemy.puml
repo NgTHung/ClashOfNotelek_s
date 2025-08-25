@@ -1,0 +1,66 @@
+@startuml
+!theme plain
+title Slime Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Application Classes ---
+class Engine
+class Character
+class BaseEvent
+class EventDispatcher {
+    + {inner} EventListener
+}
+enum EnemyType
+enum GlobalEventType
+abstract class Enemy <<abstract>>
+
+class Slime {
+    - m_Listener: EventDispatcher::EventListener
+    --
+    + Slime(Character& Player, Engine &g_Engine)
+    + Update(const sf::Time& DT): bool
+    + HandleEvent(std::shared_ptr<BaseEvent> Event): bool
+    + HandleInput(const sf::Event& Event): bool
+    + SetPosition(const sf::Vector2f& position): void
+    + SetIntRect(const sf::IntRect& rect): bool
+    + Move(const sf::Vector2f& direction): void
+    + SetScale(const sf::Vector2f& scale): void
+    + SetRotation(const float angle): void
+    + draw(sf::RenderTarget &Target, sf::RenderStates states) const: void
+    + OffAttack(): void
+    + OnAttack(): void
+    + Attack(): void
+    + GetType(): const EnemyType
+    + GetCollisionEventType(): const GlobalEventType
+    + GetYAxisPoint(): float
+    + UpdateAnimation(): void
+    + UpdateState(): void
+    + BeHitProcess(): void
+    + Flash(): void
+    + Die(): void
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+Enemy <|-- Slime
+
+' ==> Composition
+Slime *-- "1" EventListener : owns >
+
+' ==> Aggregation / Dependency
+Slime o-- Engine : uses >
+Slime ..> Character : uses in constructor >
+Slime ..> BaseEvent : handles >
+Slime ..> EnemyType : returns >
+Slime ..> GlobalEventType : returns >
+
+Slime -- Logger : uses >
+Slime -- ResourceManager : load resources >
+Slime -- Environment : use global settings >
+
+@enduml

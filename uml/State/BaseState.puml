@@ -1,0 +1,38 @@
+@startuml
+!theme plain
+title BaseState<T> Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- External Dependencies ---
+package SFML <<library>> {
+    class Event
+    class Time
+}
+
+class BaseEvent
+
+' --- The Abstract BaseState Class ---
+abstract class BaseState <T> <<abstract>> {
+    # m_Instance: T&
+    --
+    + BaseState(Instance: T&)
+    + virtual ~BaseState()
+    + {abstract} EnterState(): void
+    + {abstract} ExitState(): void
+    + {abstract} HandleInput(Event: optional<sf.Event>): unique_ptr<BaseState>
+    + {abstract} Update(DT: const sf.Time&): unique_ptr<BaseState>
+    + {abstract} HandleEvent(Event: shared_ptr<BaseEvent>&): bool
+}
+
+' A state can create a new state to transition to. This is a key part of the pattern.
+BaseState ..> BaseState : creates for transition >
+
+' Dependencies on external types
+BaseState ..> SFML.Event : handles
+BaseState ..> SFML.Time : uses for updates
+BaseState ..> BaseEvent : handles
+
+@enduml

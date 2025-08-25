@@ -1,0 +1,51 @@
+@startuml
+!theme plain
+title SlimeBar Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+}
+
+' --- Application Classes ---
+class Environment
+enum GlobalEventType
+abstract class GraphicBase <<abstract>>
+
+class SlimeBar {
+    - m_maxslime: int
+    - m_BackGround: sf::RectangleShape
+    - m_Bar: sf::RectangleShape
+    - m_SlimeHasKilled: int
+    - m_Size: sf::Vector2f
+    - m_Slime: sf::Sprite
+    --
+    + SlimeBar()
+    + ~SlimeBar()
+    + KillASlime(): void
+    + IsWin(): bool
+    + draw(sf::RenderTarget& target, sf::RenderStates states) const: void
+    + SetPosition(const sf::Vector2f& pos): void
+    + GetCollisionEventType() const: GlobalEventType
+    + Update(const sf::Time&): bool
+    + HandleInput(const sf::Event&): bool
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+GraphicBase <|-- SlimeBar
+
+' ==> Composition
+SlimeBar *-- "2" SFML.RectangleShape : contains >
+SlimeBar *-- "1" SFML.Sprite : contains >
+
+' ==> Dependency
+SlimeBar ..> Environment : uses for defaults >
+SlimeBar ..> GlobalEventType : returns >
+SlimeBar -- ResourceManager : load textures >
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+!theme plain
+title Screen Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' Forward-declared class
+class Engine
+
+' Classes from external libraries/headers
+package SFML <<library>> {
+    class RenderTarget
+    class Event
+}
+
+package EventSystem {
+    class BaseEvent
+}
+
+' The main abstract class
+abstract class Screen <<abstract>> {
+    # m_Engine: Engine&
+    --
+    + Screen(Engine& g_Engine)
+    + virtual ~Screen()
+    + {abstract} Render(Renderer: sf::RenderTarget&): bool
+    + {abstract} Update(DT: const sf::Time&): bool
+    + {abstract} HandleEvent(Event: std::shared_ptr<BaseEvent>): bool
+    + {abstract} HandleInput(Event: std::optional<sf::Event>): bool
+}
+
+' --- Relationships ---
+
+' Aggregation: The Screen is part of an Engine and holds a reference to it.
+' The Engine manages the Screen's lifetime, but the Screen needs access back to the Engine.
+Engine o-- "1..*" Screen : manages >
+' Dependency: The Screen class methods depend on these types.
+Screen ..> SFML.RenderTarget : renders to
+Screen ..> SFML.Event : handles input
+Screen ..> BaseEvent : handles events
+
+@enduml

@@ -1,0 +1,83 @@
+@startuml
+!theme plain
+title Command Class Hierarchy
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Application Classes ---
+class Player
+class Character
+enum Direction
+
+' --- Base Command Class ---
+abstract class BaseCommand {
+    + {abstract} execute(): void
+}
+
+' --- Player Commands ---
+class MovePlayerCommand {
+    - m_Player: Player&
+    - m_NewDirection: Direction
+    --
+    + execute(): void
+}
+class StopPlayerMovingCommand {
+    - m_Player: Player&
+    - m_OldDirection: Direction
+    --
+    + execute(): void
+}
+class AdvancePlayerIndexCommand {
+    - m_Player: Player&
+    --
+    + execute(): void
+}
+
+' --- Character Commands ---
+class MoveCharacterCommand {
+    - m_Character: Character&
+    - m_NewDirection: Direction
+    --
+    + execute(): void
+}
+class StopCharacterMovingCommand {
+    - m_Character: Character&
+    - m_OldDirection: Direction
+    --
+    + execute(): void
+}
+class CharacterAttackCommand {
+    - m_Character: Character&
+    --
+    + execute(): void
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+BaseCommand <|-- MovePlayerCommand
+BaseCommand <|-- StopPlayerMovingCommand
+BaseCommand <|-- AdvancePlayerIndexCommand
+BaseCommand <|-- MoveCharacterCommand
+BaseCommand <|-- StopCharacterMovingCommand
+BaseCommand <|-- CharacterAttackCommand
+
+' ==> Aggregation (Command refers to a Receiver)
+MovePlayerCommand o-- "1" Player : operates on >
+StopPlayerMovingCommand o-- "1" Player : operates on >
+AdvancePlayerIndexCommand o-- "1" Player : operates on >
+
+MoveCharacterCommand o-- "1" Character : operates on >
+StopCharacterMovingCommand o-- "1" Character : operates on >
+CharacterAttackCommand o-- "1" Character : operates on >
+
+' ==> Dependency
+MovePlayerCommand ..> Direction : uses >
+StopPlayerMovingCommand ..> Direction : uses >
+MoveCharacterCommand ..> Direction : uses >
+StopCharacterMovingCommand ..> Direction : uses >
+
+@enduml

@@ -1,0 +1,60 @@
+@startuml
+!theme plain
+title Player Event Classes Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Core Event System ---
+
+enum GlobalEventType
+abstract class BaseEvent <<abstract>> {
+    + {abstract} GetEventType(): GlobalEventType
+}
+
+
+' --- Game Specific Classes & Enums ---
+
+enum Direction
+class Player
+
+' --- The Concrete Player Event Classes ---
+    class PlayerMovedEvent {
+        - m_NewDirection: Direction
+        - m_Player: Player&
+        --
+        + PlayerMovedEvent(Player &Player, const Direction &NewDirection)
+        + GetEventType(): const GlobalEventType
+    }
+
+    class PlayerStopMoved {
+        - m_OldDirection: Direction
+        - m_Player: Player&
+        --
+        + PlayerStopMoved(Player &Player, const Direction &OldDirection)
+        + GetEventType(): const GlobalEventType
+    }
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A relationship)
+' Both classes are concrete implementations of BaseEvent.
+BaseEvent <|-- PlayerMovedEvent
+BaseEvent <|-- PlayerStopMoved
+
+' ==> Association (Refers-To relationship)
+' Both event classes hold a non-owning reference to a Player.
+' This is best represented as an association with a hollow circle (aggregation) or a directed arrow.
+PlayerMovedEvent -u-o "1" Player : refers to >
+PlayerStopMoved -u-o "1" Player : refers to >
+
+' ==> Dependency (Uses-A relationship)
+' The events use the Direction enum as part of their data.
+PlayerMovedEvent .u.> Direction : uses >
+PlayerStopMoved .u.> Direction : uses >
+
+BaseEvent ..|> GlobalEventType : returns >
+
+@enduml

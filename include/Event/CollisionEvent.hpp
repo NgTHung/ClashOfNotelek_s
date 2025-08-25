@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 
 #include "Event/Event.hpp"
 
@@ -54,5 +53,15 @@ private:
     Collidable* m_CollidableB;
 public:
     SwordCollisionEvent(Collidable* &A, Collidable* &B);
+    GlobalEventType GetEventType() const override;
+};
+
+class MapEntityCollisionEvent : public CollisionEvent
+{
+private:
+    Collidable* m_CollidableA;
+    Collidable* m_CollidableB;
+public:
+    MapEntityCollisionEvent(Collidable* &A, Collidable* &B);
     GlobalEventType GetEventType() const override;
 };
