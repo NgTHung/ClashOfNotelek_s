@@ -126,7 +126,7 @@ bool Slime::Update(const sf::Time &DT)
         CanUpdateAnimation = true;
         m_MiliSecondUpdate -= 120;
     }
-    if (m_State == EnemyState::Dying) {
+    if (m_State == EnemyState::Dying || m_State == EnemyState::CollsionDeleted) {
         float dt = DT.asSeconds();
         m_DeathTimer += dt;
         sf::Angle RotationAngle = Transformable::getRotation() + sf::degrees(m_RotationSpeed*dt);
@@ -218,6 +218,8 @@ bool Slime::Update(const sf::Time &DT)
         UpdateAnimation();
     return true;
 }
+
+
 
 void Slime::Move(const sf::Vector2f& direction)
 {

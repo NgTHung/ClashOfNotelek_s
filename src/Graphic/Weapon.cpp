@@ -129,7 +129,7 @@ void Sword::SetOrigin(sf::Vector2f origin) {
 
 void Sword::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     // states.transform *= getTransform();
-    DrawDebug(target);
+   // DrawDebug(target);
     target.draw(m_Shape);
 }
 

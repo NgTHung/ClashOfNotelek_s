@@ -409,5 +409,10 @@ float Enemy::GetDame() const
 {
     return this->m_Dame;
 }
+void Enemy::SetState(const EnemyState& state)
+{
+    m_State = state;
+}
+
 
 

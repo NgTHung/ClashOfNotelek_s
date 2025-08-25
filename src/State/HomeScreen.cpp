@@ -170,12 +170,13 @@ bool HomeScreen::Update(const sf::Time &DT)
     //delete dead enemy
     for (const auto& enemy : m_Enemy)
     {
-        if (enemy->GetState() == EnemyState::CanDelete)
+        if (enemy->GetState() == EnemyState::Dying)
         {
             if (enemy->GetType() == EnemyType::slime)
                 m_SlimeBar.KillASlime();
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Environment::AttackableLayer);
             m_Engine.GetCollisionSystem().RemoveCollidable(enemy->GetID(),Environment::EnemyAttackLayer);
+            enemy->SetState(EnemyState::CollsionDeleted);
         }
     }
     m_Enemy.erase(

@@ -118,6 +118,7 @@ enum EnemyState
     Chase,
     Dying,
     Dead,
+    CollsionDeleted,
     CanDelete,
     None
 };
@@ -132,6 +133,7 @@ public:
     EnemyState GetState() const;
     virtual  void OffAttack() = 0;
     virtual  void OnAttack() = 0;
+    void SetState(const EnemyState& state);
     virtual  void Attack() = 0;
     float GetDame() const;
     virtual void BeHitProcess() = 0;
