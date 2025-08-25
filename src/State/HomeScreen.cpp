@@ -54,8 +54,6 @@ HomeScreen::HomeScreen(Engine &g_Engine)
     for (const auto& wall : m_Walls)
         wall->SetScale(sf::Vector2f(10,10));
     m_Enemy.clear();
-    m_vDT.reserve(Environment::FrameLimit + 1);
-    m_FPS.setFillColor(sf::Color::Black);
     m_Overlay.setFillColor(sf::Color(0,0,0,150));
     m_Overlay.setSize(sf::Vector2f(Environment::ScreenResolution));
     m_Menu.SetOrigin(sf::Vector2f(150,125));
@@ -98,7 +96,6 @@ bool HomeScreen::Render(sf::RenderTarget &Renderer)
 
     for (auto renderthing : m_RenderQueue)
         Renderer.draw(*renderthing);
-    Renderer.draw(m_FPS);
     Renderer.draw(m_Character.GetPlayerHealthBar());
     Renderer.draw(m_SlimeBar);
     if (isPause)
@@ -158,15 +155,6 @@ bool HomeScreen::Update(const sf::Time &DT)
         grass->Update(DT);
     for (const auto& enemy : m_Enemy)
         enemy->Update(DT);
-    fps += DT.asSeconds()/ Environment::FrameLimit;
-    m_vDT.push_back(DT.asSeconds());
-    if (m_vDT.size() > Environment::FrameLimit)
-    {
-        fps -= m_vDT.front() / Environment::FrameLimit;
-        m_vDT.erase(m_vDT.begin());
-    }
-    m_FPS.setString(std::format("FPS: {:.2f}", 1.f / fps));
-    m_FPS.setPosition(m_Character.GetPosition());
     //delete dead enemy
     for (const auto& enemy : m_Enemy)
     {
