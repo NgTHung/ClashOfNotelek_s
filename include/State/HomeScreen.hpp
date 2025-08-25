@@ -39,10 +39,10 @@ private:
     sf::Sprite m_MapTexture;
     SlimeBar m_SlimeBar;
     std::vector<std::shared_ptr<Enemy>> m_Enemy;
-    std::vector<float> m_vDT;
+    // std::vector<float> m_vDT;
     bool isPause = false;
     sf::RectangleShape m_Overlay;
     Board m_Menu;
-    float fps = 0;
-    ArielText m_FPS;
+    // float fps = 0;
+    // ArielText m_FPS;
 };
