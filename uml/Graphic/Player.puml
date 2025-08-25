@@ -1,0 +1,92 @@
+@startuml PlayerClassDiagram
+
+!theme plain
+hide empty members
+skinparam classAttributeIconSize 0
+
+title Class Diagram for Player
+
+' External dependencies from SFML and other custom classes
+' These are simplified representations for context.
+package SFML <<library>> {
+    class Text
+    class FloatRect
+    class Vector2f
+    class RenderTarget
+    class Time
+    class Event
+}
+
+class Engine
+class "BaseState<Player>" as BaseState<Player>
+class EventQueue
+class BaseEvent
+
+' The Direction enumeration
+enum Direction {
+    WEST
+    NORTH
+    EAST
+    SOUTH
+    NONE
+}
+
+' The Player class
+class Player {
+    - m_Engine : const Engine&
+    - m_PlayerState : std::unique_ptr<BaseState<Player>>
+    - m_Name : sf::Text
+    - m_TextBound : sf::FloatRect
+    - m_Names : std::vector<std::string>
+    - m_Index : int
+    - m_CurrentPosition : sf::Vector2f
+    - m_EventQueue : EventQueue
+    - m_HP : int
+    - s : std::set<Direction>
+    --
+    + Player(const Engine& g_Engine)
+    + ~Player()
+    + Render(sf::RenderTarget& Renderer) const : bool
+    + Update(const sf::Time& DT) : bool
+    + HandleEvent(std::shared_ptr<BaseEvent> Event) : bool
+    + HandleInput(const std::optional<sf::Event>& Event) : bool
+    + setPosition(sf::Vector2f NewPosition) : bool
+    + ChangeState(std::unique_ptr<BaseState<Player>> NewState) : void
+    + SetName(const std::string& Name) : void
+    + AdvanceIndex() : void
+    + ResetIndex() : void
+    + AddDirection(Direction NewDirection) : void
+    + RemoveDirection(Direction NewDirection) : void
+    + GetDirection() : std::set<Direction>
+    + GetPosition() const : sf::Vector2f
+}
+
+' --- Relationships ---
+
+' Player has a strong, non-owning association with Engine (Aggregation)
+Player o-- "1" Engine : uses >
+
+' Player owns its state (Composition)
+Player *-- "1" BaseState  : m_PlayerState >
+
+' Player owns its EventQueue (Composition)
+Player *-- "1" EventQueue : m_EventQueue
+
+' Player uses the Direction enum
+Player ..> Direction : uses
+
+' Player uses BaseEvent through a method parameter
+Player ..> BaseEvent : handles >
+
+' Player has dependencies on various SFML types
+Player ..> SFML.Text
+Player ..> SFML.FloatRect
+Player ..> SFML.Vector2f
+Player ..> SFML.RenderTarget
+Player ..> SFML.Time
+Player ..> SFML.Event
+
+Player -- ResourcesManager : load resources >
+Player -- Logger : log events >
+
+@enduml

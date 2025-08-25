@@ -47,7 +47,7 @@ void EventDispatcher::RegisterListener(GlobalEventType Type, const EventListener
     }
 }
 
-EventDispatcher &EventDispatcher::GetInstance()
+EventDispatcher &EventDispatcher:: GetInstance()
 {
     static EventDispatcher instance;
     return instance;

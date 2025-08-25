@@ -17,8 +17,6 @@ public:
 
     bool Update(const sf::Time &) override;
 
-    bool FixLagUpdate(const sf::Time &) override;
-
     bool HandleInput(const sf::Event &) override;
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

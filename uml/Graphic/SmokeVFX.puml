@@ -1,0 +1,69 @@
+@startuml
+!theme plain
+title VFX Classes Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+}
+
+' --- Application Classes ---
+enum GlobalEventType
+abstract class GraphicBase <<abstract>>{
+}
+
+class HitSmokeVFX {
+    - m_Sprite: sf::Sprite
+    - m_Active: bool
+    - m_MiliSecondUpdate: int
+    - m_Direction: sf::Vector2f
+    - m_Index: int
+    --
+    + HitSmokeVFX()
+    + Active(sf::Vector2f Pos, sf::Vector2f Direction): void
+    + IsActive() const: bool
+    + Update(const sf::Time& DT): bool
+    + HandleInput(const sf::Event&): bool
+    + draw(sf::RenderTarget& target, sf::RenderStates states) const: void
+    + GetCollisionEventType() const: GlobalEventType
+}
+
+class DeadSmokeVFX {
+    - m_Sprite: sf::Sprite
+    - m_Active: bool
+    - m_MiliSecondUpdate: int
+    - m_Index: int
+    --
+    + DeadSmokeVFX()
+    + Active(sf::Vector2f Pos): void
+    + IsActive() const: bool
+    + Update(const sf::Time& DT): bool
+    + HandleInput(const sf::Event&): bool
+    + draw(sf::RenderTarget& target, sf::RenderStates states) const: void
+    + GetCollisionEventType() const: GlobalEventType
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+GraphicBase <|-- HitSmokeVFX
+GraphicBase <|-- DeadSmokeVFX
+
+' ==> Composition
+HitSmokeVFX *-u- "1" SFML.Sprite : contains >
+DeadSmokeVFX *-u- "1" SFML.Sprite : contains >
+
+' ==> Dependency
+HitSmokeVFX ..> GlobalEventType : returns >
+DeadSmokeVFX ..> GlobalEventType : returns >
+
+HitSmokeVFX -- ResourceManager : load textures >
+DeadSmokeVFX -- ResourceManager : load textures >
+HitSmokeVFX -- Environment : use global settings >
+DeadSmokeVFX -- Environment : use global settings >
+
+
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+!theme plain
+title ScreenShake Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+    class View
+    class Time
+}
+
+' --- Application Class ---
+class ScreenShake {
+    - m_Duration: float
+    - m_Elapsed: float
+    - m_Strength: float
+    - m_Active: bool
+    - m_Random: std::default_random_engine
+    - m_OffsetDist: std::uniform_real_distribution<float>
+    --
+    + ScreenShake()
+    + ~ScreenShake()
+    + GetShakeViewUpdate(const sf::Time& DT, sf::View CurrentView): sf::View
+    + Start(): void
+    + IsActive() const: bool
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Dependency
+ScreenShake ..> SFML.View : modifies and returns >
+ScreenShake ..> SFML.Time : uses >
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+!theme plain
+title ID Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+
+class ID {
+    - {static} s_NextID: int
+    - m_ID: const int
+    --
+    + ID()
+    + ~ID()
+    + GetID() const: int
+    + operator==(Other: const ID&): bool
+    + operator!=(Other: const ID&): bool
+}
+
+@enduml

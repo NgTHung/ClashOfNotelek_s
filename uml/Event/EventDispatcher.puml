@@ -1,0 +1,54 @@
+@startuml
+!theme plain
+title EventDispatcher Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- External Dependencies ---
+
+enum GlobalEventType
+abstract class BaseEvent <<abstract>>
+
+class EventListener <<typedef>>
+EventListener --|> "function<bool(const shared_ptr<BaseEvent>&)>" : is a >
+' --- The EventDispatcher Singleton ---
+class EventDispatcher <<singleton>> {
+    ' Representing the typedef as a nested type for clarity
+
+    .. private attributes ..
+    - m_Listeners: std::unordered_map<GlobalEventType, std::vector<EventListener>>
+    .. private constructor/destructor ..
+    - EventDispatcher()
+    - ~EventDispatcher()
+    ' Note: Deleted functions are described in the note
+    .. public methods ..
+    + {static} GetInstance(): EventDispatcher&
+    + Dispatch(const std::shared_ptr<BaseEvent>& Event): void
+    + RegisterListener(Type: GlobalEventType, Listener: const EventListener&): void
+    + UnRegisterListener(Type: GlobalEventType, Listener: const EventListener&): void
+    + UnRegisterAllListeners(Type: GlobalEventType): void
+    + UnRegisterAllListeners(): void
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Nested Type Relationship
+' EventListener is defined within the scope of EventDispatcher.
+EventDispatcher +-- EventListener
+
+' ==> Aggregation (Manages-A relationship)
+' The dispatcher stores a collection of listeners.
+EventDispatcher o-- "0..*" EventListener : stores >
+
+' ==> Dependency (Uses-A relationship)
+' The dispatcher uses the enum as a key and the event as data.
+EventDispatcher ..> GlobalEventType : uses as key >
+EventDispatcher ..> BaseEvent : dispatches >
+
+' The listener itself depends on the event type it handles.
+EventListener ..> BaseEvent : handles >
+EventDispatcher -- Logger : logs >
+@enduml

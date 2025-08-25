@@ -6,7 +6,7 @@
 #include "Utility/IDGenerator.hpp"
 class Engine;
 
-class Collidable : private sf::Transformable, public sf::Drawable {
+class Collidable : public sf::Transformable, public sf::Drawable {
 private:
     ID m_ID;
     sf::Vector2f m_Size;
@@ -66,6 +66,8 @@ public:
     static bool CheckSATCollision(const std::vector<sf::Vector2f> &PointsA, const std::vector<sf::Vector2f> &PointsB);
 
     void HandleCollisions() const;
+
+    void HandleEnemyAttackLayer() const;
 
     void AddCollidable(Collidable *collidable, int layer);
 

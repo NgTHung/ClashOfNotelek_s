@@ -1,0 +1,53 @@
+@startuml
+!theme plain
+title DeadScreen Class Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Core & Parent Classes ---
+class Engine
+abstract class Screen <<abstract>>
+' --- SFML Library Classes ---
+package SFML <<library>> {
+    class Sprite
+}
+
+' --- Game Specific Classes ---
+class GraphicButton
+
+
+' --- The DeadScreen Class ---
+class DeadScreen {
+    - m_ReplayButton: GraphicButton
+    - m_ExitButton: GraphicButton
+    - m_Sprite: sf::Sprite
+    - m_TimePerFrame: int
+    - m_TimeCounter: int
+    - m_Index: int
+    --
+    + DeadScreen(Engine &g_Engine)
+    + ~DeadScreen()
+    + Render(sf::RenderTarget& Renderer): bool
+    + Update(const sf::Time& DT): bool
+    + HandleEvent(std::shared_ptr<BaseEvent> Event): bool
+    + HandleInput(std::optional<sf::Event> Event): bool
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance (Is-A relationship)
+' DeadScreen is a specific type of Screen.
+Screen <|-- DeadScreen
+
+' ==> Composition (Owns-A relationship)
+' A DeadScreen is composed of these parts. Their lifetime is tied to the DeadScreen.
+DeadScreen *-left- "2" GraphicButton : contains >
+DeadScreen *-- "1" SFML.Sprite : contains >
+DeadScreen -- ResourcesManager : load resources >
+DeadScreen -u- Engine : uses >
+' ==> Aggregation (Has-A relationship)
+' The Engine manages the Screen, and the Screen holds a reference back to the Engine.
+Engine o-d- Screen : manages >
+@enduml

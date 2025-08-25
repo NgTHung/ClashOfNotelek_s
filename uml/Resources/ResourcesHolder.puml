@@ -1,0 +1,25 @@
+@startuml
+!theme plain
+title ResourcesHolder Abstract Base Class
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- The Abstract Base Class ---
+abstract class ResourcesHolder <<abstract>> {
+    # m_DirectoryTable: std::unordered_set<std::string>
+    # m_SelectedDirectory: std::string
+    --
+    + ResourcesHolder()
+    + virtual ~ResourcesHolder()
+    + {abstract} LoadDirectory(): void
+    + {abstract} LoadFile(const std::string &FilePath): bool
+    + LoadDirectory(const std::string &DirectoryPath): void
+    + LoadFiles(const std::vector<std::string> &FileTable): std::vector<std::string>
+    + AddDirectory(const std::string &DirectoryPath, bool isSelected = false): void
+    + SelectDirectory(const std::string &DirectoryPath): void
+    + ReloadDirectory(const std::string &DirectoryPath): void
+}
+
+@enduml

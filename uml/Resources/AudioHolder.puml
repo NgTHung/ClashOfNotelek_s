@@ -1,0 +1,42 @@
+@startuml
+!theme plain
+title AudioHolder Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+}
+
+' --- Application Classes ---
+abstract class ResourcesHolder <<abstract>>
+class AudioHolder {
+    - m_Sound: std::map<std::string, sf::SoundBuffer>
+    - m_MusicMap: std::map<std::string, std::string>
+    - AddMusic(const std::string& musicName, const std::string& filePath): bool
+    --
+    + AudioHolder()
+    + ~AudioHolder()
+    + LoadDirectory(): void
+    + LoadFile(const std::string &FilePath): bool
+    + GetMusic(const std::string& musicName) const: const std::string&
+    + GetSoundBuffer(const std::string& musicName) const: const sf::SoundBuffer&
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+ResourcesHolder <|-- AudioHolder
+
+' ==> Composition
+AudioHolder *-- "0..*" SFML.SoundBuffer : holds in map >
+
+' ==> Dependency
+AudioHolder ..> SFML.SoundBuffer : provides access to >
+
+AudioHolder -- Environment : uses for defaults >
+AudioHolder -- Logger : logs errors >
+
+@enduml

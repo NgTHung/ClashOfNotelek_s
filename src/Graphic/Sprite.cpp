@@ -5,19 +5,20 @@
 #include "Event/CollisionEvent.hpp"
 #include "Utility/Logger.hpp"
 #include "Resources/ResourcesManager.hpp"
-#include "Utility/Enviroment.hpp"
+#include "Utility/Environment.hpp"
 
-#include <iostream>
+#include "State/DeadScreen.hpp"
 
-Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(Enviroment::SpriteSize)),
+Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(Environment::SpriteSize)),
                                          m_Engine(g_Engine)
                                            {
     const sf::Vector2f Position = static_cast<sf::Vector2f>(g_Engine.GetWindow().getSize()) / 2.f;
-    const sf::IntRect IntRect = {Enviroment::BaseLocation, Enviroment::SpriteSize};
+    const sf::IntRect IntRect = {Environment::BaseLocation, Environment::SpriteSize};
     this->m_Weapon = std::make_shared<Sword>(g_Engine);
-    this->m_Weapon->SetScale(Enviroment::SpriteScalingFactor);
-    this->Character::SetScale(Enviroment::SpriteScalingFactor);
+    this->m_Weapon->SetScale(Environment::SpriteScalingFactor);
+    this->Character::SetScale(Environment::SpriteScalingFactor);
     this->Character::SetPosition(Position);
+    m_OldPosition = {0,0};
     this->SetIntRect(IntRect);
     m_Shape.setSize(Character::GetSize());
     m_Shape.setTexture(&ResourcesManager::GetManager().GetTextureHolder().GetTexture("hi.png"));
@@ -25,7 +26,9 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_CharacterState = std::make_unique<CharacterStandingState>(m_Engine, *this);
 
     this->m_CharacterState->EnterState();
-    // this->m_HP = 100; // Default HP value
+
+     this->m_HP = 100;
+    m_PlayerHealthBar.SetMaxHealth(m_HP);
     // set Default Directions
     this->isSouth = true;
     this->isNorth = false;
@@ -39,7 +42,25 @@ Character::Character(Engine &g_Engine) : GraphicBase(static_cast<sf::Vector2f>(E
     this->m_Vertices[1] = sf::Vector2f{26,0};
     this->m_Vertices[2] = sf::Vector2f{26,32};
     this->m_Vertices[3] = sf::Vector2f{6,32};
+
+    this->m_FootVertices.resize(4);
+    this->m_FootVertices[0] = sf::Vector2f{11,29};
+    this->m_FootVertices[2] = sf::Vector2f{22,29};
+    this->m_FootVertices[3] = sf::Vector2f{22,32};
+    this->m_FootVertices[1] = sf::Vector2f{11,32};
+
+    m_Engine.GetCollisionSystem().AddCollidable(this,Environment::PlayerCollisionLayer);
+    m_Engine.GetCollisionSystem().AddCollidable(this,Environment::EnemyAttackLayer);
+
+    this->m_Listener = [this](const std::shared_ptr<BaseEvent> &Event) { return this->HandleEvent(Event); };
+
+    EventDispatcher::GetInstance().RegisterListener(
+            GlobalEventType::CharacterCollision, m_Listener);
+
 }
+
+
+
 
 Weapon &Character::GetWeapon() const {
     return *m_Weapon;
@@ -58,14 +79,29 @@ void Character::SetScale(const sf::Vector2f &Factor) {
 
 bool Character::Update(const sf::Time &DT) {
     // m_Sword.RotateToMouse();
+    m_PlayerHealthBar.SetPosition(m_Engine.GetWindow().getView().getCenter()  - m_Engine.GetWindow().getView().getSize()/2.f + sf::Vector2f(10,5));
+    m_PlayerHealthBar.Update(DT);
+    m_PlayerHealthBar.SetCurrentHealth(m_HP);
     m_Weapon->Update(DT);
     if (auto NewState = m_CharacterState->Update(DT)) {
         ChangeState(std::move(NewState));
     }
+
     return true;
 }
 
+PlayerHealthBar& Character::GetPlayerHealthBar()
+{
+    return m_PlayerHealthBar;
+}
+
+float Character::GetHP() const
+{
+    return m_HP;
+}
+
 bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
+
     switch (Event.get()->GetEventType()) {
         case GlobalEventType::Generic: {
             LOG_ERROR("Incorrect populated Event");
@@ -79,6 +115,11 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             throw "Incorrect populated Event";
         }
         case GlobalEventType::CharacterMoved:
+            break;
+        case GlobalEventType::EnemyCollision:
+        {
+           break;
+        }
         case GlobalEventType::PlayerAttacked: {
             // this->m_PlayerState->AddEvent(Event.value());
             Event.reset();
@@ -107,12 +148,26 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             switch (CollidableB->GetCollisionEventType()) {
                 case GlobalEventType::WallCollision: {
                     LOG_DEBUG("Character collided with Wall ID: {}", CollidableB->GetID());
-                    // Handle wall collision logic here
+                    Character::SetPosition(m_OldPosition);
                     break;
                 }
                 case GlobalEventType::EnemyCollision: {
                     LOG_DEBUG("Character collided with Enemy ID: {}", CollidableB->GetID());
-                    // Handle enemy collision logic here
+                    if (auto enemy = dynamic_cast<Enemy*>(CollidableB))
+                        if (enemy->GetDame() > 0)
+                        {
+                            this->m_HP -= enemy->GetDame();
+                            enemy->Attack();
+                            m_Engine.ShakeScreen();
+                            m_Engine.PlaySound("ouch");
+                            m_PlayerHealthBar.BeAttack();
+
+                        }
+                    if (this->m_HP <= 0)
+                    {
+                        m_Engine.PushState<DeadScreen>(this->m_Engine);
+                        return true;
+                    }
                     break;
                 }
                 case GlobalEventType::CharacterCollision: {
@@ -139,6 +194,7 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
             throw "Incorrect populated Event";
         }
     }
+
     // if (auto NewState = m_PlayerState->HandleEvent(*this))
     // {
     //     ChangeState(std::move(NewState));
@@ -147,22 +203,18 @@ bool Character::HandleEvent(std::shared_ptr<BaseEvent> Event) {
 }
 
 bool Character::HandleInput(const sf::Event &Event) {
+
     if (auto NewState = m_CharacterState->HandleInput(Event)) {
         ChangeState(std::move(NewState));
     }
     return true;
 }
 
-bool Character::FixLagUpdate(const sf::Time &DT) {
-    if (auto NewState = m_CharacterState->FixLagUpdate(DT)) {
-        ChangeState(std::move(NewState));
-    }
-    return true;
-}
-
 void Character::SetPosition(const sf::Vector2f &position) {
-    Collidable::SetPosition(position);
-    this->m_Weapon->SetPosition(position);
+    if (m_Engine.GetCollisionSystem().IsFree(position,*this,Environment::MapEntityCollisionLayer))
+    {
+        this->m_Weapon->SetPosition(position);
+    }
 }
 
 void Character::ChangeState(std::unique_ptr<BaseState<Character> > NewState) {
@@ -183,17 +235,17 @@ void Character::draw(sf::RenderTarget &Target, sf::RenderStates States) const {
     States.transform *= GetTransform();
     Target.draw(m_Shape, States);
 
-    std::vector<sf::Vector2f> Points = this->GetTransformedPoints();
-    sf::VertexArray shape(sf::PrimitiveType::LineStrip,Points.size() + 1);
-    for (size_t i = 0; i < Points.size(); ++i) {
-        shape[i].position = Points[i];
-        shape[i].color = sf::Color::Red;
-    }
-    if(Points.size() > 0)
-        shape[Points.size()].position = Points[0];
-    // for(auto i : Points)
-    //     std::cout<< i.x << " " << i.y << '\n';
-    Target.draw(shape);
+    // std::vector<sf::Vector2f> Points = this->GetTransformedPoints();
+    // sf::VertexArray shape(sf::PrimitiveType::LineStrip,Points.size() + 1);
+    // for (size_t i = 0; i < Points.size(); ++i) {
+    //     shape[i].position = Points[i];
+    //     shape[i].color = sf::Color::Red;
+    // }
+    // if(Points.size() > 0)
+    //     shape[Points.size()].position = Points[0];
+    // // for(auto i : Points)
+    // //     std::cout<< i.x << " " << i.y << '\n';
+    // Target.draw(shape);
     if (m_Weapon) {
         Target.draw(*m_Weapon, States);
     }
@@ -288,10 +340,15 @@ int Character::AnimationTagToInt() const {
     }
 }
 
-bool Character::NextFrame(int maxframe) {
+bool Character::NextFrame(int maxframe,const sf::Time &DT) {
     int TagNum = AnimationTagToInt();
-    m_Index = (m_Index + 1) % maxframe;
-    sf::IntRect Rect(Enviroment::BaseSpriteSize * sf::Vector2i{m_Index, TagNum}, Enviroment::SpriteSize);
+    this->m_MiliSecondUpdate += DT.asMilliseconds();
+    if (this->m_MiliSecondUpdate > 150)
+    {
+        this->m_MiliSecondUpdate -= 150;
+        m_Index = (m_Index + 1) % maxframe;
+    }
+    sf::IntRect Rect(Environment::BaseSpriteSize * sf::Vector2i{m_Index, TagNum}, Environment::SpriteSize);
     this->SetIntRect(Rect);
     return true;
 }
@@ -313,3 +370,44 @@ void Character::RemoveDirection(const Direction NewDirection) {
 std::set<Direction> Character::GetDirection() {
     return this->s;
 }
+
+float Character::GetYAxisPoint()
+{
+    sf::Transform tf = Collidable::GetTransform();
+    sf::Vector2f tmp = tf.transformPoint(this->m_Vertices[3]);
+    return tmp.y;
+}
+
+std::vector<sf::Vector2f> Character::GetFootVertices() const
+{
+    std::vector<sf::Vector2f> tmp;
+    sf::Transform tf = this->GetTransform();
+    for (auto vertices : m_FootVertices)
+        tmp.push_back(tf.transformPoint(vertices));
+    return tmp;
+}
+
+Enemy::Enemy(Character& Player, Engine &g_Engine): GraphicBase(sf::Vector2f(Environment::SpriteSize)),
+                                                   m_MovingRight(false), m_PatrolRange(0),
+                                                   m_Speed(0),
+                                                   m_Engine(g_Engine), m_Radius(0), m_LastAttackID(0), m_Dame(0),
+                                                   m_Player(Player), m_Index(0), m_HP(0) {
+    m_State = Patrol;
+}
+
+void Enemy::SetStartPosition(const sf::Vector2f& position)
+{
+    this->m_StartPosition = position;
+}
+
+EnemyState Enemy::GetState() const
+{
+    return this->m_State;
+}
+
+float Enemy::GetDame() const
+{
+    return this->m_Dame;
+}
+
+

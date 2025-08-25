@@ -1,0 +1,64 @@
+@startuml
+!theme plain
+title Button and GraphicButton Class Hierarchy
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+}
+
+' --- Application Classes ---
+class Engine
+abstract class GraphicBase {
+}
+class ArielText
+
+class Button {
+    # m_Button: sf::RectangleShape
+    # m_Text: ArielText
+    # m_Position: sf::Vector2f
+    # m_OnClick: std::function<void()>
+    # m_Engine: Engine&
+    --
+    + Button(Engine&, sf::Vector2f, ...) ' Overloaded constructors
+    + Update(const sf::Time &): bool
+    + HandleInput(const sf::Event &): bool
+    + draw(...) const: void
+    + SetOnClick(func: std::function<void()>): void
+}
+
+class GraphicButton {
+    # m_Index: int
+    # m_HasClicked: bool
+    # m_MilliSecondsCount: int
+    # m_FramePerSecond: int
+    --
+    + GraphicButton(Engine&, sf::Vector2f, const sf::Texture&)
+    + draw(...) const: void
+    + HandleInput(const sf::Event &): bool
+    + Update(const sf::Time &): bool
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance Hierarchy
+GraphicBase <|-- Button
+Button <|-- GraphicButton
+
+' ==> Composition
+Button *-r- "1" SFML.RectangleShape : has a >
+Button *-- "1" ArielText : has a >
+
+' ==> Aggregation
+Button o-- "1" Engine : uses >
+
+' ==> Dependency
+Button .l.> "function<void()>"
+
+Button -- Environment : uses global config>
+GraphicButton -l- Environment : uses global config>
+@enduml

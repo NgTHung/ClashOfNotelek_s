@@ -1,0 +1,88 @@
+@startuml
+!theme plain
+title Character State Machine Hierarchy
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Application Classes ---
+class Engine
+abstract class BaseCommand
+class EventDispatcher {
+    + {inner} EventListener
+}
+
+' --- State Machine Base ---
+abstract class "BaseState<T>" as BaseState <<template>> <<abstract>>
+abstract class "BaseState<Character>" as BaseState<Character> <<abstract>>
+' --- Character State Hierarchy ---
+abstract class CharacterState {
+    # m_Engine: Engine&
+    # m_LeftClickCommand: std::shared_ptr<BaseCommand>
+    # m_LeftClickReleaseCommand: std::shared_ptr<BaseCommand>
+    # m_WPressedCommand: std::shared_ptr<BaseCommand>
+    # m_APressedCommand: std::shared_ptr<BaseCommand>
+    # m_SPressedCommand: std::shared_ptr<BaseCommand>
+    # m_DPressedCommand: std::shared_ptr<BaseCommand>
+    # m_SpacePressedCommand: std::shared_ptr<BaseCommand>
+    # m_WReleasedCommand: std::shared_ptr<BaseCommand>
+    # m_AReleasedCommand: std::shared_ptr<BaseCommand>
+    # m_SReleasedCommand: std::shared_ptr<BaseCommand>
+    # m_DReleasedCommand: std::shared_ptr<BaseCommand>
+    --
+    + {abstract} EnterState(): void
+    + {abstract} ExitState(): void
+    + {abstract} HandleEvent(const std::shared_ptr<BaseEvent>&): bool
+    + HandleInput(std::optional<sf::Event> Event): unique_ptr<BaseState>
+    + {abstract} Update(const sf::Time &DT): unique_ptr<BaseState>
+}
+
+class CharacterStandingState {
+    --
+    - m_Listener: EventDispatcher::EventListener
+}
+
+class CharacterMovingState {
+    --
+    - m_Listener: EventDispatcher::EventListener
+}
+
+class CharacterAttackState {
+    --
+    - m_Listener: EventDispatcher::EventListener
+}
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance
+BaseState <|-- CharacterState
+CharacterState <|-- CharacterStandingState
+CharacterState <|-- CharacterMovingState
+CharacterState <|-- CharacterAttackState
+BaseCommand <|-- MoveCharacterCommand
+BaseCommand <|-- StopCharacterMovingCommand
+BaseCommand <|-- CharacterAttackCommand
+
+' ==> Composition
+CharacterStandingState *-- "1" EventListener : owns >
+CharacterMovingState *-- "1" EventListener : owns >
+CharacterAttackState *-- "1" EventListener : owns >
+
+' ==> Aggregation
+CharacterState o-- "1" Engine : uses >
+CharacterState o-- "0..*" BaseCommand : delegates to >
+
+CharacterStandingState -- MoveCharacterCommand : uses >
+CharacterMovingState -- MoveCharacterCommand : uses >
+CharacterMovingState -- StopCharacterMovingCommand : uses >
+CharacterState -- CharacterAttackCommand : uses >
+CharacterStandingState -r-> CharacterMovingState : transitions to >
+CharacterMovingState --> CharacterStandingState : transitions to >
+CharacterStandingState --> CharacterAttackState : transitions to >
+CharacterMovingState --> CharacterAttackState : transitions to >
+CharacterAttackState --> CharacterStandingState : transitions to >
+CharacterAttackState --> CharacterMovingState : transitions to >
+
+@enduml

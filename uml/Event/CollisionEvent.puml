@@ -1,0 +1,55 @@
+@startuml
+!theme plain
+title Collision Event Hierarchy Diagram
+
+' Settings for better readability
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- Core Event System ---
+enum GlobalEventType
+abstract class BaseEvent <<abstract>> {
+    + {abstract} GetEventType(): GlobalEventType
+}
+
+class Collidable <<interface>>
+
+
+' Intermediate base class for all collision events
+class CollisionEvent {
+    - m_CollidableA: Collidable*
+    - m_CollidableB: Collidable*
+    --
+    + CollisionEvent(A: Collidable*&, B: Collidable*&)
+    + GetEventType(): GlobalEventType
+    + GetCollidableA(): Collidable*
+    + GetCollidableB(): Collidable*
+}
+
+' Concrete, specific collision event types
+class PlayerCollisionEvent
+class WallCollisionEvent
+class EnemyCollisionEvent
+class SwordCollisionEvent
+class MapEntityCollisionEvent
+
+
+' --- RELATIONSHIPS ---
+
+' ==> Inheritance Hierarchy (Is-A)
+' This forms a two-level inheritance tree.
+BaseEvent <|-- CollisionEvent
+CollisionEvent <|-- PlayerCollisionEvent
+CollisionEvent <|-- WallCollisionEvent
+CollisionEvent <|-- EnemyCollisionEvent
+CollisionEvent <|-- SwordCollisionEvent
+CollisionEvent <|-- MapEntityCollisionEvent
+CollisionEvent ..l> GlobalEventType: returns
+
+' ==> Association (Has-A / Refers-To)
+' A CollisionEvent holds non-owning pointers to the two objects that collided.
+CollisionEvent --o "2" Collidable : refers to >
+
+CollisionEvent -- Logger : logs to >
+
+@enduml

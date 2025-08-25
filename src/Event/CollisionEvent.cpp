@@ -26,11 +26,17 @@ GlobalEventType PlayerCollisionEvent::GetEventType() const {
     return GlobalEventType::CharacterCollision;
 }
 
-PlayerCollisionEvent::PlayerCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A,B) {
+PlayerCollisionEvent::PlayerCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A, B),
+                                                                            m_CollidableA(nullptr),
+                                                                            m_CollidableB(nullptr) {
 }
-WallCollisionEvent::WallCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A,B) {
+
+WallCollisionEvent::WallCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A, B), m_CollidableA(nullptr),
+                                                                        m_CollidableB(nullptr) {
 }
-EnemyCollisionEvent::EnemyCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A,B) {
+
+EnemyCollisionEvent::EnemyCollisionEvent(Collidable* &A, Collidable* &B): CollisionEvent(A, B), m_CollidableA(nullptr),
+                                                                          m_CollidableB(nullptr) {
 }
 
 GlobalEventType WallCollisionEvent::GetEventType() const {
@@ -41,12 +47,22 @@ GlobalEventType EnemyCollisionEvent::GetEventType() const {
     return GlobalEventType::EnemyCollision;
 }
 
-SwordCollisionEvent::SwordCollisionEvent(Collidable*& A, Collidable*& B): CollisionEvent(A,B)
-{
+SwordCollisionEvent::SwordCollisionEvent(Collidable*& A, Collidable*& B): CollisionEvent(A, B), m_CollidableA(nullptr),
+                                                                          m_CollidableB(nullptr) {
 }
 
 GlobalEventType SwordCollisionEvent::GetEventType() const
 {
     return GlobalEventType::SwordCollision;
+}
+
+MapEntityCollisionEvent::MapEntityCollisionEvent(Collidable*& A, Collidable*& B): CollisionEvent(A, B),
+    m_CollidableA(nullptr),
+    m_CollidableB(nullptr) {
+}
+
+GlobalEventType MapEntityCollisionEvent::GetEventType() const
+{
+    return GlobalEventType::MapEntityCollision;
 }
 

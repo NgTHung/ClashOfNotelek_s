@@ -1,0 +1,41 @@
+@startuml
+!theme plain
+title Water Class Diagram
+
+' Settings
+skinparam classAttributeIconSize 0
+hide empty members
+
+' --- SFML Library ---
+package SFML <<library>> {
+    class Vector2f
+    class RenderTarget
+}
+
+' --- Application Classes ---
+class Engine
+class Wall
+
+class Water {
+    - m_Walls: std::vector<std::shared_ptr<Wall>>
+    - m_Engine: Engine&
+    --
+    + AddWall(sf::Vector2f Position, sf::Vector2f Size): void
+    + DrawWalls(sf::RenderTarget& Target): void
+    + Water(Engine& g_Engine)
+    + ~Water()
+}
+
+' --- RELATIONSHIPS ---
+
+' ==> Aggregation
+' Water manages a collection of Walls via shared_ptr and holds a reference to the Engine.
+Water o-- "0..*" Wall : manages >
+Water o-- "1" Engine : uses >
+
+' ==> Dependency
+' The Water class methods use these SFML types as parameters.
+Water ..> SFML.RenderTarget : draws to >
+Water ..> SFML.Vector2f : uses >
+
+@enduml
